@@ -194,8 +194,8 @@ public class inputdata extends JFrame {
 		contentPane.add(btnSubmit);
 		
 		JLabel lblNewLabel = new JLabel("");
-		sl_contentPane.putConstraint(SpringLayout.NORTH, lblNewLabel, 31, SpringLayout.SOUTH, comboRampIn);
-		sl_contentPane.putConstraint(SpringLayout.EAST, lblNewLabel, -27, SpringLayout.WEST, btnSubmit);
+		sl_contentPane.putConstraint(SpringLayout.NORTH, lblNewLabel, 6, SpringLayout.SOUTH, comboFromDeck);
+		sl_contentPane.putConstraint(SpringLayout.WEST, lblNewLabel, 10, SpringLayout.WEST, comboFromDeck);
 		lblNewLabel.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/Deck.png")));
 		contentPane.add(lblNewLabel);
 		
