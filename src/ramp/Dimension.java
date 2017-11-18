@@ -1,5 +1,13 @@
 package ramp;
 
+/**
+ * A dimension is a collection of three values: feet, inches, and eighths of an
+ * inch. The purpose of this class is to store these values and convert them to
+ * and from different formats.
+ * 
+ * @author lsg
+ *
+ */
 public class Dimension implements Comparable<Dimension> {
 	private int feet, inches, eighths;
 
