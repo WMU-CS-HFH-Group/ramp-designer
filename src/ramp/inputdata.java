@@ -8,6 +8,9 @@ import javax.swing.JLabel;
 import javax.swing.JComboBox;
 import java.awt.Font;
 import javax.swing.SpringLayout;
+import javax.swing.JButton;
+import javax.print.attribute.standard.PrinterMessageFromOperator;
+import javax.swing.ImageIcon;
 
 public class inputdata extends JFrame {
 
@@ -184,6 +187,19 @@ public class inputdata extends JFrame {
 		comboRampStyle.addItem("L Turn");
 		comboRampStyle.addItem("U Turn");
 		contentPane.add(comboRampStyle);
+		
+		JButton btnSubmit = new JButton("Submit");
+		sl_contentPane.putConstraint(SpringLayout.NORTH, btnSubmit, 226, SpringLayout.SOUTH, comboDimInL);
+		sl_contentPane.putConstraint(SpringLayout.WEST, btnSubmit, 0, SpringLayout.WEST, lblDimFt2);
+		contentPane.add(btnSubmit);
+		
+		JLabel lblNewLabel = new JLabel("");
+		sl_contentPane.putConstraint(SpringLayout.NORTH, lblNewLabel, 31, SpringLayout.SOUTH, comboRampIn);
+		sl_contentPane.putConstraint(SpringLayout.EAST, lblNewLabel, -27, SpringLayout.WEST, btnSubmit);
+		lblNewLabel.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/Deck.png")));
+		contentPane.add(lblNewLabel);
+		
+		System.out.println();
 		
 //		lblLayout = new JLabel("Layout");
 //		lblLayout.setBounds(10, 93, 43, 19);
