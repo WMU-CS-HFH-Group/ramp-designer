@@ -1,5 +1,13 @@
 package ramp;
 
+/**
+ * A dimension is a collection of three values: feet, inches, and eighths of an
+ * inch. The purpose of this class is to store these values and convert them to
+ * and from different formats.
+ * 
+ * @author lsg
+ *
+ */
 public class Dimension implements Comparable<Dimension> {
 	private int feet, inches, eighths;
 
@@ -120,5 +128,36 @@ public class Dimension implements Comparable<Dimension> {
 
 		// If the difference is negative, return -1, and vice-versa.
 		return (int) (difference / Math.abs(difference));
+	}
+
+	/**
+	 * Converts a fraction string in the format <code>numer/denom</code> to an
+	 * integer representing eighths of an inch.
+	 * 
+	 * @param fraction
+	 *            A string in the format <code>numerator/denominator</code>
+	 * @return The number of eighths of an inch, or 0 if the fraction is improperly
+	 *         formatted (e.g. no slash)
+	 * @throws NumberFormatException
+	 *             when the numerator or denominator are not proper integers.
+	 */
+	public static int convertFractionToEighths(String fraction) throws NumberFormatException {
+		String[] strings = fraction.split("/");
+		int eighths = 0;
+
+		// Ensure that the fraction was formatted correctly.
+		if (strings.length == 2) {
+			// Parse the components. These may throw number format exceptions.
+			int numerator = Integer.parseInt(strings[0]);
+			int denominator = Integer.parseInt(strings[1]);
+
+			// Convert the fraction into a double value.
+			double fractional = (double) numerator / (double) denominator;
+
+			// Round the fractional part to the nearest eighth.
+			eighths = (int) Math.round(fractional * 8);
+		}
+
+		return eighths;
 	}
 }
