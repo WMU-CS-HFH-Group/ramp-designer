@@ -193,11 +193,53 @@ public class inputdata extends JFrame {
 		sl_contentPane.putConstraint(SpringLayout.WEST, btnSubmit, 0, SpringLayout.WEST, lblDimFt2);
 		contentPane.add(btnSubmit);
 		
-		JLabel lblNewLabel = new JLabel("");
-		sl_contentPane.putConstraint(SpringLayout.NORTH, lblNewLabel, 6, SpringLayout.SOUTH, comboFromDeck);
-		sl_contentPane.putConstraint(SpringLayout.WEST, lblNewLabel, 10, SpringLayout.WEST, comboFromDeck);
-		lblNewLabel.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/Deck.png")));
-		contentPane.add(lblNewLabel);
+		JLabel lblHouseDeck = new JLabel("");
+		sl_contentPane.putConstraint(SpringLayout.NORTH, lblHouseDeck, 6, SpringLayout.SOUTH, comboFromDeck);
+		sl_contentPane.putConstraint(SpringLayout.WEST, lblHouseDeck, 10, SpringLayout.WEST, comboFromDeck);
+		lblHouseDeck.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/Deck.png")));
+		contentPane.add(lblHouseDeck);
+		
+		JLabel lblRampHor = new JLabel("");
+		sl_contentPane.putConstraint(SpringLayout.NORTH, lblRampHor, 17, SpringLayout.SOUTH, comboRampIn);
+		sl_contentPane.putConstraint(SpringLayout.EAST, lblRampHor, 0, SpringLayout.EAST, comboInch);
+		lblRampHor.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/rampHorizontal.png")));
+		contentPane.add(lblRampHor);
+		
+		JLabel lblRampVert = new JLabel("");
+		sl_contentPane.putConstraint(SpringLayout.NORTH, lblRampVert, 6, SpringLayout.SOUTH, lblRampHor);
+		sl_contentPane.putConstraint(SpringLayout.WEST, lblRampVert, 0, SpringLayout.WEST, lblHeightOfDeck);
+		lblRampVert.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/rampVertical.png")));
+		contentPane.add(lblRampVert);
+		
+		JLabel lblTurnAr = new JLabel("");
+		lblTurnAr.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/turnAround.png")));
+		contentPane.add(lblTurnAr);
+		
+		JLabel lblRampHor2 = new JLabel("");
+		sl_contentPane.putConstraint(SpringLayout.NORTH, lblTurnAr, 6, SpringLayout.SOUTH, lblRampHor2);
+		lblRampHor2.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/rampHorizontal.png")));
+		sl_contentPane.putConstraint(SpringLayout.NORTH, lblRampHor2, 6, SpringLayout.SOUTH, lblRampHor);
+		sl_contentPane.putConstraint(SpringLayout.WEST, lblRampHor2, 10, SpringLayout.WEST, lblRampHor);
+		contentPane.add(lblRampHor2);
+		
+		JLabel lblRampVert2 = new JLabel("");
+		sl_contentPane.putConstraint(SpringLayout.WEST, lblTurnAr, 6, SpringLayout.EAST, lblRampVert2);
+		sl_contentPane.putConstraint(SpringLayout.NORTH, lblRampVert2, 6, SpringLayout.SOUTH, lblRampHor2);
+		sl_contentPane.putConstraint(SpringLayout.WEST, lblRampVert2, 10, SpringLayout.EAST, lblRampVert);
+		lblRampVert2.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/rampVertical.png")));
+		contentPane.add(lblRampVert2);
+		
+		JLabel lblTurnUVert = new JLabel("");
+		sl_contentPane.putConstraint(SpringLayout.WEST, lblTurnUVert, 0, SpringLayout.WEST, lblTurnAr);
+		sl_contentPane.putConstraint(SpringLayout.SOUTH, lblTurnUVert, 0, SpringLayout.SOUTH, btnSubmit);
+		lblTurnUVert.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/turnUVertical.png")));
+		contentPane.add(lblTurnUVert);
+		
+		JLabel lblTurnUHor = new JLabel("");
+		sl_contentPane.putConstraint(SpringLayout.WEST, lblTurnUHor, 6, SpringLayout.EAST, lblTurnAr);
+		sl_contentPane.putConstraint(SpringLayout.SOUTH, lblTurnUHor, 0, SpringLayout.SOUTH, lblTurnAr);
+		lblTurnUHor.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/turnUHorizontal.png")));
+		contentPane.add(lblTurnUHor);
 		
 		System.out.println();
 		
