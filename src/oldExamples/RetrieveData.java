@@ -1,11 +1,8 @@
 package oldExamples;
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
 import javax.swing.JButton;
@@ -17,13 +14,9 @@ import java.awt.Font;
 import javax.swing.AbstractAction;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.Action;
-
-import java.awt.Cursor;
-
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 
