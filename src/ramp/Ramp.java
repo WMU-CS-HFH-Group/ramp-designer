@@ -124,4 +124,60 @@ public class Ramp {
 		this.turnDirection = Direction.UNDEFINED;
 	}
 
+	public RampType getType() {
+		return type;
+	}
+
+	public void setType(RampType type) {
+		this.type = type;
+	}
+
+	public float getDeckHeight() {
+		return deckHeight;
+	}
+
+	public void setDeckHeight(float deckHeight) {
+		this.deckHeight = deckHeight;
+	}
+
+	public float getDeckWidth() {
+		return deckWidth;
+	}
+
+	public void setDeckWidth(float deckWidth) {
+		this.deckWidth = deckWidth;
+	}
+
+	public float getDeckLength() {
+		return deckLength;
+	}
+
+	public void setDeckLength(float deckLength) {
+		this.deckLength = deckLength;
+	}
+
+	public float getDeckOffset() {
+		return deckOffset;
+	}
+
+	public void setDeckOffset(float deckOffset) {
+		this.deckOffset = deckOffset;
+	}
+
+	public Direction getRampDirection() {
+		return rampDirection;
+	}
+
+	public void setRampDirection(Direction rampDirection) {
+		this.rampDirection = rampDirection;
+	}
+
+	public Direction getTurnDirection() {
+		return turnDirection;
+	}
+
+	public void setTurnDirection(Direction turnDirection) {
+		this.turnDirection = turnDirection;
+	}
+
 }
