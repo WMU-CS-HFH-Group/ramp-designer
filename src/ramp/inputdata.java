@@ -11,10 +11,16 @@ import javax.swing.SpringLayout;
 import javax.swing.JButton;
 import javax.print.attribute.standard.PrinterMessageFromOperator;
 import javax.swing.ImageIcon;
+import javax.swing.SwingConstants;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class inputdata extends JFrame {
 
 	private JPanel contentPane;
+	private float totalIn = 0;
 
 	/**
 	 * Launch the application.
@@ -36,6 +42,7 @@ public class inputdata extends JFrame {
 	 * Create the frame.
 	 */
 	public inputdata() {
+		
 		setTitle("RampDesign by Lana-Wulf Soft");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 799, 601);
@@ -241,24 +248,44 @@ public class inputdata extends JFrame {
 		lblTurnUHor.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/turnUHorizontal.png")));
 		contentPane.add(lblTurnUHor);
 		
-		System.out.println();
+		JLabel lblInchesRemaining = new JLabel("Ramp inches remaining: ");
+		lblInchesRemaining.setFont(new Font("Dialog", Font.PLAIN, 14));
+		lblInchesRemaining.setHorizontalAlignment(SwingConstants.RIGHT);
+		sl_contentPane.putConstraint(SpringLayout.NORTH, lblInchesRemaining, 0, SpringLayout.NORTH, btnSubmit);
+		sl_contentPane.putConstraint(SpringLayout.EAST, lblInchesRemaining, 0, SpringLayout.EAST, comboDimFtL);
+		contentPane.add(lblInchesRemaining);
 		
-//		lblLayout = new JLabel("Layout");
-//		lblLayout.setBounds(10, 93, 43, 19);
-//		lblLayout.setFont(new Font("Dialog", Font.PLAIN, 14));
-//		contentPane.add(lblLayout);
-//		
-//		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-//		contentPane.add(tabbedPane);
-//		
-//		panelNoTurns = new JPanel();
-//		tabbedPane.addTab("No Turns", null, panelNoTurns, null);
-//		
-//		panel = new JPanel();
-//		tabbedPane.addTab("One Turn", null, panel, null);
-//		
-//		panel_1 = new JPanel();
-//		tabbedPane.addTab("Two Turns", null, panel_1, null);
+		comboFeet.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				float calcIn = (float) (12.0 * (int) comboFeet.getSelectedIndex());
+				calcIn += (float) comboInch.getSelectedIndex();
+				calcIn += (float) (.125 * (int) comboInPart.getSelectedIndex());
+				setTotalIn(calcIn * 12);
+				lblInchesRemaining.setText("Ramp inches remaining: " + (calcIn * 12));
+			} 
+		});
+		
+		comboInch.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				float calcIn = (float) (12.0 * (int) comboFeet.getSelectedIndex());
+				calcIn += (float) comboInch.getSelectedIndex();
+				calcIn += (float) (.125 * (int) comboInPart.getSelectedIndex());
+				setTotalIn(calcIn * 12);
+				lblInchesRemaining.setText("Ramp inches remaining: " + (calcIn * 12));
+			} 
+		});
+		
+		comboInPart.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				float calcIn = (float) (12.0 * (int) comboFeet.getSelectedIndex());
+				calcIn += (float) comboInch.getSelectedIndex();
+				calcIn += (float) (.125 * (int) comboInPart.getSelectedIndex());
+				setTotalIn(calcIn * 12);
+				lblInchesRemaining.setText("Ramp inches remaining: " + (calcIn * 12));
+			} 
+		});
+		
+		System.out.println();
 	}
 	
 	//**********set combo boxes boxes*******************
@@ -281,6 +308,7 @@ public class inputdata extends JFrame {
 	}
 	
 	public void setInParts(JComboBox<String> combo){
+		combo.addItem("0");
 		combo.addItem("1/8");
 		combo.addItem("1/4");
 		combo.addItem("3/8");
@@ -289,5 +317,15 @@ public class inputdata extends JFrame {
 		combo.addItem("3/4");
 		combo.addItem("7/8");
 	}
+
+	public float getTotalIn() {
+		return totalIn;
+	}
+
+	public void setTotalIn(float totalIn) {
+		this.totalIn = totalIn;
+	}
+	
+	
 }
 

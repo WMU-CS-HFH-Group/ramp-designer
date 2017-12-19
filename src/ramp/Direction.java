@@ -8,15 +8,15 @@ package ramp;
  */
 public enum Direction {
 	/**
-	 * LEFT is "west" when in relation to the house.
+	 * LEFT is left when in relation to the house.
 	 */
 	LEFT,
 	/**
-	 * CENTER is away from the house, or "south."
+	 * CENTER is away from the house.
 	 */
 	CENTER,
 	/**
-	 * RIGHT is "east" when in relation to the house.
+	 * RIGHT is right when in relation to the house.
 	 */
 	RIGHT,
 	/**

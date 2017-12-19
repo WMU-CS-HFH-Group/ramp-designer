@@ -1,23 +1,27 @@
 package ramp;
 
 /**
- * A dimension is a collection of three values: feet, inches, and eighths of an
- * inch. The purpose of this class is to store these values and convert them to
+ * A dimension is a collection of three values: feet, inches, and eighthes of an
+ * inch. The purpose of this class is to store these values and/or convert them to
  * and from different formats.
  * 
  * @author lsg
  *
  */
-public class Dimension implements Comparable<Dimension> {
+public class Converter implements Comparable<Converter> {
 	private int feet, inches, eighths;
+	private float totalIn;
 
 	/**
-	 * Creates a dimension object that stores values as separate variables: feet,
-	 * inches, and eighths of inches.
+	 * Creates a dimension object that stores values as separate variables: totalIn, feet,
+	 * inches, and eighthes of inches.
 	 * 
 	 * @param dimension
 	 */
-	public Dimension(float dimension) {
+	public Converter(float dimension) {
+		// sets total inches
+		this.totalIn = dimension;
+		
 		// Calculate the number of feet.
 		this.feet = (int) Math.floor((double) dimension / 12);
 
@@ -39,7 +43,7 @@ public class Dimension implements Comparable<Dimension> {
 	 * @param eighths
 	 *            Eighths of an inch.
 	 */
-	public Dimension(int feet, int inches, int eighths) {
+	public Converter(int feet, int inches, int eighths) {
 		this.feet = feet;
 		this.inches = inches;
 		this.eighths = eighths;
@@ -68,14 +72,13 @@ public class Dimension implements Comparable<Dimension> {
 	public void setEighths(int eighths) {
 		this.eighths = eighths;
 	}
+	
+	public float getTotalIn() {
+		return totalIn;
+	}
 
-	/**
-	 * Converts this dimension to inches.
-	 * 
-	 * @return The dimension value in inches.
-	 */
-	public float toInches() {
-		return (float) (this.feet * 12) + (this.inches) + ((float) this.eighths / 8f);
+	public void setTotalIn(float totalIn) {
+		this.totalIn = totalIn;
 	}
 
 	@Override
@@ -87,7 +90,7 @@ public class Dimension implements Comparable<Dimension> {
 	public String toString() {
 		String result = "";
 
-		if (this.toInches() == 0) {
+		if (totalIn == 0) {
 			// If the entire dimension is 0, display 0 feet.
 			result = "0'";
 		} else {
@@ -122,9 +125,9 @@ public class Dimension implements Comparable<Dimension> {
 	}
 
 	@Override
-	public int compareTo(Dimension dimension2) {
+	public int compareTo(Converter dimension2) {
 		// Find the difference between the two dimensions.
-		float difference = this.toInches() - dimension2.toInches();
+		float difference = this.totalIn - dimension2.getTotalIn();
 
 		// If the difference is negative, return -1, and vice-versa.
 		return (int) (difference / Math.abs(difference));
