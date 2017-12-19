@@ -1,4 +1,5 @@
 package ramp;
+import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -152,7 +153,7 @@ public class inputdata extends JFrame {
 		lblDimIn2.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		contentPane.add(lblDimIn2);
 		
-		JLabel lblStyle = new JLabel("Ramp Style: ");
+		JLabel lblStyle = new JLabel("The ramp is: ");
 		sl_contentPane.putConstraint(SpringLayout.NORTH, lblStyle, 10, SpringLayout.SOUTH, lblHeightOfDeck);
 		lblStyle.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		sl_contentPane.putConstraint(SpringLayout.WEST, lblStyle, 0, SpringLayout.WEST, lblHeightOfDeck);
@@ -180,21 +181,6 @@ public class inputdata extends JFrame {
 		comboFromDeck.addItem("Center");
 		contentPane.add(comboFromDeck);
 		
-		JLabel lblWithARamp = new JLabel("with a ramp style of");
-		lblWithARamp.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		sl_contentPane.putConstraint(SpringLayout.NORTH, lblWithARamp, 0, SpringLayout.NORTH, comboFromDeck);
-		sl_contentPane.putConstraint(SpringLayout.WEST, lblWithARamp, 6, SpringLayout.EAST, comboFromDeck);
-		contentPane.add(lblWithARamp);
-		
-		JComboBox<String> comboRampStyle = new JComboBox<String>();
-		sl_contentPane.putConstraint(SpringLayout.NORTH, comboRampStyle, 0, SpringLayout.NORTH, lblWithARamp);
-		sl_contentPane.putConstraint(SpringLayout.WEST, comboRampStyle, 6, SpringLayout.EAST, lblWithARamp);
-		sl_contentPane.putConstraint(SpringLayout.EAST, comboRampStyle, 79, SpringLayout.EAST, lblWithARamp);
-		comboRampStyle.addItem("Straight");
-		comboRampStyle.addItem("L Turn");
-		comboRampStyle.addItem("U Turn");
-		contentPane.add(comboRampStyle);
-		
 		JButton btnSubmit = new JButton("Submit");
 		sl_contentPane.putConstraint(SpringLayout.NORTH, btnSubmit, 226, SpringLayout.SOUTH, comboDimInL);
 		sl_contentPane.putConstraint(SpringLayout.WEST, btnSubmit, 0, SpringLayout.WEST, lblDimFt2);
@@ -206,45 +192,36 @@ public class inputdata extends JFrame {
 		lblHouseDeck.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/Deck.png")));
 		contentPane.add(lblHouseDeck);
 		
-		JLabel lblRampHor = new JLabel("");
-		sl_contentPane.putConstraint(SpringLayout.NORTH, lblRampHor, 17, SpringLayout.SOUTH, comboRampIn);
-		sl_contentPane.putConstraint(SpringLayout.EAST, lblRampHor, 0, SpringLayout.EAST, comboInch);
-		lblRampHor.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/rampHorizontal.png")));
-		contentPane.add(lblRampHor);
+		JButton btnRampHor = new JButton();
+		sl_contentPane.putConstraint(SpringLayout.NORTH, btnRampHor, 45, SpringLayout.NORTH, lblHouseDeck);
+		sl_contentPane.putConstraint(SpringLayout.WEST, btnRampHor, -90, SpringLayout.WEST, lblHouseDeck);
+		sl_contentPane.putConstraint(SpringLayout.EAST, btnRampHor, 85, SpringLayout.WEST, lblHouseDeck);
+		btnRampHor.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/rampHorizontal.png")));
+		contentPane.add(btnRampHor);
 		
-		JLabel lblRampVert = new JLabel("");
-		sl_contentPane.putConstraint(SpringLayout.NORTH, lblRampVert, 6, SpringLayout.SOUTH, lblRampHor);
-		sl_contentPane.putConstraint(SpringLayout.WEST, lblRampVert, 0, SpringLayout.WEST, lblHeightOfDeck);
+		JButton lblRampVert = new JButton();
+		sl_contentPane.putConstraint(SpringLayout.NORTH, lblRampVert, -10, SpringLayout.SOUTH, lblHouseDeck);
+		sl_contentPane.putConstraint(SpringLayout.EAST, lblRampVert, -65, SpringLayout.EAST, lblHouseDeck);
 		lblRampVert.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/rampVertical.png")));
+		lblRampVert.setVisible(false);
 		contentPane.add(lblRampVert);
 		
-		JLabel lblTurnAr = new JLabel("");
-		lblTurnAr.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/turnAround.png")));
-		contentPane.add(lblTurnAr);
-		
-		JLabel lblRampHor2 = new JLabel("");
-		sl_contentPane.putConstraint(SpringLayout.NORTH, lblTurnAr, 6, SpringLayout.SOUTH, lblRampHor2);
-		lblRampHor2.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/rampHorizontal.png")));
-		sl_contentPane.putConstraint(SpringLayout.NORTH, lblRampHor2, 6, SpringLayout.SOUTH, lblRampHor);
-		sl_contentPane.putConstraint(SpringLayout.WEST, lblRampHor2, 10, SpringLayout.WEST, lblRampHor);
-		contentPane.add(lblRampHor2);
-		
-		JLabel lblRampVert2 = new JLabel("");
-		sl_contentPane.putConstraint(SpringLayout.WEST, lblTurnAr, 6, SpringLayout.EAST, lblRampVert2);
-		sl_contentPane.putConstraint(SpringLayout.NORTH, lblRampVert2, 6, SpringLayout.SOUTH, lblRampHor2);
-		sl_contentPane.putConstraint(SpringLayout.WEST, lblRampVert2, 10, SpringLayout.EAST, lblRampVert);
-		lblRampVert2.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/rampVertical.png")));
-		contentPane.add(lblRampVert2);
+		JButton btnTurnAr = new JButton();
+		sl_contentPane.putConstraint(SpringLayout.NORTH, btnTurnAr, -6, SpringLayout.NORTH, btnRampHor);
+		sl_contentPane.putConstraint(SpringLayout.WEST, btnTurnAr, -50, SpringLayout.WEST, btnRampHor);
+		sl_contentPane.putConstraint(SpringLayout.EAST, btnTurnAr, 0, SpringLayout.WEST, btnRampHor);
+		btnTurnAr.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/turnAround.png")));
+		contentPane.add(btnTurnAr);
 		
 		JLabel lblTurnUVert = new JLabel("");
-		sl_contentPane.putConstraint(SpringLayout.WEST, lblTurnUVert, 0, SpringLayout.WEST, lblTurnAr);
-		sl_contentPane.putConstraint(SpringLayout.SOUTH, lblTurnUVert, 0, SpringLayout.SOUTH, btnSubmit);
+		sl_contentPane.putConstraint(SpringLayout.NORTH, lblTurnUVert, 272, SpringLayout.SOUTH, lblStyle);
+		sl_contentPane.putConstraint(SpringLayout.WEST, lblTurnUVert, 23, SpringLayout.WEST, contentPane);
 		lblTurnUVert.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/turnUVertical.png")));
 		contentPane.add(lblTurnUVert);
 		
 		JLabel lblTurnUHor = new JLabel("");
-		sl_contentPane.putConstraint(SpringLayout.WEST, lblTurnUHor, 6, SpringLayout.EAST, lblTurnAr);
-		sl_contentPane.putConstraint(SpringLayout.SOUTH, lblTurnUHor, 0, SpringLayout.SOUTH, lblTurnAr);
+		sl_contentPane.putConstraint(SpringLayout.WEST, lblTurnUHor, 30, SpringLayout.EAST, lblTurnUVert);
+		sl_contentPane.putConstraint(SpringLayout.SOUTH, lblTurnUHor, 0, SpringLayout.SOUTH, lblTurnUVert);
 		lblTurnUHor.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/turnUHorizontal.png")));
 		contentPane.add(lblTurnUHor);
 		
@@ -255,34 +232,73 @@ public class inputdata extends JFrame {
 		sl_contentPane.putConstraint(SpringLayout.EAST, lblInchesRemaining, 0, SpringLayout.EAST, comboDimFtL);
 		contentPane.add(lblInchesRemaining);
 		
+		
+		//listeners go last
+		//changes inches remaining whenever 
 		comboFeet.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				float calcIn = (float) (12.0 * (int) comboFeet.getSelectedIndex());
-				calcIn += (float) comboInch.getSelectedIndex();
-				calcIn += (float) (.125 * (int) comboInPart.getSelectedIndex());
-				setTotalIn(calcIn * 12);
-				lblInchesRemaining.setText("Ramp inches remaining: " + (calcIn * 12));
+				changetotal(comboFeet, comboInch, comboInPart, lblInchesRemaining);
 			} 
 		});
 		
 		comboInch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				float calcIn = (float) (12.0 * (int) comboFeet.getSelectedIndex());
-				calcIn += (float) comboInch.getSelectedIndex();
-				calcIn += (float) (.125 * (int) comboInPart.getSelectedIndex());
-				setTotalIn(calcIn * 12);
-				lblInchesRemaining.setText("Ramp inches remaining: " + (calcIn * 12));
+				changetotal(comboFeet, comboInch, comboInPart, lblInchesRemaining);
 			} 
 		});
 		
 		comboInPart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				float calcIn = (float) (12.0 * (int) comboFeet.getSelectedIndex());
-				calcIn += (float) comboInch.getSelectedIndex();
-				calcIn += (float) (.125 * (int) comboInPart.getSelectedIndex());
-				setTotalIn(calcIn * 12);
-				lblInchesRemaining.setText("Ramp inches remaining: " + (calcIn * 12));
+				changetotal(comboFeet, comboInch, comboInPart, lblInchesRemaining);
 			} 
+		});
+		
+		//changes direction of first ramp
+		comboFromDeck.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btnRampHor.setVisible(false);
+				btnTurnAr.setVisible(false);
+				lblRampVert.setVisible(false);
+				switch (comboFromDeck.getSelectedIndex()) {
+				case 0:
+					sl_contentPane.putConstraint(SpringLayout.NORTH, btnRampHor, 45, SpringLayout.NORTH, lblHouseDeck);
+					sl_contentPane.putConstraint(SpringLayout.WEST, btnRampHor, -90, SpringLayout.WEST, lblHouseDeck);
+					sl_contentPane.putConstraint(SpringLayout.EAST, btnRampHor, 85, SpringLayout.WEST, lblHouseDeck);
+					sl_contentPane.putConstraint(SpringLayout.NORTH, btnTurnAr, -6, SpringLayout.NORTH, btnRampHor);
+					sl_contentPane.putConstraint(SpringLayout.WEST, btnTurnAr, -50, SpringLayout.WEST, btnRampHor);
+					sl_contentPane.putConstraint(SpringLayout.EAST, btnTurnAr, 0, SpringLayout.WEST, btnRampHor);
+					btnRampHor.setVisible(true);
+					btnTurnAr.setVisible(true);
+					break;
+				case 1:
+					sl_contentPane.putConstraint(SpringLayout.NORTH, btnRampHor, 45, SpringLayout.NORTH, lblHouseDeck);
+					sl_contentPane.putConstraint(SpringLayout.WEST, btnRampHor, -55, SpringLayout.EAST, lblHouseDeck);
+					sl_contentPane.putConstraint(SpringLayout.EAST, btnRampHor, 120, SpringLayout.EAST, lblHouseDeck);
+					sl_contentPane.putConstraint(SpringLayout.NORTH, btnTurnAr, -6, SpringLayout.NORTH, btnRampHor);
+					sl_contentPane.putConstraint(SpringLayout.WEST, btnTurnAr, 0, SpringLayout.EAST, btnRampHor);
+					sl_contentPane.putConstraint(SpringLayout.EAST, btnTurnAr, 50, SpringLayout.EAST, btnRampHor);
+					btnRampHor.setVisible(true);
+					btnTurnAr.setVisible(true);
+					break;
+
+				default:
+					sl_contentPane.putConstraint(SpringLayout.NORTH, btnTurnAr, 0, SpringLayout.SOUTH, lblRampVert);
+					sl_contentPane.putConstraint(SpringLayout.WEST, btnTurnAr, 5, SpringLayout.WEST, lblRampVert);
+					sl_contentPane.putConstraint(SpringLayout.EAST, btnTurnAr, -5, SpringLayout.EAST, lblRampVert);
+					lblRampVert.setVisible(true);
+					btnTurnAr.setVisible(true);
+					break;
+				}
+			}
+		});
+		
+		//set length of ramp piece*****************************************************************************************************************************************
+		btnRampHor.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				WindowChooseLenght frejm = new WindowChooseLenght();
+                frejm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frejm.setVisible(true);
+			}
 		});
 		
 		System.out.println();
@@ -317,6 +333,15 @@ public class inputdata extends JFrame {
 		combo.addItem("3/4");
 		combo.addItem("7/8");
 	}
+	
+	/*******************changes total remaining value**********************/
+	private void changetotal(JComboBox comboFeet, JComboBox comboInch, JComboBox comboInPart, JLabel lblInchesRemaining){
+		float calcIn = (float) (12.0 * (int) comboFeet.getSelectedIndex());
+		calcIn += (float) comboInch.getSelectedIndex();
+		calcIn += (float) (.125 * (int) comboInPart.getSelectedIndex());
+		setTotalIn(calcIn * 12);
+		lblInchesRemaining.setText("Ramp inches remaining: " + (calcIn * 12));
+	}
 
 	public float getTotalIn() {
 		return totalIn;
@@ -325,7 +350,5 @@ public class inputdata extends JFrame {
 	public void setTotalIn(float totalIn) {
 		this.totalIn = totalIn;
 	}
-	
-	
 }
 
