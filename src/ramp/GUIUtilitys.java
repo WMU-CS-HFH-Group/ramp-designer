@@ -10,9 +10,12 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.management.loading.PrivateClassLoader;
 import javax.swing.*;
 
 public class GUIUtilitys <Other>{
+	private GUIData guiData = new GUIData();
+	
 	public GUIUtilitys() {
 		
 	}
@@ -171,7 +174,7 @@ public class GUIUtilitys <Other>{
 		btnSubmit.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				//****************************************************************
+				Diagram diagram = new Diagram(guiData);
 			}
 		});
 	}
