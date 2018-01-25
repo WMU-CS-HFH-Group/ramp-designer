@@ -292,7 +292,7 @@ public class inputdata extends JFrame {
 		float calcIn = (float) (12.0 * (int) comboFeet.getSelectedIndex());
 		calcIn += (float) comboInch.getSelectedIndex();
 		calcIn += (float) (.125 * (int) comboInPart.getSelectedIndex());
-		setTotalIn(calcIn * 12);
+		data.setTotalIn(calcIn * 12);
 		lblInchesRemaining.setText("Ramp inches remaining: " + (calcIn * 12));
 	}
 
