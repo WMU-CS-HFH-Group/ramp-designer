@@ -41,7 +41,6 @@ public class inputdata extends JFrame {
 	 * Create the frame.
 	 */
 	public inputdata() {
-		
 		setTitle("RampDesign by Lana-Wulf Soft");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 799, 601);

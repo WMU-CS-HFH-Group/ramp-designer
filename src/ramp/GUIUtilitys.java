@@ -175,6 +175,7 @@ public class GUIUtilitys <Other>{
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				Diagram diagram = new Diagram(guiData);
+				diagram.launch();
 			}
 		});
 	}
