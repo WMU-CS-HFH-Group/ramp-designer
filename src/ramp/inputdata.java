@@ -179,6 +179,14 @@ public class inputdata extends JFrame {
 		comboFromDeck.addItem("Center");
 		contentPane.add(comboFromDeck);
 		
+		JLabel lblNewLabel = new JLabel("");
+		sl_contentPane.putConstraint(SpringLayout.SOUTH, lblNewLabel, 10, SpringLayout.SOUTH, comboFromDeck);
+		lblNewLabel.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/House.png")));
+		sl_contentPane.putConstraint(SpringLayout.NORTH, lblNewLabel, 0, SpringLayout.NORTH, contentPane);
+		sl_contentPane.putConstraint(SpringLayout.WEST, lblNewLabel, 0, SpringLayout.WEST, contentPane);
+		sl_contentPane.putConstraint(SpringLayout.EAST, lblNewLabel, 0, SpringLayout.EAST, contentPane);
+		contentPane.add(lblNewLabel);
+		
 		JButton btnSubmit = new JButton("Submit");
 		sl_contentPane.putConstraint(SpringLayout.WEST, btnSubmit, 0, SpringLayout.WEST, lblDimFt2);
 		sl_contentPane.putConstraint(SpringLayout.SOUTH, btnSubmit, -10, SpringLayout.SOUTH, contentPane);
@@ -200,21 +208,11 @@ public class inputdata extends JFrame {
 		
 		JLabel lblHouseDeck = new JLabel("");
 		sl_contentPane.putConstraint(SpringLayout.NORTH, lblHouseDeck, 6, SpringLayout.SOUTH, comboFromDeck);
-		sl_contentPane.putConstraint(SpringLayout.WEST, lblHouseDeck, 10, SpringLayout.WEST, comboFromDeck);
+		sl_contentPane.putConstraint(SpringLayout.WEST, lblHouseDeck, 10, SpringLayout.EAST, comboFromDeck);
 		lblHouseDeck.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/Deck.png")));
 		contentPane.add(lblHouseDeck);
-		sl_contentPane.putConstraint(SpringLayout.NORTH, lblRampHor, 45, SpringLayout.NORTH, lblHouseDeck);
-		sl_contentPane.putConstraint(SpringLayout.WEST, lblRampHor, -90, SpringLayout.WEST, lblHouseDeck);
-		sl_contentPane.putConstraint(SpringLayout.EAST, lblRampHor, 85, SpringLayout.WEST, lblHouseDeck);
-		sl_contentPane.putConstraint(SpringLayout.WEST, lblRampVert, 110, SpringLayout.WEST, lblHouseDeck);
-		sl_contentPane.putConstraint(SpringLayout.SOUTH, lblRampVert, 180, SpringLayout.SOUTH, lblHouseDeck);
-		sl_contentPane.putConstraint(SpringLayout.EAST, lblRampVert, -75, SpringLayout.EAST, lblHouseDeck);
-		sl_contentPane.putConstraint(SpringLayout.NORTH, lblRampVert, -10, SpringLayout.SOUTH, lblHouseDeck);
 		
 		JButton btnTurnAr = new JButton();
-		sl_contentPane.putConstraint(SpringLayout.NORTH, btnTurnAr, -6, SpringLayout.NORTH, lblRampHor);
-		sl_contentPane.putConstraint(SpringLayout.WEST, btnTurnAr, -50, SpringLayout.WEST, lblRampHor);
-		sl_contentPane.putConstraint(SpringLayout.EAST, btnTurnAr, 0, SpringLayout.WEST, lblRampHor);
 		btnTurnAr.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/turnAround.png")));
 		btnTurnAr.setVisible(false);
 		contentPane.add(btnTurnAr);
@@ -281,11 +279,7 @@ public class inputdata extends JFrame {
 		//** End Set length of ramp piece **//
 		
 		//** adds extra ramps on base click **//************************************************************************************************
-		btnTurnAr.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-			}
-		});
+		guiUtility.createRamp(btnTurnAr, contentPane, sl_contentPane);
 		
 		System.out.println();
 	}
