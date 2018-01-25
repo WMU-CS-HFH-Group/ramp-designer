@@ -3,6 +3,9 @@ package ramp;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
+
+import javax.swing.JFrame;
+
 import java.util.ArrayList;
 
 @SuppressWarnings("serial")
@@ -88,6 +91,20 @@ public class Diagram extends Component {
 				repaint();
 			}
 		});
+	}
+	
+	public void launch() {
+		JFrame frame;
+		
+		frame = new JFrame("Graphics Spike");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		frame.setSize(800, 800);
+		frame.setBackground(Color.white);
+		frame.setLayout(new BorderLayout());
+		frame.add("Center", this);
+		
+		frame.setVisible(true);
 	}
 	
 	public void resetTranslation() {
