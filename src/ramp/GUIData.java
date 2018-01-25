@@ -2,8 +2,6 @@ package ramp;
 
 import java.util.ArrayList;
 
-import com.jgoodies.forms.layout.Size;
-
 public class GUIData {
 	private String length = ""; //Ramp length
 	private float deckHeight = 0; //Height of deck
