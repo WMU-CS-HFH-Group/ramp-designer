@@ -13,11 +13,11 @@ import java.awt.event.MouseEvent;
 import javax.management.loading.PrivateClassLoader;
 import javax.swing.*;
 
-public class GUIUtilitys <Other>{
-	private GUIData guiData = new GUIData();
+public class GUIUtilitys{
+	private static GUIData guiData;
 	
-	public GUIUtilitys() {
-		
+	public GUIUtilitys(GUIData guiData) {
+		this.guiData = guiData;
 	}
 
 	/**
@@ -42,23 +42,23 @@ public class GUIUtilitys <Other>{
 	 * @param lbl label to enable
 	 * @param data information held in GUIData
 	 */
-	public void clearSaveLenght(JTextArea lbl, GUIData data) {
+	public void clearSaveLenght(JTextArea lbl) {
 		lbl.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusGained(FocusEvent arg0) {
-				lbl.setText(data.getLenghth());
+				lbl.setText(guiData.getLength());
 				lbl.setBackground(Color.white);
 			}
 			@Override
 			public void focusLost(FocusEvent e) {
-				data.setLenghth(lbl.getText());
+				guiData.setLength(lbl.getText());
 				lbl.setBackground(Color.GRAY);
 			}
 		});
 	}
 	
 	
-	public void setRamps(JPanel contentPane, JTextArea lblRampHor, JTextArea lblRampVert, JButton btnTurnAr) {
+	public void setRamps(JPanel contentPane, SpringLayout sl_contentPane, JTextArea lblRampHor, JTextArea lblRampVert, JButton btnTurnAr) {
 		lblRampHor.setText("#' #\"");
 		lblRampHor.setFont(new Font("Tahoma", Font.BOLD, 20));
 		lblRampHor.setVisible(false);
@@ -74,6 +74,22 @@ public class GUIUtilitys <Other>{
 		btnTurnAr.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/turnAround.png")));
 		btnTurnAr.setVisible(false);
 		contentPane.add(btnTurnAr);
+		
+		//** Set length of ramp piece **
+		//**** Un-focus from enter length on enter ****
+		removeFocusEnter(lblRampHor);
+		removeFocusEnter(lblRampVert);
+		//**** End Un-focus from enter length on enter ****
+		//**** https://stackoverflow.com/questions/19569302/jtextarea-pressing-enter-adds-unnecessary-new-line ****
+		
+		//**** Clears/Saves input in bar ****
+		clearSaveLenght(lblRampHor);
+		clearSaveLenght(lblRampVert);
+		//**** End Clears/Saves input in bar ****
+		//** End Set length of ramp piece **//
+		
+		//** adds extra ramps on base click **//************************************************************************************************
+		createRamp(btnTurnAr, contentPane, sl_contentPane);
 	}
 	
 	/**
@@ -137,14 +153,14 @@ public class GUIUtilitys <Other>{
 			JTextArea lblRampHor = new JTextArea();
 			JTextArea lblRampVert = new JTextArea();
 			JButton btnTurnAr = new JButton();
-			GUIUtilitys utility = new GUIUtilitys();		
+			GUIUtilitys utility = new GUIUtilitys(guiData);		
 			int direction = -1;
 			
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				switch (direction){
 				case -1:
-					utility.setRamps(contentPane, lblRampHor, lblRampVert, btnTurnAr);					
+					utility.setRamps(contentPane, sl_contentPane, lblRampHor, lblRampVert, btnTurnAr);					
 					utility.setRampDirection(direction+1, sl_contentPane, pivot, lblRampHor, lblRampVert, btnTurnAr);
 					utility.createRamp(btnTurnAr, contentPane, sl_contentPane);
 					direction+=2;

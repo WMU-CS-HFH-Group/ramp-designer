@@ -15,12 +15,11 @@ import java.awt.event.MouseEvent;
 public class inputdata extends JFrame {
 
 	private JPanel contentPane;
-	private GUIData data = new GUIData();
-	private GUIUtilitys guiUtility = new GUIUtilitys();
+	private static GUIData guiData = new GUIData();
+	private GUIUtilitys guiUtility = new GUIUtilitys(guiData);
 	private final int MAX_FEET = 24;
 	private final int MAX_INCH = 48;
-	private float totalIn = 0;
-	private float usedIn = 0;
+	
 //	/**
 //	 * Launch the application.
 //	 */
@@ -196,7 +195,7 @@ public class inputdata extends JFrame {
 		JTextArea lblRampVert = new JTextArea();
 		JButton btnTurnAr = new JButton();
 		
-		guiUtility.setRamps(contentPane, lblRampHor, lblRampVert, btnTurnAr);
+		guiUtility.setRamps(contentPane, sl_contentPane, lblRampHor, lblRampVert, btnTurnAr);
 		
 		JLabel lblHouseDeck = new JLabel("");
 		sl_contentPane.putConstraint(SpringLayout.NORTH, lblHouseDeck, 6, SpringLayout.SOUTH, comboFromDeck);
@@ -232,6 +231,13 @@ public class inputdata extends JFrame {
 			} 
 		});
 		
+		//** Add information on deck dimensions **//
+		comboDimFtW.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				changetotal(comboFeet, comboInch, comboInPart, lblInchesRemaining);
+			} 
+		});
+		
 		//** changes direction of first ramp **//
 		comboFromDeck.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -252,21 +258,7 @@ public class inputdata extends JFrame {
 			}
 		});
 		
-		//** Set length of ramp piece **
-		//**** Un-focus from enter length on enter ****
-		guiUtility.removeFocusEnter(lblRampHor);
-		guiUtility.removeFocusEnter(lblRampVert);
-		//**** End Un-focus from enter length on enter ****
-		//**** https://stackoverflow.com/questions/19569302/jtextarea-pressing-enter-adds-unnecessary-new-line ****
 		
-		//**** Clears/Saves input in bar ****
-		guiUtility.clearSaveLenght(lblRampHor, data);
-		guiUtility.clearSaveLenght(lblRampVert, data);
-		//**** End Clears/Saves input in bar ****
-		//** End Set length of ramp piece **//
-		
-		//** adds extra ramps on base click **//************************************************************************************************
-		guiUtility.createRamp(btnTurnAr, contentPane, sl_contentPane);
 		
 		//** Set Submit button **//
 		guiUtility.submitButtonActions(btnSubmit);
@@ -292,23 +284,8 @@ public class inputdata extends JFrame {
 		float calcIn = (float) (12.0 * (int) comboFeet.getSelectedIndex());
 		calcIn += (float) comboInch.getSelectedIndex();
 		calcIn += (float) (.125 * (int) comboInPart.getSelectedIndex());
-		data.setTotalIn(calcIn * 12);
+		guiData.setDeckHeight(calcIn);
+		guiData.setRampLenghtTotal(calcIn*12);
 		lblInchesRemaining.setText("Ramp inches remaining: " + (calcIn * 12));
-	}
-
-	public float getTotalIn() {
-		return totalIn;
-	}
-
-	public void setTotalIn(float totalIn) {
-		this.totalIn = totalIn;
-	}
-
-	public float getUsedIn() {
-		return usedIn;
-	}
-
-	public void setUsedIn(float usedIn) {
-		this.usedIn = usedIn;
 	}
 }
