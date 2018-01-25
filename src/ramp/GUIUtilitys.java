@@ -54,6 +54,25 @@ public class GUIUtilitys <Other>{
 		});
 	}
 	
+	
+	public void setRamps(JPanel contentPane, JTextArea lblRampHor, JTextArea lblRampVert, JButton btnTurnAr) {
+		lblRampHor.setText("#' #\"");
+		lblRampHor.setFont(new Font("Tahoma", Font.BOLD, 20));
+		lblRampHor.setVisible(false);
+		contentPane.add(lblRampHor);
+		
+		lblRampVert.setText("#' #\"");
+		lblRampVert.setFont(new Font("Tahoma", Font.BOLD, 20));
+		lblRampVert.setLineWrap(true);
+		lblRampVert.setWrapStyleWord(true);
+		lblRampVert.setVisible(false);
+		contentPane.add(lblRampVert);
+		
+		btnTurnAr.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/turnAround.png")));
+		btnTurnAr.setVisible(false);
+		contentPane.add(btnTurnAr);
+	}
+	
 	/**
 	 * Basic turn around not including U-turn
 	 * @param incase         Case 0 is left, Case 1 is right, any other Case is down
@@ -104,7 +123,12 @@ public class GUIUtilitys <Other>{
 		
 	}
 	
-	
+	/**
+	 * Basic ramp adder
+	 * @param pivot
+	 * @param contentPane
+	 * @param sl_contentPane
+	 */
 	public static void createRamp(JButton pivot, JPanel contentPane, SpringLayout sl_contentPane) {		
 		pivot.addMouseListener(new MouseAdapter() {
 			JTextArea lblRampHor = new JTextArea();
@@ -117,22 +141,7 @@ public class GUIUtilitys <Other>{
 			public void mouseClicked(MouseEvent arg0) {
 				switch (direction){
 				case -1:
-					lblRampHor.setText("#' #\"");
-					lblRampHor.setFont(new Font("Tahoma", Font.BOLD, 20));
-					lblRampHor.setVisible(false);
-					contentPane.add(lblRampHor);
-					
-					lblRampVert.setText("#' #\"");
-					lblRampVert.setFont(new Font("Tahoma", Font.BOLD, 20));
-					lblRampVert.setLineWrap(true);
-					lblRampVert.setWrapStyleWord(true);
-					lblRampVert.setVisible(false);
-					contentPane.add(lblRampVert);
-					
-					btnTurnAr.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/turnAround.png")));
-					btnTurnAr.setVisible(false);
-					contentPane.add(btnTurnAr);
-					
+					utility.setRamps(contentPane, lblRampHor, lblRampVert, btnTurnAr);					
 					utility.setRampDirection(direction+1, sl_contentPane, pivot, lblRampHor, lblRampVert, btnTurnAr);
 					utility.createRamp(btnTurnAr, contentPane, sl_contentPane);
 					direction+=2;
@@ -150,6 +159,19 @@ public class GUIUtilitys <Other>{
 				default:
 					break;
 				}
+			}
+		});
+	}
+	
+	/**
+	 * Actions for the submit button
+	 * @param btnSubmit
+	 */
+	public void submitButtonActions(JButton btnSubmit) {
+		btnSubmit.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				//****************************************************************
 			}
 		});
 	}

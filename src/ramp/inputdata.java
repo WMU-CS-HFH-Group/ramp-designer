@@ -192,30 +192,18 @@ public class inputdata extends JFrame {
 		sl_contentPane.putConstraint(SpringLayout.SOUTH, btnSubmit, -10, SpringLayout.SOUTH, contentPane);
 		contentPane.add(btnSubmit);
 		
-		JTextArea lblRampHor = new JTextArea();
-		lblRampHor.setText("#' #\"");
-		lblRampHor.setFont(new Font("Tahoma", Font.BOLD, 20));
-		lblRampHor.setVisible(false);
-		contentPane.add(lblRampHor);
 		
+		JTextArea lblRampHor = new JTextArea();
 		JTextArea lblRampVert = new JTextArea();
-		lblRampVert.setText("#' #\"");
-		lblRampVert.setFont(new Font("Tahoma", Font.BOLD, 20));
-		lblRampVert.setLineWrap(true);
-		lblRampVert.setWrapStyleWord(true);
-		lblRampVert.setVisible(false);
-		contentPane.add(lblRampVert);
+		JButton btnTurnAr = new JButton();
+		
+		guiUtility.setRamps(contentPane, lblRampHor, lblRampVert, btnTurnAr);
 		
 		JLabel lblHouseDeck = new JLabel("");
 		sl_contentPane.putConstraint(SpringLayout.NORTH, lblHouseDeck, 6, SpringLayout.SOUTH, comboFromDeck);
 		sl_contentPane.putConstraint(SpringLayout.WEST, lblHouseDeck, 10, SpringLayout.EAST, comboFromDeck);
 		lblHouseDeck.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/Deck.png")));
 		contentPane.add(lblHouseDeck);
-		
-		JButton btnTurnAr = new JButton();
-		btnTurnAr.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/turnAround.png")));
-		btnTurnAr.setVisible(false);
-		contentPane.add(btnTurnAr);
 		
 		JLabel lblInchesRemaining = new JLabel("Ramp inches remaining: ");
 		lblInchesRemaining.setFont(new Font("Dialog", Font.PLAIN, 14));
@@ -280,6 +268,9 @@ public class inputdata extends JFrame {
 		
 		//** adds extra ramps on base click **//************************************************************************************************
 		guiUtility.createRamp(btnTurnAr, contentPane, sl_contentPane);
+		
+		//** Set Submit button **//
+		guiUtility.submitButtonActions(btnSubmit);
 		
 		System.out.println();
 	}
