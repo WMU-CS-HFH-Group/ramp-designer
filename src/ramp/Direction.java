@@ -3,8 +3,6 @@ package ramp;
 /**
  * Directions are normally measured in relation to the house, and assume that
  * the house is on top of the schematic.
- * 
- * @author lsg
  */
 public enum Direction {
 	/**

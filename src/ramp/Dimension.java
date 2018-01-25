@@ -1,27 +1,21 @@
 package ramp;
 
 /**
- * A dimension is a collection of three values: feet, inches, and eighthes of an
- * inch. The purpose of this class is to store these values and/or convert them to
+ * A dimension is a collection of three values: feet, inches, and eighths of an
+ * inch. The purpose of this class is to store these values and convert them to
  * and from different formats.
  * 
- * @author lsg
- *
  */
-public class Converter implements Comparable<Converter> {
+public class Dimension implements Comparable<Dimension> {
 	private int feet, inches, eighths;
-	private float totalIn;
 
 	/**
-	 * Creates a dimension object that stores values as separate variables: totalIn, feet,
-	 * inches, and eighthes of inches.
+	 * Creates a dimension object that stores values as separate variables: feet,
+	 * inches, and eighths of inches.
 	 * 
 	 * @param dimension
 	 */
-	public Converter(float dimension) {
-		// sets total inches
-		this.totalIn = dimension;
-		
+	public Dimension(float dimension) {
 		// Calculate the number of feet.
 		this.feet = (int) Math.floor((double) dimension / 12);
 
@@ -43,7 +37,7 @@ public class Converter implements Comparable<Converter> {
 	 * @param eighths
 	 *            Eighths of an inch.
 	 */
-	public Converter(int feet, int inches, int eighths) {
+	public Dimension(int feet, int inches, int eighths) {
 		this.feet = feet;
 		this.inches = inches;
 		this.eighths = eighths;
@@ -72,13 +66,18 @@ public class Converter implements Comparable<Converter> {
 	public void setEighths(int eighths) {
 		this.eighths = eighths;
 	}
-	
-	public float getTotalIn() {
-		return totalIn;
-	}
 
-	public void setTotalIn(float totalIn) {
-		this.totalIn = totalIn;
+	/**
+	 * Converts this dimension to inches.
+	 * 
+	 * @return The dimension value in inches.
+	 */
+	public float toInches() {
+		return (float) (this.feet * 12) + (this.inches) + ((float) this.eighths / 8f);
+	}
+	
+	public int toEighths() {
+		return (int) (this.toInches() * 8.0f);
 	}
 
 	@Override
@@ -90,7 +89,7 @@ public class Converter implements Comparable<Converter> {
 	public String toString() {
 		String result = "";
 
-		if (totalIn == 0) {
+		if (this.toInches() == 0) {
 			// If the entire dimension is 0, display 0 feet.
 			result = "0'";
 		} else {
@@ -102,22 +101,22 @@ public class Converter implements Comparable<Converter> {
 			// Display the inches part of the measurement if it is nonzero.
 			if (this.inches > 0) {
 				result += String.format("%d", this.inches);
-			}
-
-			// Display the fractional part of the measurement if it is nonzero.
-			if (this.eighths > 0) {
-				if (this.eighths % 4 == 0) {
-					// If it can be reduced to halves, display halves.
-					result += String.format(" %d/2\"", this.eighths / 4);
-				} else if (this.eighths % 2 == 0) {
-					// If it can be reduced to fourths, display fourths.
-					result += String.format(" %d/4\"", this.eighths / 2);
+				
+				// Display the fractional part of the measurement if it is nonzero.
+				if (this.eighths > 0) {
+					if (this.eighths % 4 == 0) {
+						// If it can be reduced to halves, display halves.
+						result += String.format(" %d/2\"", this.eighths / 4);
+					} else if (this.eighths % 2 == 0) {
+						// If it can be reduced to fourths, display fourths.
+						result += String.format(" %d/4\"", this.eighths / 2);
+					} else {
+						// If it cannot be reduced, display eighths.
+						result += String.format(" %d/8\"", this.eighths);
+					}
 				} else {
-					// If it cannot be reduced, display eighths.
-					result += String.format(" %d/8\"", this.eighths);
+					result += "\"";
 				}
-			} else {
-				result += "\"";
 			}
 		}
 
@@ -125,12 +124,21 @@ public class Converter implements Comparable<Converter> {
 	}
 
 	@Override
-	public int compareTo(Converter dimension2) {
+	public int compareTo(Dimension dimension2) {
 		// Find the difference between the two dimensions.
-		float difference = this.totalIn - dimension2.getTotalIn();
+		float difference = this.toInches() - dimension2.toInches();
 
 		// If the difference is negative, return -1, and vice-versa.
 		return (int) (difference / Math.abs(difference));
+	}
+	
+	public Dimension scale(float scalar) {
+		return new Dimension(this.toInches() * scalar);
+	}
+	
+	// Divides the dimension by another dimension.
+	public float divideBy(Dimension d2) {
+		return this.toInches() / d2.toInches();
 	}
 
 	/**
@@ -162,5 +170,10 @@ public class Converter implements Comparable<Converter> {
 		}
 
 		return eighths;
+	}
+	
+	// subtracts d2 from d1.
+	public static Dimension difference(Dimension d1, Dimension d2) {
+		return new Dimension(d1.toInches() - d2.toInches());
 	}
 }
