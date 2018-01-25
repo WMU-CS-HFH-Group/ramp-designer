@@ -75,9 +75,28 @@ public class Dimension implements Comparable<Dimension> {
 	public float toInches() {
 		return (float) (this.feet * 12) + (this.inches) + ((float) this.eighths / 8f);
 	}
-	
+
 	public int toEighths() {
 		return (int) (this.toInches() * 8.0f);
+	}
+
+	/**
+	 * Adds a dimension to this one and returns the result.
+	 */
+	public Dimension add(Dimension d) {
+		return new Dimension(this.toInches() + d.toInches());
+	}
+
+	/** 
+	 * Subtracts a dimension from this one and returns the result.
+	 * @return The difference, or a dimension of length 0' 0" if d is too long. 
+	 */
+	public Dimension subtract(Dimension d) {
+		if (d.toInches() < this.toInches()) {
+			return new Dimension(this.toInches() - d.toInches());
+		} else {
+			return new Dimension(0);
+		}
 	}
 
 	@Override
@@ -101,7 +120,7 @@ public class Dimension implements Comparable<Dimension> {
 			// Display the inches part of the measurement if it is nonzero.
 			if (this.inches > 0) {
 				result += String.format("%d", this.inches);
-				
+
 				// Display the fractional part of the measurement if it is nonzero.
 				if (this.eighths > 0) {
 					if (this.eighths % 4 == 0) {
@@ -131,11 +150,11 @@ public class Dimension implements Comparable<Dimension> {
 		// If the difference is negative, return -1, and vice-versa.
 		return (int) (difference / Math.abs(difference));
 	}
-	
+
 	public Dimension scale(float scalar) {
 		return new Dimension(this.toInches() * scalar);
 	}
-	
+
 	// Divides the dimension by another dimension.
 	public float divideBy(Dimension d2) {
 		return this.toInches() / d2.toInches();
@@ -171,7 +190,7 @@ public class Dimension implements Comparable<Dimension> {
 
 		return eighths;
 	}
-	
+
 	// subtracts d2 from d1.
 	public static Dimension difference(Dimension d1, Dimension d2) {
 		return new Dimension(d1.toInches() - d2.toInches());

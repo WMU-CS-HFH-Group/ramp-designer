@@ -65,7 +65,7 @@ public class Grid {
 	}
 	
 	public static Grid createFeetGrid() {
-		return new Grid(new Dimension(12.0f), 3, Color.LIGHT_GRAY, 0.25);
+		return new Grid(new Dimension(12.0f), 3, Color.LIGHT_GRAY, 0.1);
 	}
 	
 	public static Grid createInchesGrid() {

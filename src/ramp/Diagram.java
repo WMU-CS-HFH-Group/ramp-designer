@@ -2,6 +2,8 @@ package ramp;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -128,6 +130,25 @@ public class Diagram extends Component {
 		this.grids.remove(grid);
 	}
 	
+	public void drawCenteredString(Graphics2D g, String s, Dimension x, Dimension y, Dimension width, Dimension height, Dimension xOffset, Dimension yOffset) {
+		// Calculate the size of the string.
+		Font font = new Font("Arial", Font.PLAIN, 100);
+		FontRenderContext context = new FontRenderContext(null, true, true);
+		Rectangle2D r = font.getStringBounds(s, context);
+		
+		// Calculate the center.
+		double strX = x.toEighths() + width.toEighths() / 2 - Math.round(r.getWidth() / 2) - r.getX() + xOffset.toEighths();
+		double strY = y.toEighths() + height.toEighths() / 2 - Math.round(r.getHeight() / 2) - r.getY() + yOffset.toEighths();
+		
+		// Draw the text.
+		g.setFont(font);
+		g.drawString(s, (int) Math.round(strX), (int) Math.round(strY));
+	}
+	
+	public void drawCenteredString(Graphics2D g, String s, Dimension x, Dimension y, Dimension width, Dimension height) {
+		this.drawCenteredString(g, s, x, y, width, height, new Dimension(0), new Dimension(0));
+	}
+	
 	public void drawPost(Graphics2D g, Dimension x, Dimension y) {
 		g.fillRect(x.toEighths(), y.toEighths(), this.postSize.toEighths(), this.postSize.toEighths());
 	}
@@ -143,6 +164,16 @@ public class Diagram extends Component {
 			//g.drawRect(x, y, this.rampWidth, length);
 			g.drawRect(x.toEighths(), y.toEighths(), length.toEighths(), this.rampWidth.toEighths());
 		}
+	}
+	
+	public void drawLanding(Graphics2D g, Dimension x, Dimension y, Dimension width, Dimension height) {
+		g.drawRect(x.toEighths(), y.toEighths(), width.toEighths(), height.toEighths());
+		this.drawCenteredString(g, String.format("%s x %s Landing", width.toString(), height.toString()), x, y, width, height);
+	}
+	
+	public void drawTurnaround(Graphics2D g, Dimension x, Dimension y, Dimension width, Dimension height) {
+		g.drawRect(x.toEighths(), y.toEighths(), width.toEighths(), height.toEighths());
+		this.drawCenteredString(g, String.format("%s x %s", width.toString(), height.toString()), x, y, width, height);
 	}
 	
 	public void paint(Graphics graphics) {		
@@ -195,6 +226,21 @@ public class Diagram extends Component {
 		}
 		
 		// Draw the diagram according to data.
-		g.setColor(Color.BLACK);		
+		g.setColor(Color.BLACK);
+		
+		// -- Sample diagram --
+		
+		// House
+		g.drawRect(new Dimension(24, 0, 0).toEighths(), new Dimension(0).toEighths(), new Dimension(24, 0, 0).toEighths(), new Dimension(32, 0, 0).toEighths());
+		// Landing
+		this.drawLanding(g, new Dimension(18, 0, 0), new Dimension(8, 0, 0), new Dimension(6, 0, 0), new Dimension(6, 0, 0));
+		// First ramp section
+		this.drawRampSection(g, new Dimension(19, 6, 0), new Dimension(14, 0, 0), new Dimension(20, 0, 0), 0);
+		// Turnaround
+		this.drawTurnaround(g, new Dimension(19, 6, 0), new Dimension(34, 0, 0), new Dimension(4, 0, 0), new Dimension(4, 0, 0));
+		// Second ramp section
+		this.drawRampSection(g, new Dimension(19, 6, 0).add(new Dimension(4, 0, 0)), new Dimension(35, 0, 0).subtract(new Dimension(4)), new Dimension(12, 0, 0), 1);
+		// Driveway
+		g.drawRect(new Dimension(31, 6, 0).add(new Dimension(4, 0, 0)).toEighths(), new Dimension(32, 0, 0).toEighths(), new Dimension(3, 0, 0).toEighths(), new Dimension(10, 0, 0).toEighths());
 	}
 }
