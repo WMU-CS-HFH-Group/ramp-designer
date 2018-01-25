@@ -1,5 +1,13 @@
 package ramp;
 
+/* TODO:
+ * - Length of each ramp
+ * - How each ramp connects to another
+ * - Sizes of each turnaround
+ * - Offset from the center on turnaround and deck
+ * - Size and height of deck
+ */
+
 public class GUIData {
 	private String lenghth = "";
 	private float totalIn = 0;

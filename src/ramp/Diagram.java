@@ -96,7 +96,7 @@ public class Diagram extends Component {
 	public void launch() {
 		JFrame frame;
 		
-		frame = new JFrame("Graphics Spike");
+		frame = new JFrame("Ramp Diagram");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		frame.setSize(800, 800);
@@ -194,8 +194,7 @@ public class Diagram extends Component {
 			}
 		}
 		
-		g.setColor(Color.BLACK);
-		this.drawPost(g, new Dimension(20), new Dimension(20));
-		this.drawRampSection(g, new Dimension(24), new Dimension(20), new Dimension(120), 0); // 10ft
+		// Draw the diagram according to data.
+		g.setColor(Color.BLACK);		
 	}
 }
