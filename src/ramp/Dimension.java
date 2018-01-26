@@ -75,7 +75,7 @@ public class Dimension implements Comparable<Dimension> {
 		double fractional = (double) inches - Math.floor((double) inches);
 		this.eighths = (int) Math.round(fractional * 8);
 	}
-
+	
 	/**
 	 * Converts this dimension to inches.
 	 * 
@@ -96,16 +96,8 @@ public class Dimension implements Comparable<Dimension> {
 		return new Dimension(this.toInches() + d.toInches());
 	}
 
-	/** 
-	 * Subtracts a dimension from this one and returns the result.
-	 * @return The difference, or a dimension of length 0' 0" if d is too long. 
-	 */
 	public Dimension subtract(Dimension d) {
-		if (d.toInches() < this.toInches()) {
-			return new Dimension(this.toInches() - d.toInches());
-		} else {
-			return new Dimension(0);
-		}
+		return new Dimension(this.toInches() - d.toInches());
 	}
 
 	@Override
@@ -203,5 +195,10 @@ public class Dimension implements Comparable<Dimension> {
 	// subtracts d2 from d1.
 	public static Dimension difference(Dimension d1, Dimension d2) {
 		return new Dimension(d1.toInches() - d2.toInches());
+	}
+	
+	public static Dimension newFromEighths(int eighths) {
+		float inches = (float) eighths / 8f;
+		return new Dimension(inches);
 	}
 }
