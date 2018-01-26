@@ -145,6 +145,12 @@ public class Diagram extends Component {
 		g.drawString(s, (int) Math.round(strX), (int) Math.round(strY));
 	}
 	
+	public void drawBox(Graphics2D g, Box b, Color color, int thickness) {
+		g.setStroke(new BasicStroke(thickness));
+		g.setColor(color);
+		g.drawRect(b.getX().toEighths(), b.getY().toEighths(), b.getWidth().toEighths(), b.getHeight().toEighths());
+	}
+	
 	public void drawCenteredString(Graphics2D g, String s, Dimension x, Dimension y, Dimension width, Dimension height) {
 		this.drawCenteredString(g, s, x, y, width, height, new Dimension(0), new Dimension(0));
 	}
