@@ -13,18 +13,11 @@ public class Dimension implements Comparable<Dimension> {
 	 * Creates a dimension object that stores values as separate variables: feet,
 	 * inches, and eighths of inches.
 	 * 
-	 * @param dimension
+	 * @param inches
 	 */
-	public Dimension(float dimension) {
-		// Calculate the number of feet.
-		this.feet = (int) Math.floor((double) dimension / 12);
-
-		// Calculate the number of inches.
-		this.inches = (int) Math.floor((double) dimension % 12);
-
-		// Determine the fractional part and round it to the nearest eighth of an inch.
-		double fractional = (double) dimension - Math.floor((double) dimension);
-		this.eighths = (int) Math.round(fractional * 8);
+	public Dimension(float inches) {
+		this(0, 0, 0);
+		this.setFromInches(inches);
 	}
 
 	/**
@@ -65,6 +58,22 @@ public class Dimension implements Comparable<Dimension> {
 
 	public void setEighths(int eighths) {
 		this.eighths = eighths;
+	}
+	
+	/**
+	 * Sets the dimension's length from a measurement in inches.
+	 * @param inches The number of inches, including any fractional parts.
+	 */
+	public void setFromInches(float inches) {
+		// Calculate the number of feet.
+		this.feet = (int) Math.floor((double) inches / 12);
+
+		// Calculate the number of inches.
+		this.inches = (int) Math.floor((double) inches % 12);
+
+		// Determine the fractional part and round it to the nearest eighth of an inch.
+		double fractional = (double) inches - Math.floor((double) inches);
+		this.eighths = (int) Math.round(fractional * 8);
 	}
 
 	/**
