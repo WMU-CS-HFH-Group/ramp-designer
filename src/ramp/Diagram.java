@@ -130,15 +130,15 @@ public class Diagram extends Component {
 		this.grids.remove(grid);
 	}
 	
-	public void drawCenteredString(Graphics2D g, String s, Dimension x, Dimension y, Dimension width, Dimension height, Dimension xOffset, Dimension yOffset) {
+	public void drawCenteredString(Graphics2D g, String s, Box b, Dimension xOffset, Dimension yOffset) {
 		// Calculate the size of the string.
 		Font font = new Font("Arial", Font.PLAIN, 100);
 		FontRenderContext context = new FontRenderContext(null, true, true);
 		Rectangle2D r = font.getStringBounds(s, context);
 		
 		// Calculate the center.
-		double strX = x.toEighths() + width.toEighths() / 2 - Math.round(r.getWidth() / 2) - r.getX() + xOffset.toEighths();
-		double strY = y.toEighths() + height.toEighths() / 2 - Math.round(r.getHeight() / 2) - r.getY() + yOffset.toEighths();
+		double strX = b.getX().toEighths() + b.getWidth().toEighths() / 2 - Math.round(r.getWidth() / 2) - r.getX() + xOffset.toEighths();
+		double strY = b.getWidth().toEighths() + b.getHeight().toEighths() / 2 - Math.round(r.getHeight() / 2) - r.getY() + yOffset.toEighths();
 		
 		// Draw the text.
 		g.setFont(font);
@@ -152,7 +152,7 @@ public class Diagram extends Component {
 	}
 	
 	public void drawCenteredString(Graphics2D g, String s, Dimension x, Dimension y, Dimension width, Dimension height) {
-		this.drawCenteredString(g, s, x, y, width, height, new Dimension(0), new Dimension(0));
+		this.drawCenteredString(g, s, new Box(x, y, width, height), new Dimension(0), new Dimension(0));
 	}
 	
 	public void drawPost(Graphics2D g, Dimension x, Dimension y) {
