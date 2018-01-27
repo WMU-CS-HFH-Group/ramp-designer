@@ -1,104 +1,157 @@
 package ramp.geometry;
 
-/**
- * A dimension is a collection of three values: feet, inches, and eighths of an
- * inch. The purpose of this class is to store these values and convert them to
- * and from different formats.
- * 
- */
 public class Dimension implements Comparable<Dimension> {
-	private int feet, inches, eighths;
-
 	/**
-	 * Creates a dimension object that stores values as separate variables: feet,
-	 * inches, and eighths of inches.
-	 * 
-	 * @param inches
+	 * Length of the dimension in inches.
 	 */
-	public Dimension(float inches) {
-		this(0, 0, 0);
-		this.setFromInches(inches);
+	private double length;
+
+	public Dimension(double inches) {
+		this.length = inches;
+	}
+
+	public Dimension(int feet, double inches) {
+		this.length = (double) feet * 12 + inches;
+	}
+
+	// CALCULATIONS //
+
+	public double getLength() {
+		return this.length;
+	}
+
+	public float getLengthF() {
+		return (float) this.length;
 	}
 
 	/**
-	 * Create a new dimension, specifying feet, inches, and eighths of an inch.
+	 * Calculates the inch part of the measurement.
 	 * 
-	 * @param feet
-	 *            Feet.
-	 * @param inches
-	 *            Inches.
-	 * @param eighths
-	 *            Eighths of an inch.
+	 * @return The number of inches, excluding the number of feet.
 	 */
-	public Dimension(int feet, int inches, int eighths) {
-		this.feet = feet;
-		this.inches = inches;
-		this.eighths = eighths;
+	public double getInches() {
+		return this.length % 12;
 	}
 
+	/**
+	 * Truncates the fractional part of the inch off the end and returns the inch
+	 * part.
+	 * 
+	 * @return The truncated (not rounded) inch component of the dimension.
+	 */
+	public int getWholeInches() {
+		return (int) Math.floor(this.length % 12);
+	}
+
+	/**
+	 * Calculates the feet part of the measurement.
+	 * 
+	 * @return The number of feet, excluding the inches.
+	 */
 	public int getFeet() {
-		return feet;
+		return (int) Math.floor(this.length / 12);
 	}
 
-	public void setFeet(int feet) {
-		this.feet = feet;
-	}
-
-	public int getInches() {
-		return inches;
-	}
-
-	public void setInches(int inches) {
-		this.inches = inches;
-	}
-
-	public int getEighths() {
-		return eighths;
-	}
-
-	public void setEighths(int eighths) {
-		this.eighths = eighths;
-	}
-	
 	/**
-	 * Sets the dimension's length from a measurement in inches.
-	 * @param inches The number of inches, including any fractional parts.
-	 */
-	public void setFromInches(float inches) {
-		// Calculate the number of feet.
-		this.feet = (int) Math.floor((double) inches / 12);
-
-		// Calculate the number of inches.
-		this.inches = (int) Math.floor((double) inches % 12);
-
-		// Determine the fractional part and round it to the nearest eighth of an inch.
-		double fractional = (double) inches - Math.floor((double) inches);
-		this.eighths = (int) Math.round(fractional * 8);
-	}
-	
-	/**
-	 * Converts this dimension to inches.
+	 * Converts the dimension to feet.
 	 * 
-	 * @return The dimension value in inches.
+	 * @return The total measurement in feet.
 	 */
-	public float toInches() {
-		return (float) (this.feet * 12) + (this.inches) + ((float) this.eighths / 8f);
-	}
-
-	public int toEighths() {
-		return (int) (this.toInches() * 8.0f);
+	public double toFeet() {
+		return this.length / 12;
 	}
 
 	/**
-	 * Adds a dimension to this one and returns the result.
+	 * Calculates the last fractional part of the inch, rounded to the nearest whole
+	 * fraction.
+	 * 
+	 * @param denominator
+	 *            The denominator of the fractional part. For example, if 8 is
+	 *            given, the fractional part will be rounded to the nearest eighth
+	 *            of an inch.
+	 * @return The rounded fractional numerator.
 	 */
-	public Dimension add(Dimension d) {
-		return new Dimension(this.toInches() + d.toInches());
+	public int getInchFractional(int denominator) {
+		double frac = this.length - Math.floor(this.length);
+		return (int) Math.round(frac * denominator);
 	}
 
-	public Dimension subtract(Dimension d) {
-		return new Dimension(this.toInches() - d.toInches());
+	/**
+	 * Converts the dimension to a fractional part of an inch.
+	 * 
+	 * @param denominator
+	 *            The size of the fraction. For example, if 8 is given, the whole
+	 *            dimension is converted to eighths of inches.
+	 * @return The total measurement, in fractions of inches, rounded.
+	 */
+	public int toFractionalParts(int denominator) {
+		return (int) Math.round(this.length * (double) denominator);
 	}
+
+	// BINARY AND SCALAR CALCULATIONS //
+
+	public Dimension getScaled(double scalar) {
+		return new Dimension(this.length * scalar);
+	}
+
+	public Dimension getSum(Dimension d2) {
+		return new Dimension(this.length + d2.getLength());
+	}
+
+	public Dimension getNegation() {
+		return new Dimension(-this.length);
+	}
+
+	// BOOLEAN PROPERTIES //
+
+	public boolean isZero() {
+		return this.length == 0.0;
+	}
+
+	/**
+	 * Calculates whether the absolute value of the length (in inches) is smaller
+	 * but not equal to than the given length (in inches).
+	 * 
+	 * @param epsilon
+	 *            An acceptable maximum value for the measurement to be negligible.
+	 * @return Whether the measurement is small enough to be considered negligible.
+	 */
+	public boolean isNegligible(double epsilon) {
+		return Math.abs(this.length) < epsilon;
+	}
+
+	/**
+	 * Calculates whether the measurement is negligible with the default delta of
+	 * 1/8th of an inch.
+	 * 
+	 * @return True if the dimension is less than 1/8th of an inch.
+	 */
+	public boolean isNegligible() {
+		return this.isNegligible(0.125);
+	}
+
+	public boolean isNegative() {
+		return this.length < 0;
+	}
+
+	// MUTATORS //
+
+	public Dimension scale(double scalar) {
+		this.length *= scalar;
+		return this;
+	}
+
+	public Dimension add(Dimension d2) {
+		this.length += d2.getLength();
+		return this;
+	}
+
+	public Dimension negate() {
+		this.length *= -1;
+		return this;
+	}
+
+	// IMPLEMENTATIONS //
 
 	@Override
 	/**
@@ -109,30 +162,34 @@ public class Dimension implements Comparable<Dimension> {
 	public String toString() {
 		String result = "";
 
-		if (this.toInches() == 0) {
-			// If the entire dimension is 0, display 0 feet.
+		double feet = this.getFeet();
+		double inches = this.getWholeInches();
+		double eighths = this.getInchFractional(8);
+
+		if (this.isNegligible()) {
+			// If the entire dimension is ~0, display 0 feet.
 			result = "0'";
 		} else {
 			// Display the feet part of the measurement if it is nonzero.
-			if (this.feet > 0) {
-				result += String.format("%d'", this.feet);
+			if (feet > 0) {
+				result += String.format("%d'", feet);
 			}
 
 			// Display the inches part of the measurement if it is nonzero.
-			if (this.inches > 0) {
-				result += String.format("%d", this.inches);
+			if (inches > 0) {
+				result += String.format("%d", inches);
 
 				// Display the fractional part of the measurement if it is nonzero.
-				if (this.eighths > 0) {
-					if (this.eighths % 4 == 0) {
+				if (eighths > 0) {
+					if (eighths % 4 == 0) {
 						// If it can be reduced to halves, display halves.
-						result += String.format(" %d/2\"", this.eighths / 4);
-					} else if (this.eighths % 2 == 0) {
+						result += String.format(" %d/2\"", eighths / 4);
+					} else if (eighths % 2 == 0) {
 						// If it can be reduced to fourths, display fourths.
-						result += String.format(" %d/4\"", this.eighths / 2);
+						result += String.format(" %d/4\"", eighths / 2);
 					} else {
 						// If it cannot be reduced, display eighths.
-						result += String.format(" %d/8\"", this.eighths);
+						result += String.format(" %d/8\"", eighths);
 					}
 				} else {
 					result += "\"";
@@ -144,37 +201,19 @@ public class Dimension implements Comparable<Dimension> {
 	}
 
 	@Override
-	public int compareTo(Dimension dimension2) {
+	public int compareTo(Dimension d2) {
 		// Find the difference between the two dimensions.
-		float difference = this.toInches() - dimension2.toInches();
+		double difference = this.length - d2.getLength();
 
 		// If the difference is negative, return -1, and vice-versa.
 		return (int) (difference / Math.abs(difference));
 	}
 
-	public Dimension scale(float scalar) {
-		return new Dimension(this.toInches() * scalar);
-	}
+	// STATIC ULILITIES //
 
-	// Divides the dimension by another dimension.
-	public float divideBy(Dimension d2) {
-		return this.toInches() / d2.toInches();
-	}
-
-	/**
-	 * Converts a fraction string in the format <code>numer/denom</code> to an
-	 * integer representing eighths of an inch.
-	 * 
-	 * @param fraction
-	 *            A string in the format <code>numerator/denominator</code>
-	 * @return The number of eighths of an inch, or 0 if the fraction is improperly
-	 *         formatted (e.g. no slash)
-	 * @throws NumberFormatException
-	 *             when the numerator or denominator are not proper integers.
-	 */
-	public static int convertFractionToEighths(String fraction) throws NumberFormatException {
+	public static int convertFraction(String fraction, int denom) {
 		String[] strings = fraction.split("/");
-		int eighths = 0;
+		int num = 0;
 
 		// Ensure that the fraction was formatted correctly.
 		if (strings.length == 2) {
@@ -185,20 +224,10 @@ public class Dimension implements Comparable<Dimension> {
 			// Convert the fraction into a double value.
 			double fractional = (double) numerator / (double) denominator;
 
-			// Round the fractional part to the nearest eighth.
-			eighths = (int) Math.round(fractional * 8);
+			// Round the fractional part to the nearest given denominator.
+			num = (int) Math.round(fractional * denom);
 		}
 
-		return eighths;
-	}
-
-	// subtracts d2 from d1.
-	public static Dimension difference(Dimension d1, Dimension d2) {
-		return new Dimension(d1.toInches() - d2.toInches());
-	}
-	
-	public static Dimension newFromEighths(int eighths) {
-		float inches = (float) eighths / 8f;
-		return new Dimension(inches);
+		return num;
 	}
 }

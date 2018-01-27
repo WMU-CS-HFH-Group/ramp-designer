@@ -6,37 +6,38 @@ package ramp.geometry;
  * @author cpg
  *
  */
+@Deprecated
 public class DimensionPair {
-	private Dimension x, y;
+	private DimensionOld x, y;
 
-	public DimensionPair(Dimension x, Dimension y) {
+	public DimensionPair(DimensionOld x, DimensionOld y) {
 		this.x = x;
 		this.y = y;
 	}
 
-	public Dimension getX() {
+	public DimensionOld getX() {
 		return x;
 	}
 
-	public void setX(Dimension x) {
+	public void setX(DimensionOld x) {
 		this.x = x;
 	}
 
-	public Dimension getY() {
+	public DimensionOld getY() {
 		return y;
 	}
 
-	public void setY(Dimension y) {
+	public void setY(DimensionOld y) {
 		this.y = y;
 	}
 
 	// CALCULATIONS //
 
-	public Dimension distanceTo(DimensionPair d) {
+	public DimensionOld distanceTo(DimensionPair d) {
 		double xD = (double) d.getX().subtract(this.getX()).toInches();
 		double yD = (double) d.getY().subtract(this.getY()).toInches();
 
-		return new Dimension((float) Math.sqrt(Math.pow(xD, 2) + Math.pow(yD, 2)));
+		return new DimensionOld((float) Math.sqrt(Math.pow(xD, 2) + Math.pow(yD, 2)));
 	}
 
 	/**
@@ -57,11 +58,15 @@ public class DimensionPair {
 	public DimensionPair subtract(DimensionPair d) {
 		return new DimensionPair(this.getX().subtract(d.getX()), this.getY().subtract(d.getY()));
 	}
+	
+	public DimensionPair add(DimensionPair d) {
+		return new DimensionPair(this.getX().add(d.getX()), this.getY().add(d.getY()));
+	}
 
 	// ACTORS //
 
 	public DimensionPair transpose() {
-		Dimension oldX = this.x;
+		DimensionOld oldX = this.x;
 		this.x = this.y;
 		this.y = oldX;
 

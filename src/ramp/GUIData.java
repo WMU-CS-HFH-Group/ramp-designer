@@ -3,7 +3,7 @@ package ramp;
 import java.util.ArrayList;
 import java.util.List;
 
-import ramp.geometry.Dimension;
+import ramp.geometry.DimensionOld;
 import ramp.geometry.DimensionPair;
 
 /**
@@ -45,9 +45,9 @@ public class GUIData {
 	 * @param direction The direction from the preceding landing or deck.
 	 */
 	public void addRampSection(float landingWidth, float landingLength, float rampLength, float offset, Direction direction) {
-		Dimension lengthD = new Dimension(rampLength);
-		Dimension offsetD = new Dimension(offset);
-		DimensionPair landingD = new DimensionPair(new Dimension(landingWidth), new Dimension(landingLength));
+		DimensionOld lengthD = new DimensionOld(rampLength);
+		DimensionOld offsetD = new DimensionOld(offset);
+		DimensionPair landingD = new DimensionPair(new DimensionOld(landingWidth), new DimensionOld(landingLength));
 		
 		RampSection section = new RampSection(lengthD, direction, offsetD, landingD);
 		this.rampSections.add(section);

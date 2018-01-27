@@ -9,7 +9,7 @@ import java.util.List;
 import javax.swing.JFrame;
 
 import ramp.geometry.Box;
-import ramp.geometry.Dimension;
+import ramp.geometry.DimensionOld;
 import ramp.geometry.DimensionPair;
 import ramp.geometry.Orientation;
 
@@ -31,11 +31,11 @@ public class Diagram extends Component {
 	private List<Grid> grids;
 
 	// Page Specifications
-	private Dimension maxWidth, maxHeight;
+	private DimensionOld maxWidth, maxHeight;
 
 	// Common dimensions
-	private Dimension rampWidth = new Dimension(40.0f);
-	private Dimension postSize = new Dimension(4.0f);
+	private DimensionOld rampWidth = new DimensionOld(40.0f);
+	private DimensionOld postSize = new DimensionOld(4.0f);
 
 	// Input
 	private GUIData guiData;
@@ -64,8 +64,8 @@ public class Diagram extends Component {
 		this.addGrid(inGrid);
 
 		// Page Specifications
-		this.maxWidth = new Dimension(50, 0, 0);
-		this.maxHeight = new Dimension(50, 0, 0);
+		this.maxWidth = new DimensionOld(50, 0, 0);
+		this.maxHeight = new DimensionOld(50, 0, 0);
 
 		// Event for zooming
 		this.addMouseWheelListener(new MouseAdapter() {
@@ -141,15 +141,15 @@ public class Diagram extends Component {
 		Rectangle2D r = font.getStringBounds(str, context);
 
 		// Convert to a dimension pair representing size.
-		Box b = new Box(new Dimension(0), new Dimension(0), Dimension.newFromEighths((int) Math.round(r.getWidth())),
-				Dimension.newFromEighths((int) Math.round(r.getHeight())));
+		Box b = new Box(new DimensionOld(0), new DimensionOld(0), DimensionOld.newFromEighths((int) Math.round(r.getWidth())),
+				DimensionOld.newFromEighths((int) Math.round(r.getHeight())));
 
 		b.setCenter(center);
 
 		return b;
 	}
 
-	public void drawCenteredString(Graphics2D g, String s, Box b, Dimension xOffset, Dimension yOffset) {
+	public void drawCenteredString(Graphics2D g, String s, Box b, DimensionOld xOffset, DimensionOld yOffset) {
 		// Calculate the size of the string.
 		Font font = new Font("Arial", Font.PLAIN, 100);
 		FontRenderContext context = new FontRenderContext(null, true, true);
@@ -166,28 +166,28 @@ public class Diagram extends Component {
 	}
 
 	public void drawCenteredString(Graphics2D g, String s, Box b) {
-		this.drawCenteredString(g, s, b, new Dimension(0), new Dimension(0));
+		this.drawCenteredString(g, s, b, new DimensionOld(0), new DimensionOld(0));
 	}
 
 	/**
-	 * Draws an arrow, but only if the line is vertical or horizontal. This is
-	 * useful for drawing dimensions.
+	 * Draws an orthogonal arrow (only horizontal or vertical).
 	 */
-	public void drawArrow(Graphics2D g, DimensionPair location, DimensionPair size) {
+	public void drawArrow(Graphics2D g, DimensionPair location, Orientation direction, DimensionOld length) {
 		// Set parameters
-		g.setStroke(new BasicStroke(1));
+		g.setStroke(new BasicStroke(2));
 		g.setColor(Color.BLACK);
+		
+		// Calculate the destination of the arrow.
+		DimensionPair destination = new DimensionPair(length.scale(direction.getX()), length.scale(direction.getY())).add(location);
 
-		// Draw line, but only if the orientation is acceptable.
-		if (size.getOrientation().orthogonal()) {
-			g.drawLine(location.getX().toEighths(), location.getY().toEighths(), location.getX().add(size.getX()).toEighths(),
-					location.getY().add(size.getY()).toEighths());
+		if (direction.orthogonal()) {
+			g.drawLine(location.getX().toEighths(), location.getY().toEighths(), destination.getX().toEighths(), destination.getY().toEighths());
 		}
 
 		// Draw the arrow cap.
-		if (size.getOrientation() == Orientation.HORIZONTAL) {
+		if (direction == Orientation.HORIZONTAL) {
 			// TODO
-		} else if (size.getOrientation() == Orientation.VERTICAL) {
+		} else if (direction == Orientation.VERTICAL) {
 
 		}
 	}
@@ -211,23 +211,12 @@ public class Diagram extends Component {
 		this.drawCenteredString(g, label, b, offset.getX(), offset.getY());
 
 		// Draw the arrows.
-		Box labelBox = this.getStringBox(label, new Font("Arial", Font.PLAIN, 100), b.getCenter());
-
-		if (o == Orientation.HORIZONTAL) {
-			// Left arrow
-			this.drawArrow(g, labelBox.getLeftCenter(), b.getLeftCenter().subtract(labelBox.getLeftCenter()));
-
-			// Right arrow
-			this.drawArrow(g, labelBox.getRightCenter(), b.getRightCenter().subtract(labelBox.getRightCenter()));
-		} else if (o == Orientation.VERTICAL) {
-			// Top arrow
-
-			// Bottom arrow
-		}
+		this.drawArrow(g, b.getCenter(), o, b.getWidth().scale(0.5f));
+		this.drawArrow(g, b.getCenter(), o, b.getWidth().scale(-0.5f));
 	}
 
 	public void drawDimension(Graphics2D g, Box b, Orientation o) {
-		this.drawDimension(g, b, o, new DimensionPair(new Dimension(0), new Dimension(0)));
+		this.drawDimension(g, b, o, new DimensionPair(new DimensionOld(0), new DimensionOld(0)));
 	}
 
 	public void drawBox(Graphics2D g, Box b, Color color, int thickness) {
@@ -236,15 +225,15 @@ public class Diagram extends Component {
 		g.drawRect(b.getX().toEighths(), b.getY().toEighths(), b.getWidth().toEighths(), b.getHeight().toEighths());
 	}
 
-	public void drawPost(Graphics2D g, Dimension x, Dimension y) {
+	public void drawPost(Graphics2D g, DimensionOld x, DimensionOld y) {
 		g.fillRect(x.toEighths(), y.toEighths(), this.postSize.toEighths(), this.postSize.toEighths());
 	}
 
 	// Vertical = 0
 	// Horizontal = 1
-	public void drawRampSection(Graphics2D g, Dimension x, Dimension y, Dimension length, int orientation) {
+	public void drawRampSection(Graphics2D g, DimensionOld x, DimensionOld y, DimensionOld length, int orientation) {
 		Box b = new Box(new DimensionPair(x, y), this.rampWidth, length);
-		DimensionPair widthOffset = new DimensionPair(new Dimension(0), new Dimension(-3, 0, 0));
+		DimensionPair widthOffset = new DimensionPair(new DimensionOld(0), new DimensionOld(-3, 0, 0));
 
 		// Flip'em if the orientation is horizontal.
 		if (orientation == 1) {
@@ -324,21 +313,21 @@ public class Diagram extends Component {
 		// -- Sample diagram --
 
 		// House
-		g.drawRect(new Dimension(24, 0, 0).toEighths(), new Dimension(0).toEighths(),
-				new Dimension(24, 0, 0).toEighths(), new Dimension(32, 0, 0).toEighths());
+		g.drawRect(new DimensionOld(24, 0, 0).toEighths(), new DimensionOld(0).toEighths(),
+				new DimensionOld(24, 0, 0).toEighths(), new DimensionOld(32, 0, 0).toEighths());
 		// Landing
-		this.drawLanding(g, new Box(new Dimension(18, 0, 0), new Dimension(8, 0, 0), new Dimension(6, 0, 0),
-				new Dimension(6, 0, 0)));
+		this.drawLanding(g, new Box(new DimensionOld(18, 0, 0), new DimensionOld(8, 0, 0), new DimensionOld(6, 0, 0),
+				new DimensionOld(6, 0, 0)));
 		// First ramp section
-		this.drawRampSection(g, new Dimension(19, 6, 0), new Dimension(14, 0, 0), new Dimension(20, 0, 0), 0);
+		this.drawRampSection(g, new DimensionOld(19, 6, 0), new DimensionOld(14, 0, 0), new DimensionOld(20, 0, 0), 0);
 		// Turnaround
-		this.drawTurnaround(g, new Box(new Dimension(19, 6, 0), new Dimension(34, 0, 0), new Dimension(4, 0, 0),
-				new Dimension(4, 0, 0)));
+		this.drawTurnaround(g, new Box(new DimensionOld(19, 6, 0), new DimensionOld(34, 0, 0), new DimensionOld(4, 0, 0),
+				new DimensionOld(4, 0, 0)));
 		// Second ramp section
-		this.drawRampSection(g, new Dimension(19, 6, 0).add(new Dimension(4, 0, 0)),
-				new Dimension(35, 0, 0).subtract(new Dimension(4)), new Dimension(12, 0, 0), 1);
+		this.drawRampSection(g, new DimensionOld(19, 6, 0).add(new DimensionOld(4, 0, 0)),
+				new DimensionOld(35, 0, 0).subtract(new DimensionOld(4)), new DimensionOld(12, 0, 0), 1);
 		// Driveway
-		g.drawRect(new Dimension(31, 6, 0).add(new Dimension(4, 0, 0)).toEighths(), new Dimension(32, 0, 0).toEighths(),
-				new Dimension(3, 0, 0).toEighths(), new Dimension(10, 0, 0).toEighths());
+		g.drawRect(new DimensionOld(31, 6, 0).add(new DimensionOld(4, 0, 0)).toEighths(), new DimensionOld(32, 0, 0).toEighths(),
+				new DimensionOld(3, 0, 0).toEighths(), new DimensionOld(10, 0, 0).toEighths());
 	}
 }

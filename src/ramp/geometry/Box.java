@@ -5,15 +5,15 @@ package ramp.geometry;
  */
 public class Box {
 	private DimensionPair location;
-	private Dimension width, height;
+	private DimensionOld width, height;
 
-	public Box(DimensionPair location, Dimension width, Dimension height) {
+	public Box(DimensionPair location, DimensionOld width, DimensionOld height) {
 		this.location = location;
 		this.width = width;
 		this.height = height;
 	}
 
-	public Box(Dimension x, Dimension y, Dimension width, Dimension height) {
+	public Box(DimensionOld x, DimensionOld y, DimensionOld width, DimensionOld height) {
 		this.location = new DimensionPair(x, y);
 		this.width = width;
 		this.height = height;
@@ -23,19 +23,19 @@ public class Box {
 		return this.location;
 	}
 
-	public Dimension getX() {
+	public DimensionOld getX() {
 		return location.getX();
 	}
 
-	public Dimension getY() {
+	public DimensionOld getY() {
 		return location.getY();
 	}
 
-	public Dimension getWidth() {
+	public DimensionOld getWidth() {
 		return width;
 	}
 
-	public Dimension getHeight() {
+	public DimensionOld getHeight() {
 		return height;
 	}
 
@@ -48,7 +48,7 @@ public class Box {
 	 * ramps.
 	 */
 	public Box transpose() {
-		Dimension oldWidth = this.width;
+		DimensionOld oldWidth = this.width;
 		this.width = this.height;
 		this.height = oldWidth;
 		return this;
@@ -66,7 +66,7 @@ public class Box {
 		float cX = this.location.getX().toInches() + this.width.toInches() / 2;
 		float cY = this.location.getY().toInches() + this.height.toInches() / 2;
 
-		return new DimensionPair(new Dimension(cX), new Dimension(cY));
+		return new DimensionPair(new DimensionOld(cX), new DimensionOld(cY));
 	}
 	
 	public DimensionPair getTopCenter() {
@@ -109,7 +109,7 @@ public class Box {
 	/**
 	 * A disambiguation function to convert an orientation to a size.
 	 */
-	public Dimension getSize(Orientation o) {
+	public DimensionOld getSize(Orientation o) {
 		if (o == Orientation.DIAGONAL) {
 			return this.location.distanceTo(new DimensionPair(this.getWidth(), this.getHeight()));
 		} else if (o == Orientation.VERTICAL) {

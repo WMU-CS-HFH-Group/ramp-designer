@@ -1,10 +1,10 @@
 package ramp;
 import java.awt.Color;
 
-import ramp.geometry.Dimension;
+import ramp.geometry.DimensionOld;
 
 public class Grid {
-	private Dimension size;
+	private DimensionOld size;
 	private int thickness;
 	private Color color;
 	private double disappearAtScale;
@@ -13,7 +13,7 @@ public class Grid {
 	private boolean displayLabels;
 	private int labelInterval;
 	
-	public Grid(Dimension size, int thickness, Color color, double disappearAtScale) {
+	public Grid(DimensionOld size, int thickness, Color color, double disappearAtScale) {
 		this.size = size;
 		this.thickness = thickness;
 		this.color = color;
@@ -23,10 +23,10 @@ public class Grid {
 		this.labelInterval = 1;
 	}
 	
-	public Dimension getSize() {
+	public DimensionOld getSize() {
 		return size;
 	}
-	public void setSize(Dimension size) {
+	public void setSize(DimensionOld size) {
 		this.size = size;
 	}
 	public int getThickness() {
@@ -67,10 +67,10 @@ public class Grid {
 	}
 	
 	public static Grid createFeetGrid() {
-		return new Grid(new Dimension(12.0f), 3, Color.LIGHT_GRAY, 0.1);
+		return new Grid(new DimensionOld(12.0f), 3, Color.LIGHT_GRAY, 0.1);
 	}
 	
 	public static Grid createInchesGrid() {
-		return new Grid(new Dimension(1.0f), 1, Color.LIGHT_GRAY, 1.0);
+		return new Grid(new DimensionOld(1.0f), 1, Color.LIGHT_GRAY, 1.0);
 	}
 }

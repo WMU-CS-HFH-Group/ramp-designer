@@ -1,13 +1,13 @@
 package ramp;
 
-import ramp.geometry.Dimension;
+import ramp.geometry.DimensionOld;
 import ramp.geometry.DimensionPair;
 
 public class RampSection {
 	/**
 	 * The length of the ramp section itself.
 	 */
-	private Dimension length;
+	private DimensionOld length;
 
 	/**
 	 * The direction in relation to the previous turnaround.
@@ -17,7 +17,7 @@ public class RampSection {
 	/**
 	 * The distance of the ramp's center from the preceding turnaround's center.
 	 */
-	private Dimension offset;
+	private DimensionOld offset;
 
 	/**
 	 * The size of the turnaround before this ramp. If this is the first ramp, this
@@ -25,7 +25,7 @@ public class RampSection {
 	 */
 	private DimensionPair turnaroundSize;
 
-	public RampSection(Dimension length, Direction direction, Dimension offset, DimensionPair turnaroundSize) {
+	public RampSection(DimensionOld length, Direction direction, DimensionOld offset, DimensionPair turnaroundSize) {
 		this.turnaroundSize = turnaroundSize;
 		this.length = length;
 		this.direction = direction;
@@ -40,11 +40,11 @@ public class RampSection {
 		this.direction = direction;
 	}
 
-	public Dimension getLength() {
+	public DimensionOld getLength() {
 		return length;
 	}
 
-	public Dimension getOffset() {
+	public DimensionOld getOffset() {
 		return offset;
 	}
 
