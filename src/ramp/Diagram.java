@@ -8,6 +8,11 @@ import java.util.List;
 
 import javax.swing.JFrame;
 
+import ramp.geometry.Box;
+import ramp.geometry.Dimension;
+import ramp.geometry.DimensionPair;
+import ramp.geometry.Orientation;
+
 import java.util.ArrayList;
 
 @SuppressWarnings("serial")

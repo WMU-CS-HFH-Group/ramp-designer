@@ -1,4 +1,4 @@
-package ramp;
+package ramp.geometry;
 
 /**
  * An enum representing a general orientation as applied to axis-aligned

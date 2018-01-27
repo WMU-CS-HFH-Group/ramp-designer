@@ -1,4 +1,4 @@
-package ramp;
+package ramp.geometry;
 
 /**
  * Axis-aligned bounding box composed of Dimension objects.

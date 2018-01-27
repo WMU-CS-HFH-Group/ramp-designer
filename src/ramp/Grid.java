@@ -1,6 +1,8 @@
 package ramp;
 import java.awt.Color;
 
+import ramp.geometry.Dimension;
+
 public class Grid {
 	private Dimension size;
 	private int thickness;

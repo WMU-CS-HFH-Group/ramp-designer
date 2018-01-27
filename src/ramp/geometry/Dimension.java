@@ -1,4 +1,4 @@
-package ramp;
+package ramp.geometry;
 
 /**
  * A dimension is a collection of three values: feet, inches, and eighths of an

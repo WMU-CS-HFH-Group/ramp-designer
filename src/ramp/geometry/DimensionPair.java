@@ -1,4 +1,4 @@
-package ramp;
+package ramp.geometry;
 
 /**
  * A two-dimensional point/size using Dimension objects.

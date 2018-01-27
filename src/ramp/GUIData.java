@@ -1,6 +1,10 @@
 package ramp;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import ramp.geometry.Dimension;
+import ramp.geometry.DimensionPair;
 
 /**
  * Represents a ramp with multiple sections. Provides convenience methods for
@@ -25,34 +29,32 @@ public class GUIData {
 	 * center, and direction of the first ramp section. It also contains a reference
 	 * to the next ramp section. This achieves a singly-linked list data structure.
 	 */
-	private RampSection rootRampSection;
-
-	private Dimension _deckHeight;
+	private List<RampSection> rampSections;
 
 	public GUIData() {
-
-	}
-
-	public void addRampSection(RampSection rampSection) {
-		this.rootRampSection.getLast().setNext(rampSection);
+		
 	}
 	
 	/**
-	 * Removes the last ramp section.
-	 */
-	public void removeLastSection() {
-		this.rootRampSection.pop();
-	}
-	
-	/**
-	 * Returns a ramp section by index, if it exists.
-	 * @param index Index of the section in the list.
-	 * @param length Length of the section in inches.
+	 * Adds a ramp section to the array.
 	 * 
-	 * @throws Exception
+	 * @param landingWidth Width in inches of the preceding landing or deck.
+	 * @param landingLength Height in inches of the preceding landing or deck.
+	 * @param rampLength The length of the ramp section in inches.
+	 * @param offset Offset from the center of the ramp section in inches.
+	 * @param direction The direction from the preceding landing or deck.
 	 */
-	public void setLength(int index, float length) throws Exception {
-		this.rootRampSection.getByIndex(index).getLength().setFromInches(length);
+	public void addRampSection(float landingWidth, float landingLength, float rampLength, float offset, Direction direction) {
+		Dimension lengthD = new Dimension(rampLength);
+		Dimension offsetD = new Dimension(offset);
+		DimensionPair landingD = new DimensionPair(new Dimension(landingWidth), new Dimension(landingLength));
+		
+		RampSection section = new RampSection(lengthD, direction, offsetD, landingD);
+		this.rampSections.add(section);
+	}
+	
+	public List<RampSection> getRampSections() {
+		return this.rampSections;
 	}
 
 	//////////
@@ -129,4 +131,5 @@ public class GUIData {
 		this.turnAround = turnArround;
 	}
 
+	//////////
 }
