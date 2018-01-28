@@ -1,5 +1,7 @@
 package ramp.diagram;
 
+import ramp.geometry.DimensionVector;
+
 /**
  * Directions are normally measured in relation to the house, and assume that
  * the house is on top of the schematic.
@@ -10,13 +12,17 @@ public enum Direction {
 	 */
 	LEFT,
 	/**
-	 * CENTER is away from the house.
+	 * DOWN is away from the house, normally.
 	 */
-	CENTER,
+	DOWN,
 	/**
 	 * RIGHT is right when in relation to the house.
 	 */
 	RIGHT,
+	/**
+	 * UP is toward the house, generally.
+	 */
+	UP,
 	/**
 	 * UNDEFINED means that the direction is not necessary.
 	 */

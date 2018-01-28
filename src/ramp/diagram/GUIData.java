@@ -5,6 +5,7 @@ import java.util.List;
 
 import ramp.geometry.DimensionOld;
 import ramp.geometry.DimensionPair;
+import ramp.geometry.DimensionVector;
 
 /**
  * Represents a ramp with multiple sections. Provides convenience methods for
@@ -23,15 +24,17 @@ public class GUIData {
 	private int[] turnAround = { 48, 48 }; // Size of turn around
 
 	//////////
-
-	/**
-	 * First ramp section. This stores the deck size and the length, offset from
-	 * center, and direction of the first ramp section. It also contains a reference
-	 * to the next ramp section. This achieves a singly-linked list data structure.
-	 */
+	
+	private List<DiagramComponent> components;
 
 	public GUIData() {
-
+		
+	}
+	
+	public GUIData(double deckWidth, double deckLength, double deckHeight, double deckLocation, double firstRampLength, Direction firstRampDirection, double firstRampOffset) {
+		this.components = new ArrayList<DiagramComponent>();
+		
+		this.components.add(new Landing(new DimensionVector(deckLocation, 0), new DimensionVector(deckWidth, deckLength, deckHeight)));
 	}
 
 	/**

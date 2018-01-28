@@ -273,8 +273,8 @@ public class Diagram extends Component {
 			// Determine whether the grid should be drawn from the scale.
 			if (this.scale > grid.getDisappearAtScale()) {
 				// Calculate the number of gridlines.
-				int verticals = (int) Math.floor(this.maxWidth.divideBy(grid.getSize()));
-				int horizontals = (int) Math.floor(this.maxHeight.divideBy(grid.getSize()));
+				int verticals = (int) Math.floor(this.maxWidth.toInches() / grid.getSize().getLength());
+				int horizontals = (int) Math.floor(this.maxHeight.toInches() / grid.getSize().getLength());
 
 				// Set the state of the graphics object.
 				g.setStroke(new BasicStroke(grid.getThickness()));
@@ -282,7 +282,7 @@ public class Diagram extends Component {
 
 				// Draw all the gridlines.
 				for (int x = 0; x < verticals; x++) {
-					int xPos = x * grid.getSize().toEighths();
+					int xPos = x * grid.getSize().toFractionalParts(8);
 					g.setColor(grid.getColor());
 					g.drawLine(xPos, 0, xPos, this.maxHeight.toEighths());
 
@@ -294,7 +294,7 @@ public class Diagram extends Component {
 				}
 
 				for (int y = 0; y < horizontals; y++) {
-					int yPos = y * grid.getSize().toEighths();
+					int yPos = y * grid.getSize().toFractionalParts(8);
 					g.setColor(grid.getColor());
 					g.drawLine(0, yPos, this.maxWidth.toEighths(), yPos);
 

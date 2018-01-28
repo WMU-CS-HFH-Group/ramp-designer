@@ -2,6 +2,7 @@ package ramp.diagram;
 
 import ramp.geometry.Dimension;
 import ramp.geometry.DimensionVector;
+import ramp.geometry.DimensionVector.VectorMismatchException;
 
 public class Ramp extends DiagramComponent {
 	/**
@@ -20,14 +21,11 @@ public class Ramp extends DiagramComponent {
 	 */
 	private Direction direction;
 
-	/**
-	 * The offset from the center of the landing that this ramp has.
-	 */
-	private Dimension offset;
-
-	public Ramp(DimensionVector location, Dimension length) {
+	public Ramp(DimensionVector location, Dimension length, Direction direction) {
 		super(location);
 		this.setLength(length);
+		this.setDirection(direction);
+		this.setLabel("Ramp");
 	}
 
 	public Dimension getLength() {
@@ -45,12 +43,48 @@ public class Ramp extends DiagramComponent {
 	public void setDirection(Direction direction) {
 		this.direction = direction;
 	}
-
-	public Dimension getOffset() {
-		return offset;
+	
+	public DimensionVector getSize() {
+		switch (this.direction) {
+		case LEFT:
+		case RIGHT:
+			return new DimensionVector(this.getLength(), Ramp.width);
+			
+		case UP:
+		case DOWN:
+			return new DimensionVector(Ramp.width, this.getLength()); 
+					
+		default:
+			return new DimensionVector(0, 0);
+		}
 	}
 
-	public void setOffset(Dimension offset) {
-		this.offset = offset;
+	public Landing newLanding(DimensionVector size, Dimension offset) {
+		DimensionVector location = this.getLocation().clone();
+
+		try {
+			switch (this.direction) {
+			case LEFT:
+				location.add(new Dimension(0), size.getY().getScaled(-0.5).add(Ramp.width.getScaled(0.5)));
+				location.getY().add(offset);
+				break;
+			case RIGHT:
+				location.add(this.getLength(), size.getY().getScaled(-0.5).add(Ramp.width.getScaled(0.5)));
+				location.getY().add(offset);
+				break;
+			case UP:
+				location.add(size.getX().getScaled(-0.5).add(Ramp.width.getScaled(0.5)), new Dimension(0));
+				location.getX().add(offset);
+				break;
+			default:
+				location.add(size.getX().getScaled(-0.5).add(Ramp.width.getScaled(0.5)), this.getLength());
+				location.getX().add(offset);
+				break;
+			}
+		} catch (VectorMismatchException e) {
+			// Never the case
+		}
+		
+		return new Landing(location, size);
 	}
 }
