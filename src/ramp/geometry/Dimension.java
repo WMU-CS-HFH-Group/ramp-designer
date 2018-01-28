@@ -88,8 +88,6 @@ public class Dimension implements Comparable<Dimension> {
 		return (int) Math.round(this.length * (double) denominator);
 	}
 
-	// BINARY AND SCALAR CALCULATIONS //
-
 	public Dimension getScaled(double scalar) {
 		return new Dimension(this.length * scalar);
 	}
@@ -135,6 +133,11 @@ public class Dimension implements Comparable<Dimension> {
 	}
 
 	// MUTATORS //
+	
+	public Dimension setLength(double length) {
+		this.length = length;
+		return this;
+	}
 
 	public Dimension scale(double scalar) {
 		this.length *= scalar;
@@ -207,6 +210,29 @@ public class Dimension implements Comparable<Dimension> {
 
 		// If the difference is negative, return -1, and vice-versa.
 		return (int) (difference / Math.abs(difference));
+	}
+	
+	@Override
+	public Dimension clone() {
+		return new Dimension(this.length);
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		
+		if (o == null) {
+			return false;
+		}
+		
+		if (getClass() != o.getClass()) {
+			return false;
+		}
+		
+		Dimension d2 = (Dimension) o;
+		return this.length == d2.length;
 	}
 
 	// STATIC ULILITIES //

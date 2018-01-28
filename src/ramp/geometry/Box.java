@@ -3,6 +3,7 @@ package ramp.geometry;
 /**
  * Axis-aligned bounding box composed of Dimension objects.
  */
+@Deprecated
 public class Box {
 	private DimensionPair location;
 	private DimensionOld width, height;
