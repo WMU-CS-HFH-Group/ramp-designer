@@ -100,6 +100,10 @@ public class Dimension implements Comparable<Dimension> {
 		return new Dimension(-this.length);
 	}
 
+	public double divideBy(Dimension d2) {
+		return this.length / d2.length;
+	}
+
 	// BOOLEAN PROPERTIES //
 
 	public boolean isZero() {
@@ -133,7 +137,7 @@ public class Dimension implements Comparable<Dimension> {
 	}
 
 	// MUTATORS //
-	
+
 	public Dimension setLength(double length) {
 		this.length = length;
 		return this;
@@ -211,26 +215,26 @@ public class Dimension implements Comparable<Dimension> {
 		// If the difference is negative, return -1, and vice-versa.
 		return (int) (difference / Math.abs(difference));
 	}
-	
+
 	@Override
 	public Dimension clone() {
 		return new Dimension(this.length);
 	}
-	
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
 			return true;
 		}
-		
+
 		if (o == null) {
 			return false;
 		}
-		
+
 		if (getClass() != o.getClass()) {
 			return false;
 		}
-		
+
 		Dimension d2 = (Dimension) o;
 		return this.length == d2.length;
 	}

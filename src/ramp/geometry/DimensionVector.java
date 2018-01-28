@@ -1,5 +1,7 @@
 package ramp.geometry;
 
+import java.util.Arrays;
+
 public class DimensionVector {
 	private Dimension[] components;
 
@@ -9,7 +11,15 @@ public class DimensionVector {
 	}
 
 	public DimensionVector(Dimension... components) {
-		this.components = components;
+		this.components = Arrays.copyOf(components, components.length);
+	}
+	
+	public DimensionVector(double... components) {
+		this.components = new Dimension[components.length];
+		
+		for (int i = 0; i < components.length; i++) {
+			this.components[i] = new Dimension(components[i]);
+		}
 	}
 
 	// GETTERS //
@@ -96,6 +106,14 @@ public class DimensionVector {
 	}
 
 	// UTILITIES //
+	
+	public double[] toDoubleArray() {
+		double[] array = new double[this.components.length];
+		for (int i = 0; i < this.components.length; i++) {
+			array[i] = this.components[i].getLength();
+		}
+		return array;
+	}
 
 	/**
 	 * Initializes the vector with dimensions of 0.
@@ -172,7 +190,7 @@ public class DimensionVector {
 		}
 		return this;
 	}
-
+	
 	public DimensionVector add(DimensionVector v2) throws VectorMismatchException {
 		if (v2.getSize() == this.getSize()) {
 			for (int i = 0; i < this.components.length; i++) {
@@ -182,6 +200,14 @@ public class DimensionVector {
 		} else {
 			throw new VectorMismatchException("Vector sizes do not match.", this.getSize(), v2.getSize());
 		}
+	}
+	
+	public DimensionVector add(Dimension... ds) throws VectorMismatchException {
+		return this.add(new DimensionVector(ds));
+	}
+
+	public DimensionVector add(double... ds) throws VectorMismatchException {
+		return this.add(new DimensionVector(ds));
 	}
 
 	public DimensionVector negate() {
