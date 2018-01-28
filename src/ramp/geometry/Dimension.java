@@ -169,8 +169,8 @@ public class Dimension implements Comparable<Dimension> {
 	public String toString() {
 		String result = "";
 
-		double feet = this.getFeet();
-		double inches = this.getWholeInches();
+		int feet = this.getFeet();
+		int inches = this.getWholeInches();
 		double eighths = this.getInchFractional(8);
 
 		if (this.isNegligible()) {

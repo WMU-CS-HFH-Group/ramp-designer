@@ -58,10 +58,8 @@ public class Diagram extends Component {
 		Grid ftGrid = Grid.createFeetGrid();
 		ftGrid.setDisplayLabels(true);
 		ftGrid.setLabelInterval(3);
-		Grid inGrid = Grid.createInchesGrid();
 
 		this.addGrid(ftGrid);
-		this.addGrid(inGrid);
 
 		// Page Specifications
 		this.maxWidth = new DimensionOld(50, 0, 0);
@@ -141,7 +139,8 @@ public class Diagram extends Component {
 		Rectangle2D r = font.getStringBounds(str, context);
 
 		// Convert to a dimension pair representing size.
-		Box b = new Box(new DimensionOld(0), new DimensionOld(0), DimensionOld.newFromEighths((int) Math.round(r.getWidth())),
+		Box b = new Box(new DimensionOld(0), new DimensionOld(0),
+				DimensionOld.newFromEighths((int) Math.round(r.getWidth())),
 				DimensionOld.newFromEighths((int) Math.round(r.getHeight())));
 
 		b.setCenter(center);
@@ -176,12 +175,14 @@ public class Diagram extends Component {
 		// Set parameters
 		g.setStroke(new BasicStroke(2));
 		g.setColor(Color.BLACK);
-		
+
 		// Calculate the destination of the arrow.
-		DimensionPair destination = new DimensionPair(length.scale(direction.getX()), length.scale(direction.getY())).add(location);
+		DimensionPair destination = new DimensionPair(length.scale(direction.getX()), length.scale(direction.getY()))
+				.add(location);
 
 		if (direction.orthogonal()) {
-			g.drawLine(location.getX().toEighths(), location.getY().toEighths(), destination.getX().toEighths(), destination.getY().toEighths());
+			g.drawLine(location.getX().toEighths(), location.getY().toEighths(), destination.getX().toEighths(),
+					destination.getY().toEighths());
 		}
 
 		// Draw the arrow cap.
@@ -281,19 +282,20 @@ public class Diagram extends Component {
 				g.setFont(new Font("Arial", Font.PLAIN, 20));
 
 				// Draw all the gridlines.
-				for (int x = 0; x < verticals; x++) {
+				for (int x = 0; x < verticals && x < 1000; x++) {
 					int xPos = x * grid.getSize().toFractionalParts(8);
+					System.out.println(grid.getSize().getLength());
 					g.setColor(grid.getColor());
 					g.drawLine(xPos, 0, xPos, this.maxHeight.toEighths());
 
 					// Draw labels on the top if required.
 					if (grid.isDisplayLabels() && x % grid.getLabelInterval() == 0) {
 						g.setColor(Color.DARK_GRAY);
-						g.drawString(grid.getSize().scale((float) x).toString(), xPos, 0);
+						g.drawString(grid.getSize().getScaled((float) x).toString(), xPos, 0);
 					}
 				}
 
-				for (int y = 0; y < horizontals; y++) {
+				for (int y = 0; y < horizontals & y < 1000; y++) {
 					int yPos = y * grid.getSize().toFractionalParts(8);
 					g.setColor(grid.getColor());
 					g.drawLine(0, yPos, this.maxWidth.toEighths(), yPos);
@@ -301,7 +303,7 @@ public class Diagram extends Component {
 					// Draw labels on the side if required.
 					if (grid.isDisplayLabels() && y % grid.getLabelInterval() == 0) {
 						g.setColor(Color.DARK_GRAY);
-						g.drawString(grid.getSize().scale((float) y).toString(), 0, yPos);
+						g.drawString(grid.getSize().getScaled((float) y).toString(), 0, yPos);
 					}
 				}
 			}
@@ -309,6 +311,7 @@ public class Diagram extends Component {
 
 		// Draw the diagram according to data.
 		g.setColor(Color.BLACK);
+		g.setStroke(new BasicStroke(2));
 
 		// -- Sample diagram --
 
@@ -316,18 +319,20 @@ public class Diagram extends Component {
 		g.drawRect(new DimensionOld(24, 0, 0).toEighths(), new DimensionOld(0).toEighths(),
 				new DimensionOld(24, 0, 0).toEighths(), new DimensionOld(32, 0, 0).toEighths());
 		// Landing
-		this.drawLanding(g, new Box(new DimensionOld(18, 0, 0), new DimensionOld(8, 0, 0), new DimensionOld(6, 0, 0),
-				new DimensionOld(6, 0, 0)));
+		g.drawRect(new DimensionOld(18, 0, 0).toEighths(), new DimensionOld(8, 0, 0).toEighths(),
+				new DimensionOld(6, 0, 0).toEighths(), new DimensionOld(6, 0, 0).toEighths());
 		// First ramp section
-		this.drawRampSection(g, new DimensionOld(19, 6, 0), new DimensionOld(14, 0, 0), new DimensionOld(20, 0, 0), 0);
+		g.drawRect(new DimensionOld(19, 6, 0).toEighths(), new DimensionOld(14, 0, 0).toEighths(),
+				new DimensionOld(40).toEighths(), new DimensionOld(20, 0, 0).toEighths());
 		// Turnaround
-		this.drawTurnaround(g, new Box(new DimensionOld(19, 6, 0), new DimensionOld(34, 0, 0), new DimensionOld(4, 0, 0),
-				new DimensionOld(4, 0, 0)));
+		g.drawRect(new DimensionOld(19, 6, 0).toEighths(), new DimensionOld(34, 0, 0).toEighths(),
+				new DimensionOld(4, 0, 0).toEighths(), new DimensionOld(4, 0, 0).toEighths());
 		// Second ramp section
-		this.drawRampSection(g, new DimensionOld(19, 6, 0).add(new DimensionOld(4, 0, 0)),
-				new DimensionOld(35, 0, 0).subtract(new DimensionOld(4)), new DimensionOld(12, 0, 0), 1);
+		g.drawRect(new DimensionOld(19, 6, 0).add(new DimensionOld(4, 0, 0)).toEighths(),
+				new DimensionOld(35, 0, 0).subtract(new DimensionOld(4)).toEighths(), new DimensionOld(12, 0, 0).toEighths(), new DimensionOld(40).toEighths());
 		// Driveway
-		g.drawRect(new DimensionOld(31, 6, 0).add(new DimensionOld(4, 0, 0)).toEighths(), new DimensionOld(32, 0, 0).toEighths(),
-				new DimensionOld(3, 0, 0).toEighths(), new DimensionOld(10, 0, 0).toEighths());
+		g.drawRect(new DimensionOld(31, 6, 0).add(new DimensionOld(4, 0, 0)).toEighths(),
+				new DimensionOld(32, 0, 0).toEighths(), new DimensionOld(3, 0, 0).toEighths(),
+				new DimensionOld(10, 0, 0).toEighths());
 	}
 }
