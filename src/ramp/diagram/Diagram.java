@@ -9,8 +9,10 @@ import java.util.List;
 import javax.swing.JFrame;
 
 import ramp.geometry.Box;
+import ramp.geometry.Dimension;
 import ramp.geometry.DimensionOld;
 import ramp.geometry.DimensionPair;
+import ramp.geometry.DimensionVector;
 import ramp.geometry.Orientation;
 
 import java.util.ArrayList;
@@ -45,7 +47,7 @@ public class Diagram extends Component {
 		this.guiData = guiData;
 
 		// Transformation
-		this.scale = 1.0;
+		this.scale = 0.25;
 		this.translationX = 0;
 		this.translationY = 0;
 		this.panOrigin = new Point(0, 0);
@@ -148,24 +150,26 @@ public class Diagram extends Component {
 		return b;
 	}
 
-	public void drawCenteredString(Graphics2D g, String s, Box b, DimensionOld xOffset, DimensionOld yOffset) {
+	public void drawCenteredString(Graphics2D g, String s, DimensionVector center, Dimension xOffset,
+			Dimension yOffset) {
 		// Calculate the size of the string.
 		Font font = new Font("Arial", Font.PLAIN, 100);
 		FontRenderContext context = new FontRenderContext(null, true, true);
 		Rectangle2D r = font.getStringBounds(s, context);
 
 		// Calculate the text location.
-		DimensionPair center = b.getCenter();
-		double strX = center.getX().toEighths() - Math.round(r.getWidth() / 2) - r.getX() + xOffset.toEighths();
-		double strY = center.getY().toEighths() - Math.round(r.getHeight() / 2) - r.getY() + yOffset.toEighths();
+		double strX = center.getX().toFractionalParts(8) - Math.round(r.getWidth() / 2) - r.getX()
+				+ xOffset.toFractionalParts(8);
+		double strY = center.getY().toFractionalParts(8) - Math.round(r.getHeight() / 2) - r.getY()
+				+ yOffset.toFractionalParts(8);
 
 		// Draw the text.
 		g.setFont(font);
 		g.drawString(s, (int) Math.round(strX), (int) Math.round(strY));
 	}
 
-	public void drawCenteredString(Graphics2D g, String s, Box b) {
-		this.drawCenteredString(g, s, b, new DimensionOld(0), new DimensionOld(0));
+	public void drawCenteredString(Graphics2D g, String s, DimensionVector center) {
+		this.drawCenteredString(g, s, center, new Dimension(0), new Dimension(0));
 	}
 
 	/**
@@ -209,7 +213,6 @@ public class Diagram extends Component {
 		String label = b.getSize(o).toString();
 
 		// Draw the dimension string.
-		this.drawCenteredString(g, label, b, offset.getX(), offset.getY());
 
 		// Draw the arrows.
 		this.drawArrow(g, b.getCenter(), o, b.getWidth().scale(0.5f));
@@ -250,13 +253,15 @@ public class Diagram extends Component {
 
 	public void drawLanding(Graphics2D g, Box b) {
 		this.drawBox(g, b, Color.BLACK, 2);
-		this.drawCenteredString(g, String.format("%s x %s Landing", b.getWidth().toString(), b.getHeight().toString()),
-				b);
+		// this.drawCenteredString(g, String.format("%s x %s Landing",
+		// b.getWidth().toString(), b.getHeight().toString()),
+		// b);
 	}
 
 	public void drawTurnaround(Graphics2D g, Box b) {
 		this.drawBox(g, b, Color.BLACK, 2);
-		this.drawCenteredString(g, String.format("%s x %s", b.getWidth().toString(), b.getHeight().toString()), b);
+		// this.drawCenteredString(g, String.format("%s x %s", b.getWidth().toString(),
+		// b.getHeight().toString()), b);
 	}
 
 	public void paint(Graphics graphics) {
@@ -279,12 +284,11 @@ public class Diagram extends Component {
 
 				// Set the state of the graphics object.
 				g.setStroke(new BasicStroke(grid.getThickness()));
-				g.setFont(new Font("Arial", Font.PLAIN, 20));
+				g.setFont(new Font("Arial", Font.PLAIN, 75));
 
 				// Draw all the gridlines.
 				for (int x = 0; x < verticals && x < 1000; x++) {
 					int xPos = x * grid.getSize().toFractionalParts(8);
-					System.out.println(grid.getSize().getLength());
 					g.setColor(grid.getColor());
 					g.drawLine(xPos, 0, xPos, this.maxHeight.toEighths());
 
@@ -314,25 +318,57 @@ public class Diagram extends Component {
 		g.setStroke(new BasicStroke(2));
 
 		// -- Sample diagram --
+		
+		// Title
+		g.setFont(new Font("Arial", Font.BOLD, 100));
+		g.drawString("Hickory Hills Mobile Home Park #63", new Dimension(1, 0).toFractionalParts(8), new Dimension(1, 0).toFractionalParts(8));
+		g.setFont(new Font("Arial", Font.PLAIN, 100));
+		g.drawString("36\" Rise Sidewalk to Landing", new Dimension(1, 0).toFractionalParts(8), new Dimension(2, 0).toFractionalParts(8));
+		g.drawString("All Treated Lumber", new Dimension(1, 0).toFractionalParts(8), new Dimension(3, 0).toFractionalParts(8));
+		g.drawString("12:1 Slope Ratio (or more)", new Dimension(1, 0).toFractionalParts(8), new Dimension(4, 0).toFractionalParts(8));
 
+
+		g.setFont(new Font("Arial", Font.PLAIN, 100));
 		// House
 		g.drawRect(new DimensionOld(24, 0, 0).toEighths(), new DimensionOld(0).toEighths(),
 				new DimensionOld(24, 0, 0).toEighths(), new DimensionOld(32, 0, 0).toEighths());
+		g.drawString("House", new Dimension(27, 0).toFractionalParts(8), new Dimension(15, 0).toFractionalParts(8));
+		
 		// Landing
 		g.drawRect(new DimensionOld(18, 0, 0).toEighths(), new DimensionOld(8, 0, 0).toEighths(),
 				new DimensionOld(6, 0, 0).toEighths(), new DimensionOld(6, 0, 0).toEighths());
+		this.drawCenteredString(g, "6x6 Landing", new DimensionVector(new Dimension(36).add(new Dimension(18 * 12)),
+				new Dimension(36).add(new Dimension(8*12))));
 		// First ramp section
 		g.drawRect(new DimensionOld(19, 6, 0).toEighths(), new DimensionOld(14, 0, 0).toEighths(),
 				new DimensionOld(40).toEighths(), new DimensionOld(20, 0, 0).toEighths());
+		DimensionVector ramp1center = new DimensionVector(new Dimension(19, 6).add(new Dimension(20)), new Dimension(14, 0).add(new Dimension(10, 0)));
+		this.drawCenteredString(g, "← 40\" →", ramp1center);
+		this.drawCenteredString(g, "20'", ramp1center, new Dimension(0), new Dimension(-3, 0));
+		this.drawCenteredString(g, "↑", ramp1center, new Dimension(0), new Dimension(-4, 0));
+		this.drawCenteredString(g, "↓", ramp1center, new Dimension(0), new Dimension(-2, 0));
+
 		// Turnaround
 		g.drawRect(new DimensionOld(19, 6, 0).toEighths(), new DimensionOld(34, 0, 0).toEighths(),
 				new DimensionOld(4, 0, 0).toEighths(), new DimensionOld(4, 0, 0).toEighths());
+		this.drawCenteredString(g, "4' x 4'", new DimensionVector(new Dimension(19, 6).add(new Dimension(2, 0)), new Dimension(36, 0)));
+		
 		// Second ramp section
 		g.drawRect(new DimensionOld(19, 6, 0).add(new DimensionOld(4, 0, 0)).toEighths(),
-				new DimensionOld(35, 0, 0).subtract(new DimensionOld(4)).toEighths(), new DimensionOld(12, 0, 0).toEighths(), new DimensionOld(40).toEighths());
+				new DimensionOld(35, 0, 0).subtract(new DimensionOld(4)).toEighths(),
+				new DimensionOld(12, 0, 0).toEighths(), new DimensionOld(40).toEighths());
+		
+		DimensionVector ramp2center = new DimensionVector(new Dimension(23, 6).add(new Dimension(6, 0)), 
+				new Dimension(34, 8).add(new Dimension(20)));
+		this.drawCenteredString(g, "← 12' →", ramp2center);
+		this.drawCenteredString(g, "40\"", ramp2center, new Dimension(-3, 0), new Dimension(0));
+		this.drawCenteredString(g, "↑", ramp2center, new Dimension(-3, 0), new Dimension(-1, 0));
+		this.drawCenteredString(g, "↓", ramp2center, new Dimension(-3, 0), new Dimension(1, 0));
+		
 		// Driveway
 		g.drawRect(new DimensionOld(31, 6, 0).add(new DimensionOld(4, 0, 0)).toEighths(),
-				new DimensionOld(32, 0, 0).toEighths(), new DimensionOld(3, 0, 0).toEighths(),
+				new DimensionOld(32, 0, 0).toEighths(), new DimensionOld(40, 0, 0).toEighths(),
 				new DimensionOld(10, 0, 0).toEighths());
+		g.drawString("Driveway", new Dimension(37, 0).toFractionalParts(8), new Dimension(37, 0).toFractionalParts(8));
 	}
 }
