@@ -1,4 +1,4 @@
-package ramp;
+package ramp.diagram;
 import java.awt.Color;
 
 import ramp.geometry.DimensionOld;

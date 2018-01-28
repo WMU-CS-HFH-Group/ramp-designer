@@ -1,4 +1,4 @@
-package ramp;
+package ramp.diagram;
 
 /**
  * Directions are normally measured in relation to the house, and assume that

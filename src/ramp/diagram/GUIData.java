@@ -1,4 +1,4 @@
-package ramp;
+package ramp.diagram;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +21,7 @@ public class GUIData {
 	private ArrayList<Integer> rampDirIndex = new ArrayList<Integer>(); // Direction off of deck/turn around, 0 west, 1
 																		// east, 2 south
 	private int[] turnAround = { 48, 48 }; // Size of turn around
-	
+
 	//////////
 
 	/**
@@ -29,36 +29,32 @@ public class GUIData {
 	 * center, and direction of the first ramp section. It also contains a reference
 	 * to the next ramp section. This achieves a singly-linked list data structure.
 	 */
-	private List<RampSection> rampSections;
 
 	public GUIData() {
-		
+
 	}
-	
+
 	/**
 	 * Adds a ramp section to the array.
 	 * 
-	 * @param landingWidth Width in inches of the preceding landing or deck.
-	 * @param landingLength Height in inches of the preceding landing or deck.
-	 * @param rampLength The length of the ramp section in inches.
-	 * @param offset Offset from the center of the ramp section in inches.
-	 * @param direction The direction from the preceding landing or deck.
+	 * @param landingWidth
+	 *            Width in inches of the preceding landing or deck.
+	 * @param landingLength
+	 *            Height in inches of the preceding landing or deck.
+	 * @param rampLength
+	 *            The length of the ramp section in inches.
+	 * @param offset
+	 *            Offset from the center of the ramp section in inches.
+	 * @param direction
+	 *            The direction from the preceding landing or deck.
 	 */
-	public void addRampSection(float landingWidth, float landingLength, float rampLength, float offset, Direction direction) {
-		DimensionOld lengthD = new DimensionOld(rampLength);
-		DimensionOld offsetD = new DimensionOld(offset);
-		DimensionPair landingD = new DimensionPair(new DimensionOld(landingWidth), new DimensionOld(landingLength));
-		
-		RampSection section = new RampSection(lengthD, direction, offsetD, landingD);
-		this.rampSections.add(section);
-	}
-	
-	public List<RampSection> getRampSections() {
-		return this.rampSections;
+	public void addRampSection(float landingWidth, float landingLength, float rampLength, float offset,
+			Direction direction) {
+		// TODO: Incorporate diagram components into this data class.
 	}
 
 	//////////
-	
+
 	public String getLength() {
 		return length;
 	}

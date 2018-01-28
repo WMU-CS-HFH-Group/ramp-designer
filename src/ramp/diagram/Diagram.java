@@ -1,4 +1,4 @@
-package ramp;
+package ramp.diagram;
 
 import java.awt.*;
 import java.awt.event.*;

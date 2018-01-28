@@ -30,12 +30,26 @@ public class DimensionVector {
 		}
 	}
 
+	/**
+	 * An alias for the first dimension, typically horizontal width or abscissa
+	 * coordinate.
+	 */
 	public Dimension getX() {
 		return this.getComponent(0);
 	}
 
+	/**
+	 * An alias for the second dimension, typically vertical length or ordinate.
+	 */
 	public Dimension getY() {
 		return this.getComponent(1);
+	}
+
+	/**
+	 * An alias for the third dimension, typically height off the ground.
+	 */
+	public Dimension getZ() {
+		return this.getComponent(2);
 	}
 
 	// CALCULATIONS //
