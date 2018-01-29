@@ -33,7 +33,7 @@ public class Diagram extends Component {
 	private List<Grid> grids;
 
 	// Page Specifications
-	private DimensionOld maxWidth, maxHeight;
+	private Dimension maxWidth, maxHeight;
 
 	// Common dimensions
 	private DimensionOld rampWidth = new DimensionOld(40.0f);
@@ -64,8 +64,8 @@ public class Diagram extends Component {
 		this.addGrid(ftGrid);
 
 		// Page Specifications
-		this.maxWidth = new DimensionOld(50, 0, 0);
-		this.maxHeight = new DimensionOld(50, 0, 0);
+		this.maxWidth = new Dimension(50, 0);
+		this.maxHeight = new Dimension(50, 0);
 
 		// Event for zooming
 		this.addMouseWheelListener(new MouseAdapter() {
@@ -135,21 +135,6 @@ public class Diagram extends Component {
 		this.grids.remove(grid);
 	}
 
-	public Box getStringBox(String str, Font font, DimensionPair center) {
-		// Calculate the size of the string.
-		FontRenderContext context = new FontRenderContext(null, true, true);
-		Rectangle2D r = font.getStringBounds(str, context);
-
-		// Convert to a dimension pair representing size.
-		Box b = new Box(new DimensionOld(0), new DimensionOld(0),
-				DimensionOld.newFromEighths((int) Math.round(r.getWidth())),
-				DimensionOld.newFromEighths((int) Math.round(r.getHeight())));
-
-		b.setCenter(center);
-
-		return b;
-	}
-
 	public void drawCenteredString(Graphics2D g, String s, DimensionVector center, Dimension xOffset,
 			Dimension yOffset) {
 		// Calculate the size of the string.
@@ -172,98 +157,6 @@ public class Diagram extends Component {
 		this.drawCenteredString(g, s, center, new Dimension(0), new Dimension(0));
 	}
 
-	/**
-	 * Draws an orthogonal arrow (only horizontal or vertical).
-	 */
-	public void drawArrow(Graphics2D g, DimensionPair location, Orientation direction, DimensionOld length) {
-		// Set parameters
-		g.setStroke(new BasicStroke(2));
-		g.setColor(Color.BLACK);
-
-		// Calculate the destination of the arrow.
-		DimensionPair destination = new DimensionPair(length.scale(direction.getX()), length.scale(direction.getY()))
-				.add(location);
-
-		if (direction.orthogonal()) {
-			g.drawLine(location.getX().toEighths(), location.getY().toEighths(), destination.getX().toEighths(),
-					destination.getY().toEighths());
-		}
-
-		// Draw the arrow cap.
-		if (direction == Orientation.HORIZONTAL) {
-			// TODO
-		} else if (direction == Orientation.VERTICAL) {
-
-		}
-	}
-
-	/**
-	 * Draws arrows around a label, which will be centered within the given box.
-	 * 
-	 * @param g
-	 *            2D Graphics object.
-	 * @param label
-	 *            The dimension label.
-	 * @param b
-	 *            The box to measure.
-	 * @param o
-	 *            Orientation to measure. Arrows will be drawn along this axis.
-	 */
-	public void drawDimension(Graphics2D g, Box b, Orientation o, DimensionPair offset) {
-		String label = b.getSize(o).toString();
-
-		// Draw the dimension string.
-
-		// Draw the arrows.
-		this.drawArrow(g, b.getCenter(), o, b.getWidth().scale(0.5f));
-		this.drawArrow(g, b.getCenter(), o, b.getWidth().scale(-0.5f));
-	}
-
-	public void drawDimension(Graphics2D g, Box b, Orientation o) {
-		this.drawDimension(g, b, o, new DimensionPair(new DimensionOld(0), new DimensionOld(0)));
-	}
-
-	public void drawBox(Graphics2D g, Box b, Color color, int thickness) {
-		g.setStroke(new BasicStroke(thickness));
-		g.setColor(color);
-		g.drawRect(b.getX().toEighths(), b.getY().toEighths(), b.getWidth().toEighths(), b.getHeight().toEighths());
-	}
-
-	public void drawPost(Graphics2D g, DimensionOld x, DimensionOld y) {
-		g.fillRect(x.toEighths(), y.toEighths(), this.postSize.toEighths(), this.postSize.toEighths());
-	}
-
-	// Vertical = 0
-	// Horizontal = 1
-	public void drawRampSection(Graphics2D g, DimensionOld x, DimensionOld y, DimensionOld length, int orientation) {
-		Box b = new Box(new DimensionPair(x, y), this.rampWidth, length);
-		DimensionPair widthOffset = new DimensionPair(new DimensionOld(0), new DimensionOld(-3, 0, 0));
-
-		// Flip'em if the orientation is horizontal.
-		if (orientation == 1) {
-			b.transpose();
-			widthOffset.transpose();
-		}
-
-		// Draw the ramp section and its labels.
-		this.drawBox(g, b, Color.BLACK, 2);
-		this.drawDimension(g, b, b.getLongestSide());
-		this.drawDimension(g, b, b.getShortestSide(), widthOffset);
-	}
-
-	public void drawLanding(Graphics2D g, Box b) {
-		this.drawBox(g, b, Color.BLACK, 2);
-		// this.drawCenteredString(g, String.format("%s x %s Landing",
-		// b.getWidth().toString(), b.getHeight().toString()),
-		// b);
-	}
-
-	public void drawTurnaround(Graphics2D g, Box b) {
-		this.drawBox(g, b, Color.BLACK, 2);
-		// this.drawCenteredString(g, String.format("%s x %s", b.getWidth().toString(),
-		// b.getHeight().toString()), b);
-	}
-
 	public void paint(Graphics graphics) {
 		// Set up graphics
 		Graphics2D g = (Graphics2D) graphics;
@@ -279,8 +172,8 @@ public class Diagram extends Component {
 			// Determine whether the grid should be drawn from the scale.
 			if (this.scale > grid.getDisappearAtScale()) {
 				// Calculate the number of gridlines.
-				int verticals = (int) Math.floor(this.maxWidth.toInches() / grid.getSize().getLength());
-				int horizontals = (int) Math.floor(this.maxHeight.toInches() / grid.getSize().getLength());
+				int verticals = (int) Math.floor(this.maxWidth.getLength() / grid.getSize().getLength());
+				int horizontals = (int) Math.floor(this.maxHeight.getLength() / grid.getSize().getLength());
 
 				// Set the state of the graphics object.
 				g.setStroke(new BasicStroke(grid.getThickness()));
@@ -290,7 +183,7 @@ public class Diagram extends Component {
 				for (int x = 0; x < verticals && x < 1000; x++) {
 					int xPos = x * grid.getSize().toFractionalParts(8);
 					g.setColor(grid.getColor());
-					g.drawLine(xPos, 0, xPos, this.maxHeight.toEighths());
+					g.drawLine(xPos, 0, xPos, this.maxHeight.toFractionalParts(8));
 
 					// Draw labels on the top if required.
 					if (grid.isDisplayLabels() && x % grid.getLabelInterval() == 0) {
@@ -302,7 +195,7 @@ public class Diagram extends Component {
 				for (int y = 0; y < horizontals & y < 1000; y++) {
 					int yPos = y * grid.getSize().toFractionalParts(8);
 					g.setColor(grid.getColor());
-					g.drawLine(0, yPos, this.maxWidth.toEighths(), yPos);
+					g.drawLine(0, yPos, this.maxWidth.toFractionalParts(8), yPos);
 
 					// Draw labels on the side if required.
 					if (grid.isDisplayLabels() && y % grid.getLabelInterval() == 0) {
@@ -317,6 +210,10 @@ public class Diagram extends Component {
 		g.setColor(Color.BLACK);
 		g.setStroke(new BasicStroke(2));
 
+		this.drawSample(g);
+	}
+	
+	public void drawSample(Graphics2D g) {
 		// -- Sample diagram --
 		
 		// Title
