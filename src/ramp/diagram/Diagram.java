@@ -128,28 +128,6 @@ public class Diagram extends Component {
 		this.grids.remove(grid);
 	}
 
-	public void drawCenteredString(Graphics2D g, String s, DimensionVector center, Dimension xOffset,
-			Dimension yOffset) {
-		// Calculate the size of the string.
-		Font font = new Font("Arial", Font.PLAIN, 100);
-		FontRenderContext context = new FontRenderContext(null, true, true);
-		Rectangle2D r = font.getStringBounds(s, context);
-
-		// Calculate the text location.
-		double strX = center.getX().toFractionalParts(8) - Math.round(r.getWidth() / 2) - r.getX()
-				+ xOffset.toFractionalParts(8);
-		double strY = center.getY().toFractionalParts(8) - Math.round(r.getHeight() / 2) - r.getY()
-				+ yOffset.toFractionalParts(8);
-
-		// Draw the text.
-		g.setFont(font);
-		g.drawString(s, (int) Math.round(strX), (int) Math.round(strY));
-	}
-
-	public void drawCenteredString(Graphics2D g, String s, DimensionVector center) {
-		this.drawCenteredString(g, s, center, new Dimension(0), new Dimension(0));
-	}
-
 	public void paint(Graphics graphics) {
 		// Set up graphics
 		Graphics2D g = (Graphics2D) graphics;
@@ -205,7 +183,39 @@ public class Diagram extends Component {
 
 		this.drawSample(g);
 	}
+
+	public static void drawCenteredString(Graphics2D g, String s, DimensionVector center, Dimension xOffset,
+			Dimension yOffset) {
+		// Calculate the size of the string.
+		Font font = new Font("Arial", Font.PLAIN, 100);
+		FontRenderContext context = new FontRenderContext(null, true, true);
+		Rectangle2D r = font.getStringBounds(s, context);
+
+		// Calculate the text location.
+		double strX = center.getX().toFractionalParts(8) - Math.round(r.getWidth() / 2) - r.getX()
+				+ xOffset.toFractionalParts(8);
+		double strY = center.getY().toFractionalParts(8) - Math.round(r.getHeight() / 2) - r.getY()
+				+ yOffset.toFractionalParts(8);
+
+		// Draw the text.
+		g.setFont(font);
+		g.drawString(s, (int) Math.round(strX), (int) Math.round(strY));
+	}
+
+	public static void drawCenteredString(Graphics2D g, String s, DimensionVector center) {
+		drawCenteredString(g, s, center, new Dimension(0), new Dimension(0));
+	}
 	
+	public static void drawLanding(Graphics2D g, Landing l) {
+		// Set state
+		g.setStroke(new BasicStroke(2));
+		
+		// Draw rectangle
+		g.drawRect(toPixels(l.getLocation().getX()), toPixels(l.getLocation().getY()), toPixels(l.getSize().getX()), toPixels(l.getSize().getY()));
+		
+		// Label
+	}
+
 	public void drawSample(Graphics2D g) {
 		// -- Sample diagram --
 		
@@ -260,5 +270,9 @@ public class Diagram extends Component {
 				new DimensionOld(32, 0, 0).toEighths(), new DimensionOld(40, 0, 0).toEighths(),
 				new DimensionOld(10, 0, 0).toEighths());
 		g.drawString("Driveway", new Dimension(37, 0).toFractionalParts(8), new Dimension(37, 0).toFractionalParts(8));
+	}
+	
+	public static int toPixels(Dimension d) {
+		return d.toFractionalParts(8);
 	}
 }

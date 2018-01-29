@@ -1,5 +1,8 @@
 package ramp.diagram;
 
+import java.awt.BasicStroke;
+import java.awt.Graphics2D;
+
 import ramp.geometry.Dimension;
 import ramp.geometry.DimensionVector;
 import ramp.geometry.DimensionVector.VectorMismatchException;
@@ -58,5 +61,10 @@ public class Landing extends DiagramComponent {
 		}
 
 		return new Ramp(location, length, direction);
+	}
+
+	@Override
+	public void draw(Graphics2D g) {
+		
 	}
 }

@@ -1,8 +1,11 @@
 package ramp.diagram;
 
+import java.awt.Graphics2D;
+
+import ramp.geometry.Dimension;
 import ramp.geometry.DimensionVector;
 
-public class DiagramComponent {
+public abstract class DiagramComponent {
 	private DimensionVector location;
 	private String label;
 	private boolean showLabel;
@@ -33,5 +36,11 @@ public class DiagramComponent {
 
 	public void setShowLabel(boolean showLabel) {
 		this.showLabel = showLabel;
+	}
+	
+	public abstract void draw(Graphics2D g);
+	
+	public static int toPixels(Dimension d) {
+		return d.toFractionalParts(8);
 	}
 }
