@@ -1,7 +1,5 @@
 package ramp.diagram;
 
-import ramp.geometry.DimensionVector;
-
 /**
  * Directions are normally measured in relation to the house, and assume that
  * the house is on top of the schematic.

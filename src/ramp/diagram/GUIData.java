@@ -3,8 +3,6 @@ package ramp.diagram;
 import java.util.ArrayList;
 import java.util.List;
 
-import ramp.geometry.DimensionOld;
-import ramp.geometry.DimensionPair;
 import ramp.geometry.DimensionVector;
 
 /**

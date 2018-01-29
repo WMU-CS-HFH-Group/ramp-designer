@@ -8,12 +8,9 @@ import java.util.List;
 
 import javax.swing.JFrame;
 
-import ramp.geometry.Box;
 import ramp.geometry.Dimension;
 import ramp.geometry.DimensionOld;
-import ramp.geometry.DimensionPair;
 import ramp.geometry.DimensionVector;
-import ramp.geometry.Orientation;
 
 import java.util.ArrayList;
 
@@ -34,10 +31,6 @@ public class Diagram extends Component {
 
 	// Page Specifications
 	private Dimension maxWidth, maxHeight;
-
-	// Common dimensions
-	private DimensionOld rampWidth = new DimensionOld(40.0f);
-	private DimensionOld postSize = new DimensionOld(4.0f);
 
 	// Input
 	private GUIData guiData;
@@ -224,8 +217,8 @@ public class Diagram extends Component {
 		g.drawString("All Treated Lumber", new Dimension(1, 0).toFractionalParts(8), new Dimension(3, 0).toFractionalParts(8));
 		g.drawString("12:1 Slope Ratio (or more)", new Dimension(1, 0).toFractionalParts(8), new Dimension(4, 0).toFractionalParts(8));
 
-
 		g.setFont(new Font("Arial", Font.PLAIN, 100));
+		
 		// House
 		g.drawRect(new DimensionOld(24, 0, 0).toEighths(), new DimensionOld(0).toEighths(),
 				new DimensionOld(24, 0, 0).toEighths(), new DimensionOld(32, 0, 0).toEighths());
