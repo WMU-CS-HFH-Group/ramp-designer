@@ -10,12 +10,17 @@ import javax.swing.JFrame;
 
 import ramp.geometry.Dimension;
 import ramp.geometry.DimensionOld;
+import ramp.geometry.DimensionUtil;
 import ramp.geometry.DimensionVector;
+import ramp.geometry.DimensionVector.VectorMismatchException;
 
 import java.util.ArrayList;
 
 @SuppressWarnings("serial")
 public class Diagram extends Component {
+	// Constants
+	private static final double LINE_SPACING = 0.25; // Ratio to the text height to leave between lines
+
 	// Transformation variables
 	private double scale;
 	private int translationX, translationY;
@@ -31,6 +36,7 @@ public class Diagram extends Component {
 
 	// Page Specifications
 	private Dimension maxWidth, maxHeight;
+	private Font labelFont;
 
 	// Input
 	private GUIData guiData;
@@ -59,6 +65,7 @@ public class Diagram extends Component {
 		// Page Specifications
 		this.maxWidth = new Dimension(50, 0);
 		this.maxHeight = new Dimension(50, 0);
+		this.labelFont = new Font("Arial", Font.PLAIN, 100);
 
 		// Event for zooming
 		this.addMouseWheelListener(new MouseAdapter() {
@@ -184,65 +191,105 @@ public class Diagram extends Component {
 		this.drawSample(g);
 	}
 
-	public static void drawCenteredString(Graphics2D g, String s, DimensionVector center, Dimension xOffset,
-			Dimension yOffset) {
-		// Calculate the size of the string.
-		Font font = new Font("Arial", Font.PLAIN, 100);
-		FontRenderContext context = new FontRenderContext(null, true, true);
-		Rectangle2D r = font.getStringBounds(s, context);
+	public void drawString(Graphics2D g, String s, Font font, DimensionVector location, boolean center) {
+		// Break the string into lines, if necessary.
+		String[] lines = s.split("\n");
 
-		// Calculate the text location.
-		double strX = center.getX().toFractionalParts(8) - Math.round(r.getWidth() / 2) - r.getX()
-				+ xOffset.toFractionalParts(8);
-		double strY = center.getY().toFractionalParts(8) - Math.round(r.getHeight() / 2) - r.getY()
-				+ yOffset.toFractionalParts(8);
+		// Measure the strings.
+		int[] size = Diagram.getStringSize(font, lines);
 
-		// Draw the text.
+		int x = Diagram.toPixels(location.getX());
+		int y = Diagram.toPixels(location.getY());
+
+		// Iterate through the strings and draw them.
 		g.setFont(font);
-		g.drawString(s, (int) Math.round(strX), (int) Math.round(strY));
-	}
 
-	public static void drawCenteredString(Graphics2D g, String s, DimensionVector center) {
-		drawCenteredString(g, s, center, new Dimension(0), new Dimension(0));
+		for (int l = 0; l < lines.length; l++) {
+			int lineX = x;
+			int lineY = y + size[2] * l;
+			if (center) {
+				int lineWidth = Diagram.getStringSize(font, lines[l])[1];
+				lineX += size[1] / 2 - lineWidth / 2;
+			}
+			g.drawString(lines[l], lineX, lineY);
+		}
 	}
 	
-	public static void drawLanding(Graphics2D g, Landing l) {
+	public void centerString(Graphics2D g, String s, Font font, DimensionVector center, DimensionVector offset) {
+		int[] size = Diagram.getStringSize(font, s);
+		DimensionVector halfSize = new DimensionVector((double) size[2] / 2.0, (double) size[1] / 2.0);
+		try {
+			this.drawString(g, s, font, DimensionUtil.getVectorSum(center, halfSize, offset), true);
+		} catch (VectorMismatchException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void drawLanding(Graphics2D g, Landing l) {
 		// Set state
 		g.setStroke(new BasicStroke(2));
-		
+
 		// Draw rectangle
-		g.drawRect(toPixels(l.getLocation().getX()), toPixels(l.getLocation().getY()), toPixels(l.getSize().getX()), toPixels(l.getSize().getY()));
-		
+		g.drawRect(toPixels(l.getLocation().getX()), toPixels(l.getLocation().getY()), toPixels(l.getSize().getX()),
+				toPixels(l.getSize().getY()));
+
 		// Label
+		DimensionVector center = DimensionUtil.getCenter(l.getLocation(), l.getSize());
+		this.drawString(g,
+				String.format("%s x %s\nLanding", l.getSize().getX().toString(), l.getSize().getY().toString()),
+				this.labelFont, center, true);
+	}
+
+	public static void drawRamp(Graphics2D g, Ramp r) {
+
+	}
+	
+	@Deprecated
+	private void drawCenteredString(Graphics2D g, String s, DimensionVector location, Dimension offsetX, Dimension offsetY) {
+		try {
+			this.drawString(g, s, this.labelFont, location.getSum(new DimensionVector(offsetX, offsetY)), true);
+		} catch (VectorMismatchException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Deprecated
+	private void drawCenteredString(Graphics2D g, String s, DimensionVector location) {
+		this.drawCenteredString(g, s, location, new Dimension(0), new Dimension(0));
 	}
 
 	public void drawSample(Graphics2D g) {
 		// -- Sample diagram --
-		
+
 		// Title
 		g.setFont(new Font("Arial", Font.BOLD, 100));
-		g.drawString("Hickory Hills Mobile Home Park #63", new Dimension(1, 0).toFractionalParts(8), new Dimension(1, 0).toFractionalParts(8));
+		g.drawString("Hickory Hills Mobile Home Park #63", new Dimension(1, 0).toFractionalParts(8),
+				new Dimension(1, 0).toFractionalParts(8));
 		g.setFont(new Font("Arial", Font.PLAIN, 100));
-		g.drawString("36\" Rise Sidewalk to Landing", new Dimension(1, 0).toFractionalParts(8), new Dimension(2, 0).toFractionalParts(8));
-		g.drawString("All Treated Lumber", new Dimension(1, 0).toFractionalParts(8), new Dimension(3, 0).toFractionalParts(8));
-		g.drawString("12:1 Slope Ratio (or more)", new Dimension(1, 0).toFractionalParts(8), new Dimension(4, 0).toFractionalParts(8));
+		g.drawString("36\" Rise Sidewalk to Landing", new Dimension(1, 0).toFractionalParts(8),
+				new Dimension(2, 0).toFractionalParts(8));
+		g.drawString("All Treated Lumber", new Dimension(1, 0).toFractionalParts(8),
+				new Dimension(3, 0).toFractionalParts(8));
+		g.drawString("12:1 Slope Ratio (or more)", new Dimension(1, 0).toFractionalParts(8),
+				new Dimension(4, 0).toFractionalParts(8));
 
 		g.setFont(new Font("Arial", Font.PLAIN, 100));
-		
+
 		// House
 		g.drawRect(new DimensionOld(24, 0, 0).toEighths(), new DimensionOld(0).toEighths(),
 				new DimensionOld(24, 0, 0).toEighths(), new DimensionOld(32, 0, 0).toEighths());
 		g.drawString("House", new Dimension(27, 0).toFractionalParts(8), new Dimension(15, 0).toFractionalParts(8));
-		
+
 		// Landing
 		g.drawRect(new DimensionOld(18, 0, 0).toEighths(), new DimensionOld(8, 0, 0).toEighths(),
 				new DimensionOld(6, 0, 0).toEighths(), new DimensionOld(6, 0, 0).toEighths());
 		this.drawCenteredString(g, "6x6 Landing", new DimensionVector(new Dimension(36).add(new Dimension(18 * 12)),
-				new Dimension(36).add(new Dimension(8*12))));
+				new Dimension(36).add(new Dimension(8 * 12))));
 		// First ramp section
 		g.drawRect(new DimensionOld(19, 6, 0).toEighths(), new DimensionOld(14, 0, 0).toEighths(),
 				new DimensionOld(40).toEighths(), new DimensionOld(20, 0, 0).toEighths());
-		DimensionVector ramp1center = new DimensionVector(new Dimension(19, 6).add(new Dimension(20)), new Dimension(14, 0).add(new Dimension(10, 0)));
+		DimensionVector ramp1center = new DimensionVector(new Dimension(19, 6).add(new Dimension(20)),
+				new Dimension(14, 0).add(new Dimension(10, 0)));
 		this.drawCenteredString(g, "← 40\" →", ramp1center);
 		this.drawCenteredString(g, "20'", ramp1center, new Dimension(0), new Dimension(-3, 0));
 		this.drawCenteredString(g, "↑", ramp1center, new Dimension(0), new Dimension(-4, 0));
@@ -251,28 +298,52 @@ public class Diagram extends Component {
 		// Turnaround
 		g.drawRect(new DimensionOld(19, 6, 0).toEighths(), new DimensionOld(34, 0, 0).toEighths(),
 				new DimensionOld(4, 0, 0).toEighths(), new DimensionOld(4, 0, 0).toEighths());
-		this.drawCenteredString(g, "4' x 4'", new DimensionVector(new Dimension(19, 6).add(new Dimension(2, 0)), new Dimension(36, 0)));
-		
+		this.drawCenteredString(g, "4' x 4'",
+				new DimensionVector(new Dimension(19, 6).add(new Dimension(2, 0)), new Dimension(36, 0)));
+
 		// Second ramp section
 		g.drawRect(new DimensionOld(19, 6, 0).add(new DimensionOld(4, 0, 0)).toEighths(),
 				new DimensionOld(35, 0, 0).subtract(new DimensionOld(4)).toEighths(),
 				new DimensionOld(12, 0, 0).toEighths(), new DimensionOld(40).toEighths());
-		
-		DimensionVector ramp2center = new DimensionVector(new Dimension(23, 6).add(new Dimension(6, 0)), 
+
+		DimensionVector ramp2center = new DimensionVector(new Dimension(23, 6).add(new Dimension(6, 0)),
 				new Dimension(34, 8).add(new Dimension(20)));
 		this.drawCenteredString(g, "← 12' →", ramp2center);
 		this.drawCenteredString(g, "40\"", ramp2center, new Dimension(-3, 0), new Dimension(0));
 		this.drawCenteredString(g, "↑", ramp2center, new Dimension(-3, 0), new Dimension(-1, 0));
 		this.drawCenteredString(g, "↓", ramp2center, new Dimension(-3, 0), new Dimension(1, 0));
-		
+
 		// Driveway
 		g.drawRect(new DimensionOld(31, 6, 0).add(new DimensionOld(4, 0, 0)).toEighths(),
 				new DimensionOld(32, 0, 0).toEighths(), new DimensionOld(40, 0, 0).toEighths(),
 				new DimensionOld(10, 0, 0).toEighths());
 		g.drawString("Driveway", new Dimension(37, 0).toFractionalParts(8), new Dimension(37, 0).toFractionalParts(8));
 	}
-	
+
 	public static int toPixels(Dimension d) {
 		return d.toFractionalParts(8);
+	}
+
+	public static int[] getStringSize(Font font, String... ss) {
+		FontRenderContext context = new FontRenderContext(null, true, true);
+		double width = 0.0;
+		double height = 0.0;
+		double lineHeight = 0.0;
+
+		for (int l = 0; l < ss.length; l++) {
+			Rectangle2D lineR = font.getStringBounds(ss[l], context);
+
+			// Compare the width
+			int iWidth = (int) Math.round(lineR.getWidth());
+			if (iWidth > width) {
+				width = iWidth;
+			}
+
+			// Increase the height
+			lineHeight = lineR.getHeight() * (1 + Diagram.LINE_SPACING);
+			height += lineHeight;
+		}
+
+		return new int[] { (int) Math.round(width), (int) Math.round(height), (int) Math.round(lineHeight) };
 	}
 }
