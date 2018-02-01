@@ -8,6 +8,8 @@ import java.util.List;
 
 import javax.swing.JFrame;
 
+import ramp.diagram.Label.Alignment;
+import ramp.diagram.Label.LabelSize;
 import ramp.geometry.Dimension;
 import ramp.geometry.DimensionOld;
 import ramp.geometry.DimensionUtil;
@@ -19,6 +21,7 @@ import java.util.ArrayList;
 @SuppressWarnings("serial")
 public class Diagram extends Component {
 	// Constants
+	@Deprecated
 	private static final double LINE_SPACING = 0.25; // Ratio to the text height to leave between lines
 
 	// Transformation variables
@@ -191,7 +194,42 @@ public class Diagram extends Component {
 		this.drawSample(g);
 	}
 
-	public void drawString(Graphics2D g, String s, Font font, DimensionVector location, boolean center) {
+	public void drawLabel(Graphics2D g, Label l) {
+		LabelSize size = l.calculateSize();
+		String[] lines = l.toLines();
+		int x = Diagram.toPixels(l.getOrigin().getX());
+		int y = Diagram.toPixels(l.getOrigin().getY());
+
+		// Calculate the location of the bottom-left corner based on the vertical
+		// alignment.
+		if (l.getAlignmentY() == Alignment.CENTER) {
+			y -= size.getHeight() / 2;
+		} else if (l.getAlignmentY() == Alignment.RIGHT_OR_BOTTOM) {
+			y -= size.getHeight();
+		}
+
+		// Set the font
+		g.setFont(l.getFont());
+
+		// Draw the lines of the string.
+		for (int i = 0; i < lines.length; i++) {
+			int lx = x;
+			int ly = y + (size.getLineHeight() + size.getLineSpacing()) * i;
+
+			// Calculate the x position based on the horizontal alignment.
+			if (l.getAlignmentX() == Alignment.CENTER) {
+				lx -= size.getWidthOfLine(i) / 2;
+			} else if (l.getAlignmentX() == Alignment.RIGHT_OR_BOTTOM) {
+				lx -= size.getWidthOfLine(i);
+			}
+
+			// Draw the string
+			g.drawString(lines[i], lx, ly + size.getLineHeight());
+		}
+	}
+
+	@Deprecated
+	public void drawStrings_(Graphics2D g, String s, Font font, DimensionVector location, boolean center) {
 		// Break the string into lines, if necessary.
 		String[] lines = s.split("\n");
 
@@ -214,12 +252,13 @@ public class Diagram extends Component {
 			g.drawString(lines[l], lineX, lineY);
 		}
 	}
-	
-	public void centerString(Graphics2D g, String s, Font font, DimensionVector center, DimensionVector offset) {
+
+	@Deprecated
+	public void centerStrings_(Graphics2D g, String s, Font font, DimensionVector center, DimensionVector offset) {
 		int[] size = Diagram.getStringSize(font, s);
 		DimensionVector halfSize = new DimensionVector((double) size[2] / 2.0, (double) size[1] / 2.0);
 		try {
-			this.drawString(g, s, font, DimensionUtil.getVectorSum(center, halfSize, offset), true);
+			this.drawStrings_(g, s, font, DimensionUtil.getVectorSum(center, halfSize, offset), true);
 		} catch (VectorMismatchException e) {
 			e.printStackTrace();
 		}
@@ -235,7 +274,7 @@ public class Diagram extends Component {
 
 		// Label
 		DimensionVector center = DimensionUtil.getCenter(l.getLocation(), l.getSize());
-		this.drawString(g,
+		this.drawStrings_(g,
 				String.format("%s x %s\nLanding", l.getSize().getX().toString(), l.getSize().getY().toString()),
 				this.labelFont, center, true);
 	}
@@ -243,16 +282,17 @@ public class Diagram extends Component {
 	public static void drawRamp(Graphics2D g, Ramp r) {
 
 	}
-	
+
 	@Deprecated
-	private void drawCenteredString(Graphics2D g, String s, DimensionVector location, Dimension offsetX, Dimension offsetY) {
+	private void drawCenteredString(Graphics2D g, String s, DimensionVector location, Dimension offsetX,
+			Dimension offsetY) {
 		try {
-			this.drawString(g, s, this.labelFont, location.getSum(new DimensionVector(offsetX, offsetY)), true);
+			this.drawStrings_(g, s, this.labelFont, location.getSum(new DimensionVector(offsetX, offsetY)), true);
 		} catch (VectorMismatchException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Deprecated
 	private void drawCenteredString(Graphics2D g, String s, DimensionVector location) {
 		this.drawCenteredString(g, s, location, new Dimension(0), new Dimension(0));
@@ -262,16 +302,27 @@ public class Diagram extends Component {
 		// -- Sample diagram --
 
 		// Title
-		g.setFont(new Font("Arial", Font.BOLD, 100));
-		g.drawString("Hickory Hills Mobile Home Park #63", new Dimension(1, 0).toFractionalParts(8),
-				new Dimension(1, 0).toFractionalParts(8));
-		g.setFont(new Font("Arial", Font.PLAIN, 100));
-		g.drawString("36\" Rise Sidewalk to Landing", new Dimension(1, 0).toFractionalParts(8),
-				new Dimension(2, 0).toFractionalParts(8));
-		g.drawString("All Treated Lumber", new Dimension(1, 0).toFractionalParts(8),
-				new Dimension(3, 0).toFractionalParts(8));
-		g.drawString("12:1 Slope Ratio (or more)", new Dimension(1, 0).toFractionalParts(8),
-				new Dimension(4, 0).toFractionalParts(8));
+		Font titleFont = new Font("Arial", Font.BOLD, 100);
+		Label title = new Label("Hickory Hills Mobile Home Park #63", new DimensionVector(12, 12), titleFont);
+		Label subtitle = new Label("36\" Rise Sidewalk to Landing\nAll Treated Lumber\n12:1 Slope Ratio (or more)",
+				new DimensionVector(12, 24), labelFont);
+		this.drawLabel(g, title);
+		this.drawLabel(g, subtitle);
+
+		// Old Title
+		// g.setFont(new Font("Arial", Font.BOLD, 100));
+		// g.drawString("Hickory Hills Mobile Home Park #63", new Dimension(1,
+		// 0).toFractionalParts(8),
+		// new Dimension(1, 0).toFractionalParts(8));
+		// g.setFont(new Font("Arial", Font.PLAIN, 100));
+		// g.drawString("36\" Rise Sidewalk to Landing", new Dimension(1,
+		// 0).toFractionalParts(8),
+		// new Dimension(2, 0).toFractionalParts(8));
+		// g.drawString("All Treated Lumber", new Dimension(1, 0).toFractionalParts(8),
+		// new Dimension(3, 0).toFractionalParts(8));
+		// g.drawString("12:1 Slope Ratio (or more)", new Dimension(1,
+		// 0).toFractionalParts(8),
+		// new Dimension(4, 0).toFractionalParts(8));
 
 		g.setFont(new Font("Arial", Font.PLAIN, 100));
 
