@@ -49,6 +49,14 @@ public class Label {
 		this(string, topLeft, Alignment.LEFT_OR_TOP, Alignment.LEFT_OR_TOP, font, Color.BLACK);
 	}
 
+	/**
+	 * Constructor for a non-existent/null label. This will not be rendered unless
+	 * it is given other parameters.
+	 */
+	public Label() {
+		this("", new DimensionVector(0, 0), new Font("Arial", Font.PLAIN, 12));
+	}
+
 	public String getString() {
 		return string;
 	}
