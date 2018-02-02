@@ -21,40 +21,13 @@ public class GUIData {
 																		// east, 2 south
 	private int[] turnAround = { 48, 48 }; // Size of turn around
 
-	//////////
-	
-	private List<DiagramComponent> components;
-
 	public GUIData() {
 		
 	}
 	
 	public GUIData(double deckWidth, double deckLength, double deckHeight, double deckLocation, double firstRampLength, Direction firstRampDirection, double firstRampOffset) {
-		this.components = new ArrayList<DiagramComponent>();
 		
-		this.components.add(new Landing(new DimensionVector(deckLocation, 0), new DimensionVector(deckWidth, deckLength, deckHeight)));
 	}
-
-	/**
-	 * Adds a ramp section to the array.
-	 * 
-	 * @param landingWidth
-	 *            Width in inches of the preceding landing or deck.
-	 * @param landingLength
-	 *            Height in inches of the preceding landing or deck.
-	 * @param rampLength
-	 *            The length of the ramp section in inches.
-	 * @param offset
-	 *            Offset from the center of the ramp section in inches.
-	 * @param direction
-	 *            The direction from the preceding landing or deck.
-	 */
-	public void addRampSection(float landingWidth, float landingLength, float rampLength, float offset,
-			Direction direction) {
-		// TODO: Incorporate diagram components into this data class.
-	}
-
-	//////////
 
 	public String getLength() {
 		return length;
