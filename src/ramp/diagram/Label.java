@@ -1,11 +1,19 @@
 package ramp.diagram;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 
 import ramp.geometry.DimensionVector;
 
+/**
+ * A data storage class for a label's attributes. This information will be used
+ * to draw the label on a diagram. It may be aligned in any direction, any
+ * color, and any font. It may have multiple lines delimited by a newline
+ * character.
+ * 
+ */
 public class Label {
 	public static final String LINE_DELIM = "\n";
 	private static final double LINE_SPACING = 0.15; // Ratio to the text height to leave between lines
@@ -14,17 +22,31 @@ public class Label {
 	private DimensionVector origin;
 	private Alignment alignmentX, alignmentY;
 	private Font font;
+	private Color color;
 
-	public Label(String string, DimensionVector origin, Alignment alignmentX, Alignment alignmentY, Font font) {
+	public Label(String string, DimensionVector origin, Alignment alignmentX, Alignment alignmentY, Font font,
+			Color color) {
 		this.string = string;
 		this.origin = origin;
 		this.alignmentX = alignmentX;
 		this.alignmentY = alignmentY;
 		this.font = font;
+		this.color = color;
 	}
 
+	/**
+	 * Constructor with sensible defaults for alignment and color. The default
+	 * alignment is top-left, and the default color is black.
+	 * 
+	 * @param string
+	 *            The string to display. This may be multi-line.
+	 * @param topLeft
+	 *            The location of the top-left corner of the string.
+	 * @param font
+	 *            The font to render the string with.
+	 */
 	public Label(String string, DimensionVector topLeft, Font font) {
-		this(string, topLeft, Alignment.LEFT_OR_TOP, Alignment.LEFT_OR_TOP, font);
+		this(string, topLeft, Alignment.LEFT_OR_TOP, Alignment.LEFT_OR_TOP, font, Color.BLACK);
 	}
 
 	public String getString() {
@@ -65,6 +87,14 @@ public class Label {
 
 	public void setFont(Font font) {
 		this.font = font;
+	}
+
+	public Color getColor() {
+		return color;
+	}
+
+	public void setColor(Color color) {
+		this.color = color;
 	}
 
 	public String[] toLines() {

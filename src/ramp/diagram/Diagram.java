@@ -208,8 +208,9 @@ public class Diagram extends Component {
 			y -= size.getHeight();
 		}
 
-		// Set the font
+		// Set the font and color
 		g.setFont(l.getFont());
+		g.setColor(l.getColor());
 
 		// Draw the lines of the string.
 		for (int i = 0; i < lines.length; i++) {
