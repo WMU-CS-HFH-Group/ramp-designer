@@ -13,10 +13,10 @@ public class DimensionVector {
 	public DimensionVector(Dimension... components) {
 		this.components = Arrays.copyOf(components, components.length);
 	}
-	
+
 	public DimensionVector(double... components) {
 		this.components = new Dimension[components.length];
-		
+
 		for (int i = 0; i < components.length; i++) {
 			this.components[i] = new Dimension(components[i]);
 		}
@@ -106,7 +106,7 @@ public class DimensionVector {
 	}
 
 	// UTILITIES //
-	
+
 	public double[] toDoubleArray() {
 		double[] array = new double[this.components.length];
 		for (int i = 0; i < this.components.length; i++) {
@@ -190,24 +190,37 @@ public class DimensionVector {
 		}
 		return this;
 	}
-	
-	public DimensionVector add(DimensionVector v2) throws VectorMismatchException {
+
+	/**
+	 * Adds another vector to this one. If the sizes do not match, return this
+	 * vector, unmodified.
+	 * 
+	 * @param v2
+	 *            Other vector to add.
+	 * @return The current vector, after it has been modified, if necessary.
+	 */
+	public DimensionVector add(DimensionVector v2) {
 		if (v2.getSize() == this.getSize()) {
 			for (int i = 0; i < this.components.length; i++) {
 				this.getComponent(i).add(v2.getComponent(i));
 			}
-			return this;
-		} else {
-			throw new VectorMismatchException("Vector sizes do not match.", this.getSize(), v2.getSize());
 		}
+		return this;
 	}
-	
-	public DimensionVector add(Dimension... ds) throws VectorMismatchException {
+
+	public DimensionVector add(Dimension... ds) {
 		return this.add(new DimensionVector(ds));
 	}
 
-	public DimensionVector add(double... ds) throws VectorMismatchException {
+	public DimensionVector add(double... ds) {
 		return this.add(new DimensionVector(ds));
+	}
+
+	public DimensionVector swapComponents(int i, int j) {
+		Dimension d = this.components[i];
+		this.components[i] = this.components[j];
+		this.components[j] = d;
+		return this;
 	}
 
 	public DimensionVector negate() {
@@ -215,6 +228,19 @@ public class DimensionVector {
 			this.getComponent(i).negate();
 		}
 		return this;
+	}
+
+	@Override
+	public String toString() {
+		String s = "(";
+		for (int i = 0; i < this.components.length; i++) {
+			s += this.components[i].toString();
+			if (i < this.components.length - 1) {
+				s += ", ";
+			}
+		}
+		s += ")";
+		return s;
 	}
 
 	@SuppressWarnings("serial")
