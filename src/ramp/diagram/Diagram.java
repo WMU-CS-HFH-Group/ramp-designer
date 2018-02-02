@@ -278,8 +278,26 @@ public class Diagram extends Component {
 				toPixels(l.getSize().getY()));
 	}
 
-	public static void drawRamp(Graphics2D g, Ramp r) {
-
+	public void drawRamp(Graphics2D g, Ramp r) {
+		// Set state
+		g.setStroke(new BasicStroke(2));
+		
+		// Find location and size
+		DimensionVector loc = r.getTopLeft();
+		DimensionVector size = r.getSize();
+		
+		// Draw rectangle
+		g.drawRect(toPixels(loc.getX()), toPixels(loc.getY()), toPixels(size.getX()), toPixels(size.getY()));
+		
+		// Draw posts
+		for (Post p : r.generatePosts()) {
+			this.drawPost(g, p);
+		}
+	}
+	
+	public void drawPost(Graphics2D g, Post p) {
+		// Draw filled rectangle
+		g.fillRect(toPixels(p.getLocation().getX()), toPixels(p.getLocation().getY()), toPixels(p.getSize()), toPixels(p.getSize()));
 	}
 
 	@Deprecated
@@ -298,6 +316,10 @@ public class Diagram extends Component {
 	}
 
 	private void drawSample(Graphics2D g) {
+		// Test ramp post generation
+		Ramp r = new Ramp(new DimensionVector(36, 36), new Dimension(12, 0), Direction.UP);
+		this.drawRamp(g, r);
+		
 		// -- Sample diagram --
 
 		// Title

@@ -178,16 +178,16 @@ public class Dimension implements Comparable<Dimension> {
 			result = "0'";
 		} else {
 			// Display the feet part of the measurement if it is nonzero.
-			if (feet > 0) {
+			if (feet != 0) {
 				result += String.format("%d'", feet);
 			}
 
 			// Display the inches part of the measurement if it is nonzero.
-			if (inches > 0) {
+			if (inches != 0) {
 				result += String.format("%d", inches);
 
 				// Display the fractional part of the measurement if it is nonzero.
-				if (eighths > 0) {
+				if (eighths != 0) {
 					if (eighths % 4 == 0) {
 						// If it can be reduced to halves, display halves.
 						result += String.format(" %d/2\"", eighths / 4);
