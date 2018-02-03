@@ -3,6 +3,7 @@ package ramp.diagram;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.font.FontRenderContext;
+import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 
@@ -198,6 +199,10 @@ public class Diagram extends Component {
 		}
 	}
 
+	public void drawArrow(Graphics2D g, Arrow a) {
+		
+	}
+
 	public void drawLabel(Graphics2D g, Label l) {
 		LabelSize size = l.calculateSize();
 		String[] lines = l.toLines();
@@ -281,23 +286,24 @@ public class Diagram extends Component {
 	public void drawRamp(Graphics2D g, Ramp r) {
 		// Set state
 		g.setStroke(new BasicStroke(2));
-		
+
 		// Find location and size
 		DimensionVector loc = r.getTopLeft();
 		DimensionVector size = r.getSize();
-		
+
 		// Draw rectangle
 		g.drawRect(toPixels(loc.getX()), toPixels(loc.getY()), toPixels(size.getX()), toPixels(size.getY()));
-		
+
 		// Draw posts
 		for (Post p : r.generatePosts()) {
 			this.drawPost(g, p);
 		}
 	}
-	
+
 	public void drawPost(Graphics2D g, Post p) {
 		// Draw filled rectangle
-		g.fillRect(toPixels(p.getLocation().getX()), toPixels(p.getLocation().getY()), toPixels(p.getSize()), toPixels(p.getSize()));
+		g.fillRect(toPixels(p.getLocation().getX()), toPixels(p.getLocation().getY()), toPixels(p.getSize()),
+				toPixels(p.getSize()));
 	}
 
 	@Deprecated
@@ -319,7 +325,7 @@ public class Diagram extends Component {
 		// Test ramp post generation
 		Ramp r = new Ramp(new DimensionVector(36, 36), new Dimension(12, 0), Direction.UP);
 		this.drawRamp(g, r);
-		
+
 		// -- Sample diagram --
 
 		// Title
@@ -350,16 +356,19 @@ public class Diagram extends Component {
 		// House
 		g.drawRect(Diagram.toPixels(new Dimension(24, 0)), Diagram.toPixels(new Dimension(0)),
 				Diagram.toPixels(new Dimension(24, 0)), Diagram.toPixels(new Dimension(32, 0)));
-		Label houseLabel = new Label("House", new DimensionVector(new Dimension(27, 0), new Dimension(15, 0)), Alignment.CENTER, Alignment.CENTER, labelFont, Color.BLACK);
+		Label houseLabel = new Label("House", new DimensionVector(new Dimension(27, 0), new Dimension(15, 0)),
+				Alignment.CENTER, Alignment.CENTER, labelFont, Color.BLACK);
 		this.drawLabel(g, houseLabel);
 
 		// Landing
 		g.drawRect(Diagram.toPixels(new Dimension(18, 0)), Diagram.toPixels(new Dimension(8, 0)),
 				Diagram.toPixels(new Dimension(6, 0)), Diagram.toPixels(new Dimension(6, 0)));
-		Label landingLabel = new Label("6'x6' Landing", new DimensionVector(new Dimension(36).add(new Dimension(18 * 12)),
-				new Dimension(36).add(new Dimension(8 * 12))), Alignment.CENTER, Alignment.CENTER, labelFont, Color.BLACK);
+		Label landingLabel = new Label("6'x6' Landing",
+				new DimensionVector(new Dimension(36).add(new Dimension(18 * 12)),
+						new Dimension(36).add(new Dimension(8 * 12))),
+				Alignment.CENTER, Alignment.CENTER, labelFont, Color.BLACK);
 		this.drawLabel(g, landingLabel);
-		
+
 		// First ramp section
 		g.drawRect(Diagram.toPixels(new Dimension(19, 6)), Diagram.toPixels(new Dimension(14, 0)),
 				Diagram.toPixels(new Dimension(40)), Diagram.toPixels(new Dimension(20, 0)));
@@ -393,7 +402,8 @@ public class Diagram extends Component {
 		g.drawRect(Diagram.toPixels(new Dimension(31, 6).add(new Dimension(4, 0))),
 				Diagram.toPixels(new Dimension(32, 0)), Diagram.toPixels(new Dimension(40, 0)),
 				Diagram.toPixels(new Dimension(10, 0)));
-		Label drivewayLabel = new Label("Driveway", new DimensionVector(new Dimension(37, 0), new Dimension(37, 0)), Alignment.CENTER, Alignment.CENTER, labelFont, Color.BLACK);
+		Label drivewayLabel = new Label("Driveway", new DimensionVector(new Dimension(37, 0), new Dimension(37, 0)),
+				Alignment.CENTER, Alignment.CENTER, labelFont, Color.BLACK);
 		this.drawLabel(g, drivewayLabel);
 	}
 
