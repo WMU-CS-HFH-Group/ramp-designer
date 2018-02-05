@@ -14,6 +14,8 @@ public class Dimension implements Comparable<Dimension> {
 		this.length = (double) feet * 12 + inches;
 	}
 
+	
+
 	// CALCULATIONS //
 
 	public double getLength() {
@@ -227,6 +229,18 @@ public class Dimension implements Comparable<Dimension> {
 		}
 
 		return result;
+	}
+	
+	/**
+	 * Takes in a human-readable string representing a dimension in imperial units.
+	 * 
+	 * @param s
+	 *            A string in one of the following formats: /FT' IN"/, /FT ft IN
+	 *            in/, /IN"/, /IN in/, and any variations on capitalization or
+	 *            punctuation.
+	 */
+	public static Dimension fromString(String s) {
+		return new Dimension(0); // TODO
 	}
 
 	@Override

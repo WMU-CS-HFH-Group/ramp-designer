@@ -323,7 +323,7 @@ public class Diagram extends Component {
 
 	private void drawSample(Graphics2D g) {
 		// Test ramp post generation
-		Ramp r = new Ramp(new DimensionVector(36, 36), new Dimension(12, 0), Direction.UP);
+		Ramp r = new Ramp(new DimensionVector(36, 72), new Dimension(18, 0), Direction.DOWN);
 		this.drawRamp(g, r);
 
 		// -- Sample diagram --

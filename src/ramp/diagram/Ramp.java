@@ -9,17 +9,19 @@ public class Ramp extends DiagramComponent {
 	/**
 	 * The constant width of a ramp (perpendicular to its railing).
 	 */
+	@Deprecated
 	public static final Dimension DEFAULT_WIDTH = new Dimension(40);
 
 	/**
 	 * Default minimum distance between posts of 2'.
 	 */
+	@Deprecated
 	public static final Dimension DEFAULT_MIN_POST_DISTANCE = new Dimension(2, 0);
 
 	/**
 	 * Default maximum distance between posts of 4'.
 	 */
-	public static final Dimension DEFAULT_MAX_POST_DISTANCE = new Dimension(4, 0);
+	public static final Dimension DEFAULT_MAX_POST_DISTANCE = new Dimension(6, 0);
 
 	/**
 	 * The distance from the ramp start to the ramp end (not the length of the ramp
@@ -114,9 +116,9 @@ public class Ramp extends DiagramComponent {
 	public Post[] generatePosts() {
 		// Calculate the number of spaces c by the following formula:
 		// c = (l - s) / I where l = length, s = post size, and I = ideal distance
-		double idealDist = Ramp.DEFAULT_MIN_POST_DISTANCE.getSum(Ramp.DEFAULT_MAX_POST_DISTANCE).getLength() / 2.0;
+//		double idealDist = Ramp.DEFAULT_MIN_POST_DISTANCE.getSum(Ramp.DEFAULT_MAX_POST_DISTANCE).getLength() / 2.0;
 		double insideLength = this.length.getSum(Post.DEFAULT_SIZE.getNegation()).getLength();
-		int spaceCount = (int) Math.floor(insideLength / idealDist);
+		int spaceCount = (int) Math.ceil(insideLength / Ramp.DEFAULT_MAX_POST_DISTANCE.getLength());
 
 		// Calculate the distance d between these posts by the following formula:
 		// d = (l - s) / c
