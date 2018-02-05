@@ -177,38 +177,50 @@ public class inputdata extends JFrame {
 		comboFromDeck.addItem("Center");
 		contentPane.add(comboFromDeck);
 		
-		JLabel lblNewLabel = new JLabel("");
-		sl_contentPane.putConstraint(SpringLayout.SOUTH, lblNewLabel, 10, SpringLayout.SOUTH, comboFromDeck);
-		lblNewLabel.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/House.png")));
-		sl_contentPane.putConstraint(SpringLayout.NORTH, lblNewLabel, 0, SpringLayout.NORTH, contentPane);
-		sl_contentPane.putConstraint(SpringLayout.WEST, lblNewLabel, 0, SpringLayout.WEST, contentPane);
-		sl_contentPane.putConstraint(SpringLayout.EAST, lblNewLabel, 0, SpringLayout.EAST, contentPane);
-		contentPane.add(lblNewLabel);
+		JLabel lblHouse = new JLabel("");
+		sl_contentPane.putConstraint(SpringLayout.SOUTH, lblHouse, 10, SpringLayout.SOUTH, comboFromDeck);
+		lblHouse.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/House.png")));
+		sl_contentPane.putConstraint(SpringLayout.NORTH, lblHouse, 0, SpringLayout.NORTH, contentPane);
+		sl_contentPane.putConstraint(SpringLayout.WEST, lblHouse, 0, SpringLayout.WEST, contentPane);
+		sl_contentPane.putConstraint(SpringLayout.EAST, lblHouse, 0, SpringLayout.EAST, contentPane);
+		contentPane.add(lblHouse);
 		
 		JButton btnSubmit = new JButton("Submit");
-		sl_contentPane.putConstraint(SpringLayout.WEST, btnSubmit, 0, SpringLayout.WEST, lblDimFt2);
 		sl_contentPane.putConstraint(SpringLayout.SOUTH, btnSubmit, -10, SpringLayout.SOUTH, contentPane);
+		sl_contentPane.putConstraint(SpringLayout.EAST, btnSubmit, -25, SpringLayout.EAST, contentPane);
 		contentPane.add(btnSubmit);
 		
+		JLabel lblInchesRemaining = new JLabel("Ramp inches remaining: ");
+		sl_contentPane.putConstraint(SpringLayout.EAST, lblInchesRemaining, -25, SpringLayout.WEST, btnSubmit);
+		lblInchesRemaining.setFont(new Font("Dialog", Font.PLAIN, 14));
+		lblInchesRemaining.setHorizontalAlignment(SwingConstants.RIGHT);
+		sl_contentPane.putConstraint(SpringLayout.NORTH, lblInchesRemaining, 0, SpringLayout.NORTH, btnSubmit);
+		contentPane.add(lblInchesRemaining);
+		
+		JScrollPane scrollRamps = new JScrollPane();
+		sl_contentPane.putConstraint(SpringLayout.NORTH, scrollRamps, 0, SpringLayout.SOUTH, lblHouse);
+		sl_contentPane.putConstraint(SpringLayout.WEST, scrollRamps, 10, SpringLayout.WEST, contentPane);
+		sl_contentPane.putConstraint(SpringLayout.SOUTH, scrollRamps, -5, SpringLayout.NORTH, btnSubmit);
+		sl_contentPane.putConstraint(SpringLayout.EAST, scrollRamps, -10, SpringLayout.EAST, contentPane);
+		contentPane.add(scrollRamps);
+		
+		JPanel scrollPanel = new JPanel();
+		scrollRamps.setViewportView(scrollPanel);
+		SpringLayout sl_scrollPanel = new SpringLayout();
+		scrollPanel.setLayout(sl_scrollPanel);
+		
+		
+		JLabel lblDeck = new JLabel("");
+		sl_scrollPanel.putConstraint(SpringLayout.NORTH, lblDeck, 5, SpringLayout.NORTH, scrollPanel);
+		sl_scrollPanel.putConstraint(SpringLayout.WEST, lblDeck, 337, SpringLayout.WEST, scrollPanel);
+		lblDeck.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/Deck.png")));
+		scrollPanel.add(lblDeck);
 		
 		JTextArea lblRampHor = new JTextArea();
 		JTextArea lblRampVert = new JTextArea();
 		JButton btnTurnAr = new JButton();
 		
-		guiUtility.setRamps(contentPane, sl_contentPane, lblRampHor, lblRampVert, btnTurnAr);
-		
-		JLabel lblHouseDeck = new JLabel("");
-		sl_contentPane.putConstraint(SpringLayout.NORTH, lblHouseDeck, 6, SpringLayout.SOUTH, comboFromDeck);
-		sl_contentPane.putConstraint(SpringLayout.WEST, lblHouseDeck, 10, SpringLayout.EAST, comboFromDeck);
-		lblHouseDeck.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/Deck.png")));
-		contentPane.add(lblHouseDeck);
-		
-		JLabel lblInchesRemaining = new JLabel("Ramp inches remaining: ");
-		lblInchesRemaining.setFont(new Font("Dialog", Font.PLAIN, 14));
-		lblInchesRemaining.setHorizontalAlignment(SwingConstants.RIGHT);
-		sl_contentPane.putConstraint(SpringLayout.NORTH, lblInchesRemaining, 0, SpringLayout.NORTH, btnSubmit);
-		sl_contentPane.putConstraint(SpringLayout.EAST, lblInchesRemaining, 0, SpringLayout.EAST, comboDimFtL);
-		contentPane.add(lblInchesRemaining);
+		guiUtility.setRamps(scrollPanel, sl_scrollPanel, lblRampHor, lblRampVert, btnTurnAr);
 		
 		
 		//listeners go last
@@ -241,12 +253,12 @@ public class inputdata extends JFrame {
 		//** changes direction of first ramp **//
 		comboFromDeck.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				guiUtility.setRampDirection(comboFromDeck.getSelectedIndex(), sl_contentPane, lblHouseDeck, lblRampHor, lblRampVert, btnTurnAr);
+				guiUtility.setRampDirection(comboFromDeck.getSelectedIndex(), sl_scrollPanel, lblDeck, lblRampHor, lblRampVert, btnTurnAr);
 			}
 		});
 		
 		//** click to change direction of first ramp **//
-		lblHouseDeck.addMouseListener(new MouseAdapter() {
+		lblDeck.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				if ((comboFromDeck.getSelectedIndex() + 1) >= comboFromDeck.getItemCount()){
@@ -254,7 +266,7 @@ public class inputdata extends JFrame {
 				} else {
 					comboFromDeck.setSelectedIndex(comboFromDeck.getSelectedIndex() + 1);
 				}
-				guiUtility.setRampDirection(comboFromDeck.getSelectedIndex(), sl_contentPane, lblHouseDeck, lblRampHor, lblRampVert, btnTurnAr);
+				guiUtility.setRampDirection(comboFromDeck.getSelectedIndex(), sl_scrollPanel, lblDeck, lblRampHor, lblRampVert, btnTurnAr);
 			}
 		});
 		
