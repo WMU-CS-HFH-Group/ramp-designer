@@ -88,14 +88,36 @@ public class Dimension implements Comparable<Dimension> {
 		return (int) Math.round(this.length * (double) denominator);
 	}
 
+	/**
+	 * Gets a new dimension that is the product of this dimension and an arbitrary
+	 * scalar.
+	 * 
+	 * @param scalar
+	 *            The scalar by which to multiply.
+	 * @return A new dimension with the product.
+	 */
 	public Dimension getScaled(double scalar) {
 		return new Dimension(this.length * scalar);
 	}
 
+	/**
+	 * Gets a new dimension which is the sum of this dimension and another.
+	 * 
+	 * @param d2
+	 *            Another dimension to add.
+	 * @return A new dimension with the sum. This dimension object will not be
+	 *         changed.
+	 */
 	public Dimension getSum(Dimension d2) {
 		return new Dimension(this.length + d2.getLength());
 	}
 
+	/**
+	 * Gets the negative of this dimension if it is positive, and vice-versa. Does
+	 * not change this dimension.
+	 * 
+	 * @return A new dimension containing the opposite sign dimension of this one.
+	 */
 	public Dimension getNegation() {
 		return new Dimension(-this.length);
 	}
