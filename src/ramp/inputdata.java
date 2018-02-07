@@ -198,6 +198,8 @@ public class inputdata extends JFrame {
 		contentPane.add(lblInchesRemaining);
 		
 		JScrollPane scrollRamps = new JScrollPane();
+		scrollRamps.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		scrollRamps.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 		sl_contentPane.putConstraint(SpringLayout.NORTH, scrollRamps, 0, SpringLayout.SOUTH, lblHouse);
 		sl_contentPane.putConstraint(SpringLayout.WEST, scrollRamps, 10, SpringLayout.WEST, contentPane);
 		sl_contentPane.putConstraint(SpringLayout.SOUTH, scrollRamps, -5, SpringLayout.NORTH, btnSubmit);
