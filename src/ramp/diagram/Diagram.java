@@ -322,6 +322,13 @@ public class Diagram extends Component {
 	}
 
 	private void drawSample(Graphics2D g) {
+		// Test dimension parsing.
+		try {
+			System.out.println(Dimension.inchesFromString("1 in"));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		// Test ramp post generation
 		Ramp r = new Ramp(new DimensionVector(36, 72), new Dimension(18, 0), Direction.DOWN);
 		this.drawRamp(g, r);
