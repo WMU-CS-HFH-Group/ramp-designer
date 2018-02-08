@@ -4,6 +4,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Dimension implements Comparable<Dimension> {
+	public static final int DEFAULT_DENOMINATOR = 8;
+	
 	/**
 	 * Length of the dimension in inches.
 	 */
@@ -211,43 +213,43 @@ public class Dimension implements Comparable<Dimension> {
 	 */
 	public String toString() {
 		String result = "";
-
-		int feet = this.getFeet();
-		int inches = this.getWholeInches();
-		double eighths = this.getInchFractional(8);
-
-		if (this.isNegligible()) {
-			// If the entire dimension is ~0, display 0 feet.
-			result = "0'";
-		} else {
-			// Display the feet part of the measurement if it is nonzero.
-			if (feet != 0) {
-				result += String.format("%d'", feet);
-			}
-
-			// Display the inches part of the measurement if it is nonzero.
-			if (inches != 0) {
-				result += String.format("%d", inches);
-
-				// Display the fractional part of the measurement if it is nonzero.
-				if (eighths != 0) {
-					if (eighths % 4 == 0) {
-						// If it can be reduced to halves, display halves.
-						result += String.format(" %d/2\"", eighths / 4);
-					} else if (eighths % 2 == 0) {
-						// If it can be reduced to fourths, display fourths.
-						result += String.format(" %d/4\"", eighths / 2);
-					} else {
-						// If it cannot be reduced, display eighths.
-						result += String.format(" %d/8\"", eighths);
-					}
-				} else {
-					result += "\"";
-				}
-			}
+		int eighths = this.getInchFractional(8);
+		String ft = String.format("%d", this.getFeet());
+		String in = String.format("%d", this.getWholeInches());
+		String frac = String.format("%d/8", eighths);
+		
+		// Simplify the fraction if it can be expressed with a power-of-two denominator.
+		if (eighths % 4 == 0) {
+			// If it can be reduced to halves, display halves.
+			frac = String.format("%d/2", eighths / 4);
+		} else if (eighths % 2 == 0) {
+			// If it can be reduced to fourths, display fourths.
+			frac = String.format("%d/4", eighths / 2);
 		}
-
-		return result;
+		
+		// Only concatenate strings for components that are nonzero.
+		if (this.isZero()) {
+			result = "0\"";
+		}
+		
+		if (this.getFeet() > 0) {
+			result += String.format("%s'", ft);
+		}
+		
+		if (this.getWholeInches() > 0) {
+			result += String.format(" %s", in);
+		}
+		
+		if (eighths > 0) {
+			result += String.format(" %s", frac);
+		}
+		
+		if (this.getInches() > 0) {
+			result += "\"";
+		}
+		
+		// Trim any whitespace off the beginning and end.
+		return result.trim();
 	}
 
 	/**
