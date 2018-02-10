@@ -3,7 +3,6 @@ package ramp.diagram;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.font.FontRenderContext;
-import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 
@@ -200,7 +199,111 @@ public class Diagram extends Component {
 	}
 
 	public void drawArrow(Graphics2D g, Arrow a) {
+		// Draw the line for the arrow.
+		DimensionVector destination = a.calculateDestination();
+		g.setColor(a.getColor());
+		g.setStroke(new BasicStroke(a.getThickness()));
+		g.drawLine(toPixels(a.getLocation().getX()), toPixels(a.getLocation().getY()), toPixels(destination.getX()),
+				toPixels(destination.getY()));
+
+		// If the label must be shown, draw a white rectangle behind it.
+		if (a.isLabelShown()) {
+			a.getLabel().setFont(this.labelFont);
+			Label l = a.centerLabel();
+			LabelSize labelSize = l.calculateSize();
+			int x = toPixels(l.getOrigin().getX()) - labelSize.getWidth() / 2;
+			int y = toPixels(l.getOrigin().getY()) - labelSize.getHeight() / 2;
+			g.setColor(Color.white); // TODO: background color variable
+			g.fillRect(x, y, labelSize.getWidth(), labelSize.getHeight());
+
+			// Draw the label.
+			a.updateLabelWithLength();
+			this.drawLabel(g, l);
+		}
+
+		// Draw the head on the destination.
+		int[] xPoints = new int[] { toPixels(destination.getX()), 0, 0 };
+		int[] yPoints = new int[] { toPixels(destination.getY()), 0, 0 };
+
+		int arrowSize = 48;
+
+		switch (a.getDirection()) {
+		case UP:
+			xPoints[1] = toPixels(destination.getX()) - arrowSize / 2;
+			yPoints[1] = toPixels(destination.getY()) + arrowSize;
+			
+			xPoints[2] = toPixels(destination.getX()) + arrowSize / 2;
+			yPoints[2] = toPixels(destination.getY()) + arrowSize;
+			break;
+		case DOWN:
+			xPoints[1] = toPixels(destination.getX()) - arrowSize / 2;
+			yPoints[1] = toPixels(destination.getY()) - arrowSize;
+			
+			xPoints[2] = toPixels(destination.getX()) + arrowSize / 2;
+			yPoints[2] = toPixels(destination.getY()) - arrowSize;
+			break;
+		case LEFT:
+			xPoints[1] = toPixels(destination.getX()) + arrowSize;
+			yPoints[1] = toPixels(destination.getY()) - arrowSize / 2;
+			
+			xPoints[2] = toPixels(destination.getX()) + arrowSize;
+			yPoints[2] = toPixels(destination.getY()) + arrowSize / 2;
+			break;
+		case RIGHT:
+		default:
+			xPoints[1] = toPixels(destination.getX()) - arrowSize;
+			yPoints[1] = toPixels(destination.getY()) - arrowSize / 2;
+			
+			xPoints[2] = toPixels(destination.getX()) - arrowSize;
+			yPoints[2] = toPixels(destination.getY()) + arrowSize / 2;
+			break;
+		}
 		
+		// Draw the arrow based on the calculated triangle.
+		g.setColor(a.getColor());
+		g.fillPolygon(xPoints, yPoints, 3);
+
+		// If the arrow is two-headed, draw one on the location point.
+		if (a.isTwoHeaded()) {
+			xPoints[0] = toPixels(a.getLocation().getX());
+			yPoints[0] = toPixels(a.getLocation().getY());
+			
+			// Flip the arrow's head and translate it to the other end.
+			switch (a.getDirection()) {
+			case DOWN:
+				xPoints[1] = toPixels(a.getLocation().getX()) - arrowSize / 2;
+				yPoints[1] = toPixels(a.getLocation().getY()) + arrowSize;
+
+				xPoints[2] = toPixels(a.getLocation().getX()) + arrowSize / 2;
+				yPoints[2] = toPixels(a.getLocation().getY()) + arrowSize;
+				break;
+			case UP:
+				xPoints[1] = toPixels(a.getLocation().getX()) - arrowSize / 2;
+				yPoints[1] = toPixels(a.getLocation().getY()) - arrowSize;
+
+				xPoints[2] = toPixels(a.getLocation().getX()) + arrowSize / 2;
+				yPoints[2] = toPixels(a.getLocation().getY()) - arrowSize;
+				break;
+			case RIGHT:
+				xPoints[1] = toPixels(a.getLocation().getX()) + arrowSize;
+				yPoints[1] = toPixels(a.getLocation().getY()) - arrowSize / 2;
+
+				xPoints[2] = toPixels(a.getLocation().getX()) + arrowSize;
+				yPoints[2] = toPixels(a.getLocation().getY()) + arrowSize / 2;
+				break;
+			case LEFT:
+			default:
+				xPoints[1] = toPixels(a.getLocation().getX()) - arrowSize;
+				yPoints[1] = toPixels(a.getLocation().getY()) - arrowSize / 2;
+
+				xPoints[2] = toPixels(a.getLocation().getX()) - arrowSize;
+				yPoints[2] = toPixels(a.getLocation().getY()) + arrowSize / 2;
+				break;
+			}
+			
+			// Draw the other head of the arrow.
+			g.fillPolygon(xPoints, yPoints, 3);
+		}
 	}
 
 	public void drawLabel(Graphics2D g, Label l) {
@@ -328,10 +431,14 @@ public class Diagram extends Component {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		// Test ramp post generation
 		Ramp r = new Ramp(new DimensionVector(36, 72), new Dimension(18, 0), Direction.DOWN);
 		this.drawRamp(g, r);
+		
+		// Test arrows.
+		Arrow a = new Arrow(new DimensionVector(0, 0), Direction.RIGHT, new Dimension(12, 0), 2, Color.black, true, new Label(), true);
+		this.drawArrow(g, a);
 
 		// -- Sample diagram --
 

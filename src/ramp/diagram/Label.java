@@ -132,6 +132,8 @@ public class Label {
 			if (lineR.getWidth() > width) {
 				width = lineR.getWidth();
 			}
+			System.out.println("width l: " + lineR.getWidth());
+			System.out.println("width: " + width);
 
 			// Increase the height.
 			height += lineHeight;
