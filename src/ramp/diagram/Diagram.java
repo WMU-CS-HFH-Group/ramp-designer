@@ -153,10 +153,6 @@ public class Diagram extends Component {
 			this.drawGrid(g, grid);
 		}
 
-		// Draw the diagram according to data.
-		g.setColor(Color.BLACK);
-		g.setStroke(new BasicStroke(2));
-
 		this.drawSample(g);
 	}
 
@@ -208,16 +204,11 @@ public class Diagram extends Component {
 
 		// If the label must be shown, draw a white rectangle behind it.
 		if (a.isLabelShown()) {
-			a.getLabel().setFont(this.labelFont);
-			Label l = a.centerLabel();
-			LabelSize labelSize = l.calculateSize();
-			int x = toPixels(l.getOrigin().getX()) - labelSize.getWidth() / 2;
-			int y = toPixels(l.getOrigin().getY()) - labelSize.getHeight() / 2;
-			g.setColor(Color.white); // TODO: background color variable
-			g.fillRect(x, y, labelSize.getWidth(), labelSize.getHeight());
+			// Generate a label with the arrow's length.
+			Label l = new Label(a.getLength().toString(), DimensionUtil.getMidpoint(a.getLocation(), destination),
+					Alignment.CENTER, Alignment.CENTER, labelFont, a.getColor());
 
 			// Draw the label.
-			a.updateLabelWithLength();
 			this.drawLabel(g, l);
 		}
 
@@ -231,21 +222,21 @@ public class Diagram extends Component {
 		case UP:
 			xPoints[1] = toPixels(destination.getX()) - arrowSize / 2;
 			yPoints[1] = toPixels(destination.getY()) + arrowSize;
-			
+
 			xPoints[2] = toPixels(destination.getX()) + arrowSize / 2;
 			yPoints[2] = toPixels(destination.getY()) + arrowSize;
 			break;
 		case DOWN:
 			xPoints[1] = toPixels(destination.getX()) - arrowSize / 2;
 			yPoints[1] = toPixels(destination.getY()) - arrowSize;
-			
+
 			xPoints[2] = toPixels(destination.getX()) + arrowSize / 2;
 			yPoints[2] = toPixels(destination.getY()) - arrowSize;
 			break;
 		case LEFT:
 			xPoints[1] = toPixels(destination.getX()) + arrowSize;
 			yPoints[1] = toPixels(destination.getY()) - arrowSize / 2;
-			
+
 			xPoints[2] = toPixels(destination.getX()) + arrowSize;
 			yPoints[2] = toPixels(destination.getY()) + arrowSize / 2;
 			break;
@@ -253,12 +244,12 @@ public class Diagram extends Component {
 		default:
 			xPoints[1] = toPixels(destination.getX()) - arrowSize;
 			yPoints[1] = toPixels(destination.getY()) - arrowSize / 2;
-			
+
 			xPoints[2] = toPixels(destination.getX()) - arrowSize;
 			yPoints[2] = toPixels(destination.getY()) + arrowSize / 2;
 			break;
 		}
-		
+
 		// Draw the arrow based on the calculated triangle.
 		g.setColor(a.getColor());
 		g.fillPolygon(xPoints, yPoints, 3);
@@ -267,7 +258,7 @@ public class Diagram extends Component {
 		if (a.isTwoHeaded()) {
 			xPoints[0] = toPixels(a.getLocation().getX());
 			yPoints[0] = toPixels(a.getLocation().getY());
-			
+
 			// Flip the arrow's head and translate it to the other end.
 			switch (a.getDirection()) {
 			case DOWN:
@@ -300,7 +291,7 @@ public class Diagram extends Component {
 				yPoints[2] = toPixels(a.getLocation().getY()) + arrowSize / 2;
 				break;
 			}
-			
+
 			// Draw the other head of the arrow.
 			g.fillPolygon(xPoints, yPoints, 3);
 		}
@@ -435,9 +426,9 @@ public class Diagram extends Component {
 		// Test ramp post generation
 		Ramp r = new Ramp(new DimensionVector(36, 72), new Dimension(18, 0), Direction.DOWN);
 		this.drawRamp(g, r);
-		
+
 		// Test arrows.
-		Arrow a = new Arrow(new DimensionVector(0, 0), Direction.RIGHT, new Dimension(12, 0), 2, Color.black, true, new Label(), true);
+		Arrow a = new Arrow(new DimensionVector(0, 0), Direction.RIGHT, new Dimension(12, 0), 2, Color.black, true, true);
 		this.drawArrow(g, a);
 
 		// -- Sample diagram --

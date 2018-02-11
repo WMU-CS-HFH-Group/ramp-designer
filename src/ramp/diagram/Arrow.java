@@ -2,20 +2,15 @@ package ramp.diagram;
 
 import java.awt.Color;
 
-import ramp.diagram.Label.Alignment;
 import ramp.geometry.Dimension;
-import ramp.geometry.DimensionUtil;
 import ramp.geometry.DimensionVector;
 
 public class Arrow extends DiagramComponent {
-	@Deprecated
-	private DimensionVector destination;
 	private Direction direction;
 	private Dimension length;
 	private int thickness;
 	private Color color;
 	private boolean twoHeaded;
-	private Label label;
 	private boolean labelShown;
 
 	/**
@@ -33,15 +28,13 @@ public class Arrow extends DiagramComponent {
 	 * @param labelShown
 	 *            Whether to display the label.
 	 */
-	public Arrow(DimensionVector location, Direction direction, Dimension length, int thickness, Color color, boolean twoHeaded,
-			Label label, boolean labelShown) {
+	public Arrow(DimensionVector location, Direction direction, Dimension length, int thickness, Color color, boolean twoHeaded, boolean labelShown) {
 		super(location);
 		this.direction = direction;
 		this.length = length;
 		this.thickness = thickness;
 		this.setColor(color);
 		this.twoHeaded = twoHeaded;
-		this.label = label;
 		this.labelShown = labelShown;
 	}
 
@@ -56,7 +49,7 @@ public class Arrow extends DiagramComponent {
 	 *            Whether to render a point on both ends of the arrow.
 	 */
 	public Arrow(DimensionVector location, Direction direction, Dimension length, int thickness, Color color, boolean twoHeaded) {
-		this(location, direction, length, thickness, color, twoHeaded, new Label(), false);
+		this(location, direction, length, thickness, color, twoHeaded, false);
 	}
 
 	/**
@@ -79,36 +72,6 @@ public class Arrow extends DiagramComponent {
 		default:
 			return this.getLocation().clone();
 		}
-	}
-
-	/**
-	 * Sets the alignment and location of the label of this arrow.
-	 * 
-	 * @return The label, after it has been modified.
-	 */
-	public Label centerLabel() {
-		this.label.setOrigin(DimensionUtil.getMidpoint(this.getLocation(), this.calculateDestination()));
-		this.label.setAlignmentX(Alignment.CENTER);
-		this.label.setAlignmentY(Alignment.CENTER);
-		return this.label;
-	}
-
-	/**
-	 * Sets the string of the label to the length of the arrow.
-	 * 
-	 * @return The distance between the arrow's location and destination.
-	 */
-	public Label updateLabelWithLength() {
-		this.label.setString(DimensionUtil.getDistance(this.getLocation(), this.calculateDestination()).toString());
-		return this.label;
-	}
-
-	public DimensionVector getDestination() {
-		return destination;
-	}
-
-	public void setDestination(DimensionVector destination) {
-		this.destination = destination;
 	}
 
 	public Direction getDirection() {
@@ -149,14 +112,6 @@ public class Arrow extends DiagramComponent {
 
 	public void setTwoHeaded(boolean twoHeaded) {
 		this.twoHeaded = twoHeaded;
-	}
-
-	public Label getLabel() {
-		return label;
-	}
-
-	public void setLabel(Label label) {
-		this.label = label;
 	}
 
 	public boolean isLabelShown() {
