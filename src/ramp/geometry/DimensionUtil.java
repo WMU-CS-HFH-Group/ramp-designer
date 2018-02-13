@@ -1,6 +1,7 @@
 package ramp.geometry;
 
 public class DimensionUtil {
+	@Deprecated
 	public static DimensionVector getVectorSum(DimensionVector... vs) throws VectorMismatchException {
 		if (vs.length > 0) {
 			DimensionVector sum = vs[0].clone();
@@ -25,6 +26,7 @@ public class DimensionUtil {
 	 * number of dimensions.
 	 * @throws VectorMismatchException 
 	 */
+	@Deprecated
 	public static DimensionVector getMidpoint(DimensionVector v1, DimensionVector v2) throws VectorMismatchException {
 		// If the vectors have the same number of dimensions, it is possible to find the
 		// midpoint.
@@ -44,6 +46,7 @@ public class DimensionUtil {
 	 * number of dimensions.
 	 * @throws VectorMismatchException 
 	 */
+	@Deprecated
 	public static Dimension getDistance(DimensionVector v1, DimensionVector v2) throws VectorMismatchException {
 		double result = 0;
 

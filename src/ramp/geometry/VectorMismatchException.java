@@ -1,6 +1,7 @@
 package ramp.geometry;
 
 @SuppressWarnings("serial")
+@Deprecated
 public class VectorMismatchException extends Exception {
 	private DimensionVector a, b;
 	

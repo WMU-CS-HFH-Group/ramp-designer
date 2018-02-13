@@ -2,6 +2,7 @@ package ramp.geometry;
 
 import java.util.Arrays;
 
+@Deprecated
 public class DimensionVector {
 	private Dimension[] components;
 
