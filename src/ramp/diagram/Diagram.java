@@ -11,10 +11,9 @@ import javax.swing.JFrame;
 import ramp.diagram.Label.Alignment;
 import ramp.diagram.Label.LabelSize;
 import ramp.geometry.Dimension;
-import ramp.geometry.DimensionOld;
 import ramp.geometry.DimensionUtil;
 import ramp.geometry.DimensionVector;
-import ramp.geometry.DimensionVector.VectorMismatchException;
+import ramp.geometry.VectorMismatchException;
 
 import java.util.ArrayList;
 
@@ -205,11 +204,16 @@ public class Diagram extends Component {
 		// If the label must be shown, draw a white rectangle behind it.
 		if (a.isLabelShown()) {
 			// Generate a label with the arrow's length.
-			Label l = new Label(a.getLength().toString(), DimensionUtil.getMidpoint(a.getLocation(), destination),
-					Alignment.CENTER, Alignment.CENTER, labelFont, a.getColor());
-
-			// Draw the label.
-			this.drawLabel(g, l);
+			try {
+				Label l;
+				l = new Label(a.getLength().toString(), DimensionUtil.getMidpoint(a.getLocation(), destination),
+						Alignment.CENTER, Alignment.CENTER, labelFont, a.getColor());
+				
+				// Draw the label.
+				this.drawLabel(g, l);
+			} catch (VectorMismatchException e) {
+				e.printStackTrace();
+			}
 		}
 
 		// Draw the head on the destination.
@@ -400,21 +404,6 @@ public class Diagram extends Component {
 				toPixels(p.getSize()));
 	}
 
-	@Deprecated
-	private void drawCenteredString(Graphics2D g, String s, DimensionVector location, Dimension offsetX,
-			Dimension offsetY) {
-		try {
-			this.drawStrings_(g, s, this.labelFont, location.getSum(new DimensionVector(offsetX, offsetY)), true);
-		} catch (VectorMismatchException e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Deprecated
-	private void drawCenteredString(Graphics2D g, String s, DimensionVector location) {
-		this.drawCenteredString(g, s, location, new Dimension(0), new Dimension(0));
-	}
-
 	private void drawSample(Graphics2D g) {
 		// Test dimension parsing.
 		try {
@@ -479,17 +468,10 @@ public class Diagram extends Component {
 				Diagram.toPixels(new Dimension(40)), Diagram.toPixels(new Dimension(20, 0)));
 		DimensionVector ramp1center = new DimensionVector(new Dimension(19, 6).add(new Dimension(20)),
 				new Dimension(14, 0).add(new Dimension(10, 0)));
-		// TODO: label rotation and arrows
-		this.drawCenteredString(g, "← 40\" →", ramp1center);
-		this.drawCenteredString(g, "20'", ramp1center, new Dimension(0), new Dimension(-3, 0));
-		this.drawCenteredString(g, "↑", ramp1center, new Dimension(0), new Dimension(-4, 0));
-		this.drawCenteredString(g, "↓", ramp1center, new Dimension(0), new Dimension(-2, 0));
 
 		// Turnaround
 		g.drawRect(Diagram.toPixels(new Dimension(19, 6)), Diagram.toPixels(new Dimension(34, 0)),
 				Diagram.toPixels(new Dimension(4, 0)), Diagram.toPixels(new Dimension(4, 0)));
-		this.drawCenteredString(g, "4' x 4'",
-				new DimensionVector(new Dimension(19, 6).add(new Dimension(2, 0)), new Dimension(36, 0)));
 
 		// Second ramp section
 		g.drawRect(Diagram.toPixels(new Dimension(19, 6).add(new Dimension(4, 0))),
@@ -498,10 +480,6 @@ public class Diagram extends Component {
 
 		DimensionVector ramp2center = new DimensionVector(new Dimension(23, 6).add(new Dimension(6, 0)),
 				new Dimension(34, 8).add(new Dimension(20)));
-		this.drawCenteredString(g, "← 12' →", ramp2center);
-		this.drawCenteredString(g, "40\"", ramp2center, new Dimension(-3, 0), new Dimension(0));
-		this.drawCenteredString(g, "↑", ramp2center, new Dimension(-3, 0), new Dimension(-1, 0));
-		this.drawCenteredString(g, "↓", ramp2center, new Dimension(-3, 0), new Dimension(1, 0));
 
 		// Driveway
 		g.drawRect(Diagram.toPixels(new Dimension(31, 6).add(new Dimension(4, 0))),

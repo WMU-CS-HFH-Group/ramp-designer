@@ -2,7 +2,7 @@ package ramp.diagram;
 
 import ramp.geometry.Dimension;
 import ramp.geometry.DimensionVector;
-import ramp.geometry.DimensionVector.VectorMismatchException;
+import ramp.geometry.VectorMismatchException;
 
 public class Landing extends DiagramComponent {
 	private DimensionVector size;
@@ -31,25 +31,29 @@ public class Landing extends DiagramComponent {
 	public Ramp newRamp(Dimension length, Direction direction, Dimension offset) {
 		DimensionVector location = this.getLocation().clone();
 
-		switch (direction) {
-		case LEFT:
-			// Find the center of the correct edge.
-			location.add(new Dimension(0), this.size.getY().getScaled(0.5));
-			// Move along the edge according to the ramp DEFAULT_WIDTH and offset.
-			location.add(new Dimension(0), Ramp.DEFAULT_WIDTH.getScaled(-0.5).getSum(offset));
-			break;
-		case RIGHT:
-			location.add(this.size.getX(), this.size.getY().getScaled(0.5));
-			location.add(new Dimension(0), Ramp.DEFAULT_WIDTH.getScaled(-0.5).getSum(offset));
-			break;
-		case UP:
-			location.add(this.size.getX().getScaled(0.5), new Dimension(0));
-			location.add(Ramp.DEFAULT_WIDTH.getScaled(-0.5).getSum(offset), new Dimension(0));
-			break;
-		default: // Down
-			location.add(this.size.getX().getScaled(0.5), this.size.getY());
-			location.add(Ramp.DEFAULT_WIDTH.getScaled(-0.5).getSum(offset), new Dimension(0));
-			break;
+		try {
+			switch (direction) {
+			case LEFT:
+				// Find the center of the correct edge.
+				location.add(new DimensionVector(new Dimension(0), this.size.getY().getScaled(0.5)));
+				// Move along the edge according to the ramp DEFAULT_WIDTH and offset.
+				location.add(new DimensionVector(new Dimension(0), Ramp.DEFAULT_WIDTH.getScaled(-0.5).getSum(offset)));
+				break;
+			case RIGHT:
+				location.add(new DimensionVector(this.size.getX(), this.size.getY().getScaled(0.5)));
+				location.add(new DimensionVector(new Dimension(0), Ramp.DEFAULT_WIDTH.getScaled(-0.5).getSum(offset)));
+				break;
+			case UP:
+				location.add(new DimensionVector(this.size.getX().getScaled(0.5), new Dimension(0)));
+				location.add(new DimensionVector(Ramp.DEFAULT_WIDTH.getScaled(-0.5).getSum(offset), new Dimension(0)));
+				break;
+			default: // Down
+				location.add(new DimensionVector(this.size.getX().getScaled(0.5), this.size.getY()));
+				location.add(new DimensionVector(Ramp.DEFAULT_WIDTH.getScaled(-0.5).getSum(offset), new Dimension(0)));
+				break;
+			}
+		} catch (VectorMismatchException e) {
+			
 		}
 
 		return new Ramp(location, length, direction);

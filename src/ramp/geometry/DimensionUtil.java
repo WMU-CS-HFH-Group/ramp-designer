@@ -1,32 +1,31 @@
 package ramp.geometry;
 
-import ramp.geometry.DimensionVector.VectorMismatchException;
-
 public class DimensionUtil {
-	public static DimensionVector getCenter(DimensionVector location, DimensionVector size) {
-		return new DimensionVector(location.getX().getSum(size.getX()), location.getY().getSum(size.getY()));
-	}
-
 	public static DimensionVector getVectorSum(DimensionVector... vs) throws VectorMismatchException {
 		if (vs.length > 0) {
 			DimensionVector sum = vs[0].clone();
 
 			for (int i = 1; i < vs.length; i++) {
-				sum.add(vs[i]);
+				if (vs[i].getSize() == sum.getSize()) {
+					sum.add(vs[i]);
+				} else {
+					throw new VectorMismatchException(sum, vs[i]);
+				}
 			}
 
 			return sum;
 		}
 
-		// Return an empty vector.
+		// Return an empty vector if there were none to begin with.
 		return new DimensionVector(new Dimension[] {});
 	}
 
 	/**
 	 * Calculates the midpoint between two vectors, as long as they have the same
 	 * number of dimensions.
+	 * @throws VectorMismatchException 
 	 */
-	public static DimensionVector getMidpoint(DimensionVector v1, DimensionVector v2) {
+	public static DimensionVector getMidpoint(DimensionVector v1, DimensionVector v2) throws VectorMismatchException {
 		// If the vectors have the same number of dimensions, it is possible to find the
 		// midpoint.
 		if (v1.getSize() == v2.getSize()) {
@@ -35,17 +34,17 @@ public class DimensionUtil {
 				m.getComponent(i).setLength((v1.getComponent(i).getLength() + v2.getComponent(i).getLength()) / 2.0);
 			}
 			return m;
+		} else {
+			throw new VectorMismatchException(v1, v2);
 		}
-
-		// Return an empty vector.
-		return new DimensionVector(new Dimension[] {});
 	}
 
 	/**
 	 * Gets the distance between two vectors in space, as long as they have the same
 	 * number of dimensions.
+	 * @throws VectorMismatchException 
 	 */
-	public static Dimension getDistance(DimensionVector v1, DimensionVector v2) {
+	public static Dimension getDistance(DimensionVector v1, DimensionVector v2) throws VectorMismatchException {
 		double result = 0;
 
 		if (v1.getSize() == v2.getSize()) {
@@ -54,6 +53,8 @@ public class DimensionUtil {
 				sumOfSquares += Math.pow(v2.getComponent(i).getLength() - v1.getComponent(i).getLength(), 2);
 			}
 			result = Math.sqrt(sumOfSquares);
+		} else {
+			throw new VectorMismatchException(v1, v2);
 		}
 
 		return new Dimension(result);

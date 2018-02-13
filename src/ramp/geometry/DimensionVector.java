@@ -64,28 +64,6 @@ public class DimensionVector {
 
 	// CALCULATIONS //
 
-	public DimensionVector getScaled(double scalar) {
-		return this.clone().scale(scalar);
-	}
-
-	/**
-	 * Adds a vector to this one and returns the result, as long as they are the
-	 * same length.
-	 * 
-	 * @param v2
-	 *            The other vector.
-	 * @return A new vector with the sum.
-	 * @throws VectorMismatchException
-	 *             If the vectors do not have the same length.
-	 */
-	public DimensionVector getSum(DimensionVector v2) throws VectorMismatchException {
-		return this.clone().add(v2);
-	}
-
-	public DimensionVector getNegated() {
-		return this.clone().negate();
-	}
-
 	public Dimension getMagnitude() {
 		double sumOfSquares = 0;
 
@@ -192,28 +170,23 @@ public class DimensionVector {
 	}
 
 	/**
-	 * Adds another vector to this one. If the sizes do not match, return this
-	 * vector, unmodified.
+	 * Adds another vector to this one.
 	 * 
 	 * @param v2
 	 *            Other vector to add.
 	 * @return The current vector, after it has been modified, if necessary.
+	 * @throws VectorMismatchException 
 	 */
-	public DimensionVector add(DimensionVector v2) {
+	public DimensionVector add(DimensionVector v2) throws VectorMismatchException {
 		if (v2.getSize() == this.getSize()) {
 			for (int i = 0; i < this.components.length; i++) {
 				this.getComponent(i).add(v2.getComponent(i));
 			}
+		} else {
+			throw new VectorMismatchException(this, v2);
 		}
+		
 		return this;
-	}
-
-	public DimensionVector add(Dimension... ds) {
-		return this.add(new DimensionVector(ds));
-	}
-
-	public DimensionVector add(double... ds) {
-		return this.add(new DimensionVector(ds));
 	}
 
 	public DimensionVector swapComponents(int i, int j) {
@@ -241,24 +214,5 @@ public class DimensionVector {
 		}
 		s += ")";
 		return s;
-	}
-
-	@SuppressWarnings("serial")
-	public class VectorMismatchException extends Exception {
-		private int length1, length2;
-
-		public VectorMismatchException(String s, int length1, int length2) {
-			super(s);
-			this.length1 = length1;
-			this.length2 = length2;
-		}
-
-		public int getLength1() {
-			return length1;
-		}
-
-		public int getLength2() {
-			return length2;
-		}
 	}
 }

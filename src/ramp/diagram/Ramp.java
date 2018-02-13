@@ -3,7 +3,7 @@ package ramp.diagram;
 import ramp.geometry.Dimension;
 import ramp.geometry.DimensionUtil;
 import ramp.geometry.DimensionVector;
-import ramp.geometry.DimensionVector.VectorMismatchException;
+import ramp.geometry.VectorMismatchException;
 
 public class Ramp extends DiagramComponent {
 	/**
@@ -91,23 +91,27 @@ public class Ramp extends DiagramComponent {
 	public Landing newLanding(DimensionVector size, Dimension offset) {
 		DimensionVector location = this.getLocation().clone();
 
-		switch (this.direction) {
-		case LEFT:
-			location.add(new Dimension(0), size.getY().getScaled(-0.5).add(Ramp.DEFAULT_WIDTH.getScaled(0.5)));
-			location.getY().add(offset);
-			break;
-		case RIGHT:
-			location.add(this.getLength(), size.getY().getScaled(-0.5).add(Ramp.DEFAULT_WIDTH.getScaled(0.5)));
-			location.getY().add(offset);
-			break;
-		case UP:
-			location.add(size.getX().getScaled(-0.5).add(Ramp.DEFAULT_WIDTH.getScaled(0.5)), new Dimension(0));
-			location.getX().add(offset);
-			break;
-		default:
-			location.add(size.getX().getScaled(-0.5).add(Ramp.DEFAULT_WIDTH.getScaled(0.5)), this.getLength());
-			location.getX().add(offset);
-			break;
+		try {
+			switch (this.direction) {
+			case LEFT:
+				location.add(new DimensionVector(new Dimension(0), size.getY().getScaled(-0.5).add(Ramp.DEFAULT_WIDTH.getScaled(0.5))));
+				location.getY().add(offset);
+				break;
+			case RIGHT:
+				location.add(new DimensionVector(this.getLength(), size.getY().getScaled(-0.5).add(Ramp.DEFAULT_WIDTH.getScaled(0.5))));
+				location.getY().add(offset);
+				break;
+			case UP:
+				location.add(new DimensionVector(size.getX().getScaled(-0.5).add(Ramp.DEFAULT_WIDTH.getScaled(0.5)), new Dimension(0)));
+				location.getX().add(offset);
+				break;
+			default:
+				location.add(new DimensionVector(size.getX().getScaled(-0.5).add(Ramp.DEFAULT_WIDTH.getScaled(0.5)), this.getLength()));
+				location.getX().add(offset);
+				break;
+			}
+		} catch (VectorMismatchException e) {
+			
 		}
 
 		return new Landing(location, size);
@@ -161,7 +165,11 @@ public class Ramp extends DiagramComponent {
 			}
 
 			// Add the post location vector to the ramp location's
-			postLocation.add(this.getLocation());
+			try {
+				postLocation.add(this.getLocation());
+			} catch (VectorMismatchException e) {
+				e.printStackTrace();
+			}
 
 			// Create the post
 			posts[i] = new Post(postLocation, Post.DEFAULT_SIZE);
