@@ -2,8 +2,8 @@ package ramp.diagram;
 
 import java.awt.Color;
 
+import ramp.geometry.Coordinate;
 import ramp.geometry.Dimension;
-import ramp.geometry.DimensionVector;
 
 public class Arrow extends DiagramComponent {
 	private Direction direction;
@@ -28,7 +28,7 @@ public class Arrow extends DiagramComponent {
 	 * @param labelShown
 	 *            Whether to display the label.
 	 */
-	public Arrow(DimensionVector location, Direction direction, Dimension length, int thickness, Color color, boolean twoHeaded, boolean labelShown) {
+	public Arrow(Coordinate location, Direction direction, Dimension length, int thickness, Color color, boolean twoHeaded, boolean labelShown) {
 		super(location);
 		this.direction = direction;
 		this.length = length;
@@ -48,7 +48,7 @@ public class Arrow extends DiagramComponent {
 	 * @param twoHeaded
 	 *            Whether to render a point on both ends of the arrow.
 	 */
-	public Arrow(DimensionVector location, Direction direction, Dimension length, int thickness, Color color, boolean twoHeaded) {
+	public Arrow(Coordinate location, Direction direction, Dimension length, int thickness, Color color, boolean twoHeaded) {
 		this(location, direction, length, thickness, color, twoHeaded, false);
 	}
 
@@ -57,18 +57,18 @@ public class Arrow extends DiagramComponent {
 	 * 
 	 * @return A dimension vector with the location of the other end of this arrow.
 	 */
-	public DimensionVector calculateDestination() {
+	public Coordinate calculateDestination() {
 		switch (this.direction) {
 		case UP:
-			return new DimensionVector(this.getLocation().getX(),
-					this.getLocation().getY().getSum(this.getLength().getNegation()));
+			return new Coordinate(this.getLocation().getX(),
+					this.getLocation().getY().clone().add(this.getLength().clone().negate()));
 		case DOWN:
-			return new DimensionVector(this.getLocation().getX(), this.getLocation().getY().getSum(this.getLength()));
+			return new Coordinate(this.getLocation().getX(), this.getLocation().getY().clone().add(this.getLength()));
 		case LEFT:
-			return new DimensionVector(this.getLocation().getX().getSum(this.getLength().getNegation()),
+			return new Coordinate(this.getLocation().getX().clone().add(this.getLength().clone().negate()),
 					this.getLocation().getY());
 		case RIGHT:
-			return new DimensionVector(this.getLocation().getX().getSum(this.getLength()), this.getLocation().getY());
+			return new Coordinate(this.getLocation().getX().clone().add(this.getLength()), this.getLocation().getY());
 		default:
 			return this.getLocation().clone();
 		}

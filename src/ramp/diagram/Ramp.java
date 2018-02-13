@@ -1,9 +1,7 @@
 package ramp.diagram;
 
+import ramp.geometry.Coordinate;
 import ramp.geometry.Dimension;
-import ramp.geometry.DimensionUtil;
-import ramp.geometry.DimensionVector;
-import ramp.geometry.VectorMismatchException;
 
 public class Ramp extends DiagramComponent {
 	/**
@@ -34,7 +32,7 @@ public class Ramp extends DiagramComponent {
 	 */
 	private Direction direction;
 
-	public Ramp(DimensionVector location, Dimension length, Direction direction) {
+	public Ramp(Coordinate location, Dimension length, Direction direction) {
 		super(location);
 		this.setLength(length);
 		this.setDirection(direction);
@@ -56,30 +54,30 @@ public class Ramp extends DiagramComponent {
 		this.direction = direction;
 	}
 
-	public DimensionVector getSize() {
+	public Coordinate getSize() {
 		switch (this.direction) {
 		case LEFT:
 		case RIGHT:
-			return new DimensionVector(this.getLength(), Ramp.DEFAULT_WIDTH);
+			return new Coordinate(this.getLength(), Ramp.DEFAULT_WIDTH);
 
 		case UP:
 		case DOWN:
-			return new DimensionVector(Ramp.DEFAULT_WIDTH, this.getLength());
+			return new Coordinate(Ramp.DEFAULT_WIDTH, this.getLength());
 
 		default:
-			return new DimensionVector(0, 0);
+			return new Coordinate(new Dimension(0), new Dimension(0));
 		}
 	}
 	
-	public DimensionVector getTopLeft() {
-		DimensionVector loc = this.getLocation().clone();
+	public Coordinate getTopLeft() {
+		Coordinate loc = this.getLocation().clone();
 		
 		switch (this.direction) {
 		case LEFT:
-			loc.getComponent(0).add(this.getLength().getNegation());
+			loc.getX().add(this.getLength().clone().negate());
 			break;
 		case UP:
-			loc.getComponent(1).add(this.getLength().getNegation());
+			loc.getY().add(this.getLength().clone().negate());
 			break;
 		default: // Right or down
 			// No transformations
@@ -88,30 +86,26 @@ public class Ramp extends DiagramComponent {
 		return loc;
 	}
 
-	public Landing newLanding(DimensionVector size, Dimension offset) {
-		DimensionVector location = this.getLocation().clone();
+	public Landing newLanding(Coordinate size, Dimension offset) {
+		Coordinate location = this.getLocation().clone();
 
-		try {
-			switch (this.direction) {
-			case LEFT:
-				location.add(new DimensionVector(new Dimension(0), size.getY().getScaled(-0.5).add(Ramp.DEFAULT_WIDTH.getScaled(0.5))));
-				location.getY().add(offset);
-				break;
-			case RIGHT:
-				location.add(new DimensionVector(this.getLength(), size.getY().getScaled(-0.5).add(Ramp.DEFAULT_WIDTH.getScaled(0.5))));
-				location.getY().add(offset);
-				break;
-			case UP:
-				location.add(new DimensionVector(size.getX().getScaled(-0.5).add(Ramp.DEFAULT_WIDTH.getScaled(0.5)), new Dimension(0)));
-				location.getX().add(offset);
-				break;
-			default:
-				location.add(new DimensionVector(size.getX().getScaled(-0.5).add(Ramp.DEFAULT_WIDTH.getScaled(0.5)), this.getLength()));
-				location.getX().add(offset);
-				break;
-			}
-		} catch (VectorMismatchException e) {
-			
+		switch (this.direction) {
+		case LEFT:
+			location.add(new Coordinate(new Dimension(0), size.getY().clone().scale(-0.5).add(Ramp.DEFAULT_WIDTH.clone().scale(0.5))));
+			location.getY().add(offset);
+			break;
+		case RIGHT:
+			location.add(new Coordinate(this.getLength(), size.getY().clone().scale(-0.5).add(Ramp.DEFAULT_WIDTH.clone().scale(0.5))));
+			location.getY().add(offset);
+			break;
+		case UP:
+			location.add(new Coordinate(size.getX().clone().scale(-0.5).add(Ramp.DEFAULT_WIDTH.clone().scale(0.5)), new Dimension(0)));
+			location.getX().add(offset);
+			break;
+		default:
+			location.add(new Coordinate(size.getX().clone().scale(-0.5).add(Ramp.DEFAULT_WIDTH.clone().scale(0.5)), this.getLength()));
+			location.getX().add(offset);
+			break;
 		}
 
 		return new Landing(location, size);
@@ -121,7 +115,7 @@ public class Ramp extends DiagramComponent {
 		// Calculate the number of spaces c by the following formula:
 		// c = (l - s) / I where l = length, s = post size, and I = ideal distance
 //		double idealDist = Ramp.DEFAULT_MIN_POST_DISTANCE.getSum(Ramp.DEFAULT_MAX_POST_DISTANCE).getLength() / 2.0;
-		double insideLength = this.length.getSum(Post.DEFAULT_SIZE.getNegation()).getLength();
+		double insideLength = this.length.clone().add(Post.DEFAULT_SIZE.clone().negate()).getLength();
 		int spaceCount = (int) Math.ceil(insideLength / Ramp.DEFAULT_MAX_POST_DISTANCE.getLength());
 
 		// Calculate the distance d between these posts by the following formula:
@@ -146,30 +140,27 @@ public class Ramp extends DiagramComponent {
 			}
 
 			// Perform coordinate calculations for the post based on the u, v coordinates
-			DimensionVector postLocation = new DimensionVector(pU, pV);
+			Coordinate postLocation = new Coordinate(new Dimension(pU), new Dimension(pV));
+			
 			switch (this.getDirection()) {
 			case LEFT:
-				postLocation.getComponent(1).negate();
-				postLocation.getComponent(1).add(Post.DEFAULT_SIZE.getNegation());
-				postLocation.swapComponents(0, 1);
+				postLocation.getY().negate();
+				postLocation.getY().add(Post.DEFAULT_SIZE.clone().negate());
+				postLocation.swapXY();
 				break;
 			case RIGHT:
-				postLocation.swapComponents(0, 1);
+				postLocation.swapXY();
 				break;
 			case UP:
-				postLocation.getComponent(1).negate();
-				postLocation.getComponent(1).add(Post.DEFAULT_SIZE.getNegation());
+				postLocation.getY().negate();
+				postLocation.getY().add(Post.DEFAULT_SIZE.clone().negate());
 				break;
 			default: // Down
 				// No transformations necessary
 			}
 
 			// Add the post location vector to the ramp location's
-			try {
-				postLocation.add(this.getLocation());
-			} catch (VectorMismatchException e) {
-				e.printStackTrace();
-			}
+			postLocation.add(this.getLocation());
 
 			// Create the post
 			posts[i] = new Post(postLocation, Post.DEFAULT_SIZE);

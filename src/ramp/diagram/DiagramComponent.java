@@ -1,20 +1,20 @@
 package ramp.diagram;
 
+import ramp.geometry.Coordinate;
 import ramp.geometry.Dimension;
-import ramp.geometry.DimensionVector;
 
 public abstract class DiagramComponent {
-	private DimensionVector location;
+	private Coordinate location;
 	
-	public DiagramComponent(DimensionVector location) {
+	public DiagramComponent(Coordinate location) {
 		this.location = location;
 	}
 
-	public DimensionVector getLocation() {
+	public Coordinate getLocation() {
 		return location;
 	}
 
-	public void setLocation(DimensionVector location) {
+	public void setLocation(Coordinate location) {
 		this.location = location;
 	}
 

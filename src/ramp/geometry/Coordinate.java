@@ -19,7 +19,7 @@ public class Coordinate {
 	public Coordinate(Dimension x, Dimension y) {
 		this(x, y, new Dimension(0));
 	}
-
+	
 	public Dimension getX() {
 		return x;
 	}
@@ -42,6 +42,13 @@ public class Coordinate {
 
 	public void setZ(Dimension z) {
 		this.z = z;
+	}
+	
+	public Coordinate swapXY() {
+		Dimension oldX = this.getX();
+		this.setX(this.getY());
+		this.setY(oldX);
+		return this;
 	}
 
 	public Coordinate scale(double scalar) {

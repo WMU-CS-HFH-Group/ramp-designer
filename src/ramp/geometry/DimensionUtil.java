@@ -1,5 +1,6 @@
 package ramp.geometry;
 
+@Deprecated
 public class DimensionUtil {
 	@Deprecated
 	public static DimensionVector getVectorSum(DimensionVector... vs) throws VectorMismatchException {
