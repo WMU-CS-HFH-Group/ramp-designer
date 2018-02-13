@@ -3,8 +3,6 @@ package ramp.diagram;
 import java.util.ArrayList;
 import java.util.List;
 
-import ramp.geometry.DimensionVector;
-
 /**
  * Represents a ramp with multiple sections. Provides convenience methods for
  * storing data for the ramp efficiently.
