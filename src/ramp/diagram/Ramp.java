@@ -49,6 +49,10 @@ public class Ramp {
 	public Section getSection(int index) {
 		return this.sections.get(index);
 	}
+	
+	public int countSections() {
+		return this.sections.size();
+	}
 
 	public Dimension calculateSectionHeight(int index) {
 		double hSum = 0;

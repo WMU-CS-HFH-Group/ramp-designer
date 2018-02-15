@@ -1,5 +1,6 @@
 package ramp.diagram;
 
+import ramp.geometry.Coordinate;
 import ramp.geometry.Dimension;
 
 public class Section {
@@ -54,4 +55,6 @@ public class Section {
 		this.landingWidth = landingWidth;
 		this.landingHeight = landingHeight;
 	}
+	
+	
 }
