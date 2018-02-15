@@ -339,7 +339,7 @@ public class Diagram extends Component {
 				toPixels(l.getSize().getY()));
 	}
 
-	public void drawRamp(Graphics2D g, Ramp r) {
+	public void drawRamp(Graphics2D g, RampSection r) {
 		// Set state
 		g.setStroke(new BasicStroke(2));
 
@@ -371,7 +371,7 @@ public class Diagram extends Component {
 		}
 
 		// Test ramp post generation
-		Ramp r = new Ramp(new Coordinate(new Dimension(36), new Dimension(72)), new Dimension(18, 0), Direction.DOWN);
+		RampSection r = new RampSection(new Coordinate(new Dimension(36), new Dimension(72)), new Dimension(18, 0), Direction.DOWN);
 		this.drawRamp(g, r);
 
 		// Test arrows.
