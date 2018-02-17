@@ -10,6 +10,7 @@ import javax.swing.JFrame;
 
 import ramp.diagram.Label.Alignment;
 import ramp.diagram.Label.LabelSize;
+import ramp.geometry.Box;
 import ramp.geometry.Coordinate;
 import ramp.geometry.Dimension;
 
@@ -157,9 +158,13 @@ public class Diagram extends Component {
 	public void drawRampTop(Graphics2D g, Ramp r) {
 		Dimension x = r.getLocation().getX();
 		Dimension y = r.getLocation().getY();
-		
+
 		// If this is true, the last section overlaps with this one.
 		boolean sectionOverlap = false;
+
+		Coordinate[] posts = new Coordinate[0];
+		
+		Box landingBox, rampBox;
 
 		for (int i = 0; i < r.countSections() && !sectionOverlap; i++) {
 			Section s = r.getSection(i);
@@ -181,7 +186,7 @@ public class Diagram extends Component {
 						x.add(ls.getRampWidth().clone().scale(0.5));
 						x.subtract(s.getLandingWidth().clone().scale(0.5));
 						x.subtract(s.getLandingOffset());
-						
+
 						y.subtract(s.getLandingLength());
 					}
 					break;
@@ -192,7 +197,7 @@ public class Diagram extends Component {
 						x.add(ls.getRampWidth().clone().scale(0.5));
 						x.subtract(s.getLandingWidth().clone().scale(0.5));
 						x.add(s.getLandingOffset());
-						
+
 						y.add(ls.getRampLength());
 					}
 					break;
@@ -201,7 +206,7 @@ public class Diagram extends Component {
 						sectionOverlap = true;
 					} else {
 						x.subtract(s.getLandingWidth());
-						
+
 						y.add(ls.getRampWidth().clone().scale(0.5));
 						y.subtract(s.getLandingLength().clone().scale(0.5));
 						y.add(s.getLandingOffset());
@@ -212,7 +217,7 @@ public class Diagram extends Component {
 						sectionOverlap = true;
 					} else {
 						x.add(s.getRampLength());
-						
+
 						y.add(ls.getRampWidth().clone().scale(0.5));
 						y.subtract(s.getLandingLength().clone().scale(0.5));
 						y.subtract(s.getLandingOffset());
@@ -226,8 +231,16 @@ public class Diagram extends Component {
 			// end.
 			if (!sectionOverlap) {
 				// Draw landing before ramp.
+				landingBox = new Box(new Coordinate(x, y), s.getLandingWidth(), s.getLandingLength());
 				g.drawRect(coord(x), coord(y), coord(s.getLandingWidth()), coord(s.getLandingLength()));
 
+				// Generate and draw a label for the landing.
+				Label landingLabel = new Label(String.format("%s x %s", s.getLandingWidth(), s.getLandingLength()), Alignment.CENTER,
+						Alignment.CENTER, labelFont, Color.black);
+				this.drawLabel(g, landingLabel, landingBox.getCenter());
+
+				rampBox = new Box(new Coordinate(x, y), new Dimension(0), new Dimension(0));
+				
 				// Draw ramp.
 				switch (s.getDirection()) {
 				case UP:
@@ -237,6 +250,13 @@ public class Diagram extends Component {
 					x.add(s.getLandingOffset());
 
 					y.subtract(s.getRampLength());
+					
+					rampBox.setWidth(s.getRampWidth());
+					rampBox.setHeight(s.getRampLength());
+					
+					// Generate posts for ramp.
+					posts = this.generatePosts(new Coordinate(x, y),
+							new Coordinate(s.getRampWidth(), s.getRampLength()), s.getDirection(), new Dimension(4));
 
 					g.drawRect(coord(x), coord(y), coord(s.getRampWidth()), coord(s.getRampLength()));
 					break;
@@ -247,6 +267,13 @@ public class Diagram extends Component {
 					x.add(s.getLandingOffset());
 
 					y.add(s.getLandingLength());
+					
+					rampBox.setWidth(s.getRampWidth());
+					rampBox.setHeight(s.getRampLength());
+					
+					// Generate posts for ramp.
+					posts = this.generatePosts(new Coordinate(x, y),
+							new Coordinate(s.getRampWidth(), s.getRampLength()), s.getDirection(), new Dimension(4));
 
 					g.drawRect(coord(x), coord(y), coord(s.getRampWidth()), coord(s.getRampLength()));
 					break;
@@ -257,6 +284,13 @@ public class Diagram extends Component {
 					y.add(s.getLandingLength().clone().scale(0.5));
 					y.subtract(s.getRampWidth().clone().scale(0.5));
 					y.add(s.getRampOffset());
+					
+					rampBox.setWidth(s.getRampLength());
+					rampBox.setHeight(s.getLandingWidth());
+					
+					// Generate posts for ramp.
+					posts = this.generatePosts(new Coordinate(x, y),
+							new Coordinate(s.getRampLength(), s.getRampWidth()), s.getDirection(), new Dimension(4));
 
 					g.drawRect(coord(x), coord(y), coord(s.getRampLength()), coord(s.getRampWidth()));
 					break;
@@ -267,10 +301,26 @@ public class Diagram extends Component {
 					y.add(s.getLandingLength().clone().scale(0.5));
 					y.subtract(s.getRampWidth().clone().scale(0.5));
 					y.subtract(s.getRampOffset());
+					
+					rampBox.setWidth(s.getRampLength());
+					rampBox.setHeight(s.getRampWidth());
+					
+					// Generate posts for ramp.
+					posts = this.generatePosts(new Coordinate(x, y),
+							new Coordinate(s.getRampLength(), s.getRampWidth()), s.getDirection(), new Dimension(4));
 
 					g.drawRect(coord(x), coord(y), coord(s.getRampLength()), coord(s.getRampWidth()));
 					break;
 				default:
+				}
+				
+				// Generate and draw labels for the ramp.
+				Label rampLengthLabel = new Label(s.getRampLength().toString(), Alignment.CENTER, Alignment.CENTER, labelFont, Color.BLACK);
+				this.drawLabel(g, rampLengthLabel, rampBox.getCenter());
+				
+				// Draw the posts
+				for (Coordinate c : posts) {
+					g.fillRect(coord(c.getX()), coord(c.getY()), coord(new Dimension(4)), coord(new Dimension(4)));
 				}
 			}
 		}
@@ -393,11 +443,10 @@ public class Diagram extends Component {
 		if (a.isLabelShown()) {
 			// Generate a label with the arrow's length.
 			Label l;
-			l = new Label(a.getLength().toString(), a.getLocation().getMidpoint(destination), Alignment.CENTER,
-					Alignment.CENTER, labelFont, a.getColor());
+			l = new Label(a.getLength().toString(), Alignment.CENTER, Alignment.CENTER, labelFont, a.getColor());
 
 			// Draw the label.
-			this.drawLabel(g, l);
+			this.drawLabel(g, l, a.getLocation().getMidpoint(destination));
 		}
 
 		// Draw the head on the destination.
@@ -485,11 +534,11 @@ public class Diagram extends Component {
 		}
 	}
 
-	public void drawLabel(Graphics2D g, Label l) {
+	public void drawLabel(Graphics2D g, Label l, Coordinate origin) {
 		LabelSize size = l.calculateSize();
 		String[] lines = l.toLines();
-		int x = Diagram.coord(l.getOrigin().getX());
-		int y = Diagram.coord(l.getOrigin().getY());
+		int x = coord(origin.getX());
+		int y = coord(origin.getY());
 
 		// Calculate the location of the bottom-left corner based on the vertical
 		// alignment.
