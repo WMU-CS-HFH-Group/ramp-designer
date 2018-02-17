@@ -159,19 +159,78 @@ public class Diagram extends Component {
 		Dimension y = r.getLocation().getY();
 
 		for (int i = 0; i < r.countSections(); i++) {
+			Section s = r.getSection(i);
+
+			// Set graphics settings.
+			g.setColor(Color.BLACK);
+			g.setStroke(new BasicStroke(2));
+
+			// Draw landing before ramp.
+			g.drawRect(coord(x), coord(y), coord(s.getLandingWidth()), coord(s.getLandingLength()));
+
+			// Draw ramp.
+			switch (s.getDirection()) {
+			case UP:
+				break;
+			case DOWN:
+				// Adjust x and y for ramp.
+				x.add(s.getLandingWidth().clone().scale(0.5));
+				x.subtract(s.getRampWidth().clone().scale(0.5));
+				x.add(s.getLandingOffset());
+				
+				y.add(s.getLandingLength());
+
+				g.drawRect(coord(x), coord(y), coord(s.getRampWidth()), coord(s.getRampLength()));
+
+				// Adjust x and y for next section.
+				if (i < r.countSections() - 1) {
+					Section s2 = r.getSection(i + 1);
+
+					x.add(s.getRampWidth().clone().scale(0.5));
+					x.subtract(s2.getLandingWidth().clone().scale(0.5));
+					x.add(s2.getLandingOffset());
+
+					y.add(s.getRampLength());
+				}
+				break;
+			case LEFT:
+			case RIGHT:
+				// Adjust x and y for ramp.
+				x.add(s.getLandingWidth());
+				
+				y.add(s.getLandingLength().clone().scale(0.5));
+				y.subtract(s.getRampWidth().clone().scale(0.5));
+				y.add(s.getRampOffset());
+
+				g.drawRect(coord(x), coord(y), coord(s.getRampLength()), coord(s.getRampWidth()));
+
+				// Adjust x and y for next section.
+				if (i < r.countSections() - 1) {
+					Section s2 = r.getSection(i + 1);
+
+					x.add(s.getRampLength());
+
+					y.add(s.getRampWidth().clone().scale(0.5));
+					y.subtract(s2.getRampWidth().clone().scale(0.5));
+					y.add(s2.getLandingOffset());
+				}
+				break;
+			default:
+			}
 
 		}
 	}
-	
-	private Coordinate[] generatePosts(Coordinate rampLocation, Coordinate rampSize, Direction rampDirection, Dimension postSize) {
+
+	private Coordinate[] generatePosts(Coordinate rampLocation, Coordinate rampSize, Direction rampDirection,
+			Dimension postSize) {
 		Dimension rampWidth = rampSize.getX();
 		Dimension rampLength = rampSize.getY();
-		
+
 		if (rampDirection == Direction.LEFT || rampDirection == Direction.RIGHT) {
 			rampWidth = rampSize.getY();
 			rampLength = rampSize.getX();
 		}
-		
+
 		double insideLength = rampLength.clone().add(postSize.clone().negate()).getLength();
 		int spaceCount = (int) Math.ceil(insideLength / MAX_POST_SPACE.getLength());
 
@@ -198,7 +257,7 @@ public class Diagram extends Component {
 
 			// Perform coordinate calculations for the post based on the u, v coordinates
 			Coordinate postLocation = new Coordinate(new Dimension(pU), new Dimension(pV));
-			
+
 			switch (rampDirection) {
 			case LEFT:
 				postLocation.getY().negate();
@@ -407,81 +466,79 @@ public class Diagram extends Component {
 	}
 
 	private void drawSample(Graphics2D g) {
-		// Test dimension parsing.
-		try {
-			System.out.println(Dimension.inchesFromString("1 in"));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		// Draw ramp.
+		Ramp r = new Ramp(new Dimension(36), new Coordinate(new Dimension(18, 0), new Dimension(8, 0)));
+		r.addSection(Direction.DOWN, new Dimension(0), new Dimension(0), new Dimension(40), new Dimension(24, 0),
+				new Dimension(6, 0), new Dimension(6, 0));
+		r.addSection(Direction.RIGHT, new Dimension(4), new Dimension(-4), new Dimension(40), new Dimension(12, 0),
+				new Dimension(4, 0), new Dimension(4, 0));
 
-		// Test arrows.
-		Arrow a = new Arrow(new Coordinate(new Dimension(0), new Dimension(0)), Direction.RIGHT, new Dimension(12, 0),
-				2, Color.black, true, true);
-		this.drawArrow(g, a);
+		this.drawRampTop(g, r);
 
-		// -- Sample diagram --
-
-		// Title
-		Font titleFont = new Font("Arial", Font.BOLD, 100);
-		Label title = new Label("Hickory Hills Mobile Home Park #63",
-				new Coordinate(new Dimension(12), new Dimension(12)), titleFont);
-		Label subtitle = new Label("36\" Rise Sidewalk to Landing\nAll Treated Lumber\n12:1 Slope Ratio (or more)",
-				new Coordinate(new Dimension(12), new Dimension(24)), labelFont);
-		this.drawLabel(g, title);
-		this.drawLabel(g, subtitle);
-
-		// Old Title
-		// g.setFont(new Font("Arial", Font.BOLD, 100));
-		// g.drawString("Hickory Hills Mobile Home Park #63", new Dimension(1,
-		// 0).toFractionalParts(8),
-		// new Dimension(1, 0).toFractionalParts(8));
-		// g.setFont(new Font("Arial", Font.PLAIN, 100));
-		// g.drawString("36\" Rise Sidewalk to Landing", new Dimension(1,
-		// 0).toFractionalParts(8),
-		// new Dimension(2, 0).toFractionalParts(8));
-		// g.drawString("All Treated Lumber", new Dimension(1, 0).toFractionalParts(8),
-		// new Dimension(3, 0).toFractionalParts(8));
-		// g.drawString("12:1 Slope Ratio (or more)", new Dimension(1,
-		// 0).toFractionalParts(8),
-		// new Dimension(4, 0).toFractionalParts(8));
-
-		g.setFont(new Font("Arial", Font.PLAIN, 100));
-
-		// House
-		g.drawRect(Diagram.coord(new Dimension(24, 0)), Diagram.coord(new Dimension(0)),
-				Diagram.coord(new Dimension(24, 0)), Diagram.coord(new Dimension(32, 0)));
-		Label houseLabel = new Label("House", new Coordinate(new Dimension(27, 0), new Dimension(15, 0)),
-				Alignment.CENTER, Alignment.CENTER, labelFont, Color.BLACK);
-		this.drawLabel(g, houseLabel);
-
-		// Landing
-		g.drawRect(Diagram.coord(new Dimension(18, 0)), Diagram.coord(new Dimension(8, 0)),
-				Diagram.coord(new Dimension(6, 0)), Diagram.coord(new Dimension(6, 0)));
-		Label landingLabel = new Label("6'x6' Landing",
-				new Coordinate(new Dimension(36).add(new Dimension(18 * 12)),
-						new Dimension(36).add(new Dimension(8 * 12))),
-				Alignment.CENTER, Alignment.CENTER, labelFont, Color.BLACK);
-		this.drawLabel(g, landingLabel);
-
-		// First ramp section
-		g.drawRect(Diagram.coord(new Dimension(19, 6)), Diagram.coord(new Dimension(14, 0)),
-				Diagram.coord(new Dimension(40)), Diagram.coord(new Dimension(20, 0)));
-
-		// Turnaround
-		g.drawRect(Diagram.coord(new Dimension(19, 6)), Diagram.coord(new Dimension(34, 0)),
-				Diagram.coord(new Dimension(4, 0)), Diagram.coord(new Dimension(4, 0)));
-
-		// Second ramp section
-		g.drawRect(Diagram.coord(new Dimension(19, 6).add(new Dimension(4, 0))),
-				Diagram.coord(new Dimension(35, 0).add(new Dimension(4).clone().negate())),
-				Diagram.coord(new Dimension(12, 0)), Diagram.coord(new Dimension(40)));
-
-		// Driveway
-		g.drawRect(Diagram.coord(new Dimension(31, 6).add(new Dimension(4, 0))), Diagram.coord(new Dimension(32, 0)),
-				Diagram.coord(new Dimension(40, 0)), Diagram.coord(new Dimension(10, 0)));
-		Label drivewayLabel = new Label("Driveway", new Coordinate(new Dimension(37, 0), new Dimension(37, 0)),
-				Alignment.CENTER, Alignment.CENTER, labelFont, Color.BLACK);
-		this.drawLabel(g, drivewayLabel);
+		/*
+		 * // Test dimension parsing. try {
+		 * System.out.println(Dimension.inchesFromString("1 in")); } catch (Exception e)
+		 * { e.printStackTrace(); }
+		 * 
+		 * // Test arrows. Arrow a = new Arrow(new Coordinate(new Dimension(0), new
+		 * Dimension(0)), Direction.RIGHT, new Dimension(12, 0), 2, Color.black, true,
+		 * true); this.drawArrow(g, a);
+		 * 
+		 * // -- Sample diagram --
+		 * 
+		 * // Title Font titleFont = new Font("Arial", Font.BOLD, 100); Label title =
+		 * new Label("Hickory Hills Mobile Home Park #63", new Coordinate(new
+		 * Dimension(12), new Dimension(12)), titleFont); Label subtitle = new
+		 * Label("36\" Rise Sidewalk to Landing\nAll Treated Lumber\n12:1 Slope Ratio (or more)"
+		 * , new Coordinate(new Dimension(12), new Dimension(24)), labelFont);
+		 * this.drawLabel(g, title); this.drawLabel(g, subtitle);
+		 * 
+		 * // Old Title // g.setFont(new Font("Arial", Font.BOLD, 100)); //
+		 * g.drawString("Hickory Hills Mobile Home Park #63", new Dimension(1, //
+		 * 0).toFractionalParts(8), // new Dimension(1, 0).toFractionalParts(8)); //
+		 * g.setFont(new Font("Arial", Font.PLAIN, 100)); //
+		 * g.drawString("36\" Rise Sidewalk to Landing", new Dimension(1, //
+		 * 0).toFractionalParts(8), // new Dimension(2, 0).toFractionalParts(8)); //
+		 * g.drawString("All Treated Lumber", new Dimension(1, 0).toFractionalParts(8),
+		 * // new Dimension(3, 0).toFractionalParts(8)); //
+		 * g.drawString("12:1 Slope Ratio (or more)", new Dimension(1, //
+		 * 0).toFractionalParts(8), // new Dimension(4, 0).toFractionalParts(8));
+		 * 
+		 * g.setFont(new Font("Arial", Font.PLAIN, 100));
+		 * 
+		 * // House g.drawRect(Diagram.coord(new Dimension(24, 0)), Diagram.coord(new
+		 * Dimension(0)), Diagram.coord(new Dimension(24, 0)), Diagram.coord(new
+		 * Dimension(32, 0))); Label houseLabel = new Label("House", new Coordinate(new
+		 * Dimension(27, 0), new Dimension(15, 0)), Alignment.CENTER, Alignment.CENTER,
+		 * labelFont, Color.BLACK); this.drawLabel(g, houseLabel);
+		 * 
+		 * // Landing g.drawRect(Diagram.coord(new Dimension(18, 0)), Diagram.coord(new
+		 * Dimension(8, 0)), Diagram.coord(new Dimension(6, 0)), Diagram.coord(new
+		 * Dimension(6, 0))); Label landingLabel = new Label("6'x6' Landing", new
+		 * Coordinate(new Dimension(36).add(new Dimension(18 * 12)), new
+		 * Dimension(36).add(new Dimension(8 * 12))), Alignment.CENTER,
+		 * Alignment.CENTER, labelFont, Color.BLACK); this.drawLabel(g, landingLabel);
+		 * 
+		 * // First ramp section g.drawRect(Diagram.coord(new Dimension(19, 6)),
+		 * Diagram.coord(new Dimension(14, 0)), Diagram.coord(new Dimension(40)),
+		 * Diagram.coord(new Dimension(20, 0)));
+		 * 
+		 * // Turnaround g.drawRect(Diagram.coord(new Dimension(19, 6)),
+		 * Diagram.coord(new Dimension(34, 0)), Diagram.coord(new Dimension(4, 0)),
+		 * Diagram.coord(new Dimension(4, 0)));
+		 * 
+		 * // Second ramp section g.drawRect(Diagram.coord(new Dimension(19, 6).add(new
+		 * Dimension(4, 0))), Diagram.coord(new Dimension(35, 0).add(new
+		 * Dimension(4).clone().negate())), Diagram.coord(new Dimension(12, 0)),
+		 * Diagram.coord(new Dimension(40)));
+		 * 
+		 * // Driveway g.drawRect(Diagram.coord(new Dimension(31, 6).add(new
+		 * Dimension(4, 0))), Diagram.coord(new Dimension(32, 0)), Diagram.coord(new
+		 * Dimension(40, 0)), Diagram.coord(new Dimension(10, 0))); Label drivewayLabel
+		 * = new Label("Driveway", new Coordinate(new Dimension(37, 0), new
+		 * Dimension(37, 0)), Alignment.CENTER, Alignment.CENTER, labelFont,
+		 * Color.BLACK); this.drawLabel(g, drivewayLabel);
+		 */
 	}
 
 	public static int coord(Dimension d) {

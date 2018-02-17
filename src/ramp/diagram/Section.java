@@ -1,24 +1,28 @@
 package ramp.diagram;
 
-import ramp.geometry.Coordinate;
 import ramp.geometry.Dimension;
 
 public class Section {
 	private Direction direction;
-	private Dimension offset;
-	private Dimension rampLength;
-	
-	private Dimension landingWidth, landingHeight;
-	
-	public Section(Direction direction, Dimension offset, Dimension rampLength, Dimension landingWidth, Dimension landingHeight) {
+	private Dimension landingOffset, rampOffset;
+	private Dimension rampWidth, rampLength;
+
+	private Dimension landingWidth, landingLength;
+
+	public Section(Direction direction, Dimension landingOffset, Dimension rampOffset, Dimension rampWidth, Dimension rampLength, Dimension landingWidth,
+			Dimension landingLength) {
 		this.direction = direction;
-		this.offset = offset;
-		this.rampLength = rampLength;
 		
+		this.landingOffset = landingOffset;
+		this.rampOffset = rampOffset;
+		
+		this.rampWidth = rampWidth;
+		this.rampLength = rampLength;
+
 		this.landingWidth = landingWidth;
-		this.landingHeight = landingHeight;
+		this.landingLength = landingLength;
 	}
-	
+
 	public Direction getDirection() {
 		return direction;
 	}
@@ -27,12 +31,28 @@ public class Section {
 		this.direction = direction;
 	}
 
-	public Dimension getOffset() {
-		return offset;
+	public Dimension getLandingOffset() {
+		return landingOffset;
 	}
 
-	public void setOffset(Dimension offset) {
-		this.offset = offset;
+	public void setLandingOffset(Dimension landingOffset) {
+		this.landingOffset = landingOffset;
+	}
+
+	public Dimension getRampOffset() {
+		return rampOffset;
+	}
+
+	public void setRampOffset(Dimension offset) {
+		this.rampOffset = offset;
+	}
+
+	public Dimension getRampWidth() {
+		return rampWidth;
+	}
+
+	public void setRampWidth(Dimension rampWidth) {
+		this.rampWidth = rampWidth;
 	}
 
 	public Dimension getRampLength() {
@@ -46,15 +66,14 @@ public class Section {
 	public Dimension getLandingWidth() {
 		return landingWidth;
 	}
-	
-	public Dimension getLandingHeight() {
-		return landingHeight;
+
+	public Dimension getLandingLength() {
+		return landingLength;
 	}
-	
-	public void setLandingSize(Dimension landingWidth, Dimension landingHeight) {
+
+	public void setLandingSize(Dimension landingWidth, Dimension landingLength) {
 		this.landingWidth = landingWidth;
-		this.landingHeight = landingHeight;
+		this.landingLength = landingLength;
 	}
-	
-	
+
 }

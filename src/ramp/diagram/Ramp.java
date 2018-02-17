@@ -40,9 +40,9 @@ public class Ramp {
 		this.sections.add(section);
 	}
 
-	public void addSection(Direction direction, Dimension offset, Dimension rampLength, Dimension landingWidth,
+	public void addSection(Direction direction, Dimension landingOffset,  Dimension rampOffset, Dimension rampWidth, Dimension rampLength, Dimension landingWidth,
 			Dimension landingHeight) {
-		Section s = new Section(direction, offset, rampLength, landingWidth, landingHeight);
+		Section s = new Section(direction, landingOffset, rampOffset, rampWidth,  rampLength, landingWidth, landingHeight);
 		this.addSection(s);
 	}
 
