@@ -157,67 +157,122 @@ public class Diagram extends Component {
 	public void drawRampTop(Graphics2D g, Ramp r) {
 		Dimension x = r.getLocation().getX();
 		Dimension y = r.getLocation().getY();
+		
+		// If this is true, the last section overlaps with this one.
+		boolean sectionOverlap = false;
 
-		for (int i = 0; i < r.countSections(); i++) {
+		for (int i = 0; i < r.countSections() && !sectionOverlap; i++) {
 			Section s = r.getSection(i);
 
 			// Set graphics settings.
 			g.setColor(Color.BLACK);
 			g.setStroke(new BasicStroke(2));
 
-			// Draw landing before ramp.
-			g.drawRect(coord(x), coord(y), coord(s.getLandingWidth()), coord(s.getLandingLength()));
+			// Adjust coordinates based on last ramp section.
+			if (i > 0) {
+				Section ls = r.getSection(i - 1);
 
-			// Draw ramp.
-			switch (s.getDirection()) {
-			case UP:
-				break;
-			case DOWN:
-				// Adjust x and y for ramp.
-				x.add(s.getLandingWidth().clone().scale(0.5));
-				x.subtract(s.getRampWidth().clone().scale(0.5));
-				x.add(s.getLandingOffset());
-				
-				y.add(s.getLandingLength());
-
-				g.drawRect(coord(x), coord(y), coord(s.getRampWidth()), coord(s.getRampLength()));
-
-				// Adjust x and y for next section.
-				if (i < r.countSections() - 1) {
-					Section s2 = r.getSection(i + 1);
-
-					x.add(s.getRampWidth().clone().scale(0.5));
-					x.subtract(s2.getLandingWidth().clone().scale(0.5));
-					x.add(s2.getLandingOffset());
-
-					y.add(s.getRampLength());
+				// Adjust x and y for landing.
+				switch (ls.getDirection()) {
+				case UP:
+					if (s.getDirection() == Direction.DOWN) {
+						sectionOverlap = true;
+					} else {
+						x.add(ls.getRampWidth().clone().scale(0.5));
+						x.subtract(s.getLandingWidth().clone().scale(0.5));
+						x.subtract(s.getLandingOffset());
+						
+						y.subtract(s.getLandingLength());
+					}
+					break;
+				case DOWN:
+					if (s.getDirection() == Direction.UP) {
+						sectionOverlap = true;
+					} else {
+						x.add(ls.getRampWidth().clone().scale(0.5));
+						x.subtract(s.getLandingWidth().clone().scale(0.5));
+						x.add(s.getLandingOffset());
+						
+						y.add(ls.getRampLength());
+					}
+					break;
+				case LEFT:
+					if (s.getDirection() == Direction.RIGHT) {
+						sectionOverlap = true;
+					} else {
+						x.subtract(s.getLandingWidth());
+						
+						y.add(ls.getRampWidth().clone().scale(0.5));
+						y.subtract(s.getLandingLength().clone().scale(0.5));
+						y.add(s.getLandingOffset());
+					}
+					break;
+				case RIGHT:
+					if (s.getDirection() == Direction.LEFT) {
+						sectionOverlap = true;
+					} else {
+						x.add(s.getRampLength());
+						
+						y.add(ls.getRampWidth().clone().scale(0.5));
+						y.subtract(s.getLandingLength().clone().scale(0.5));
+						y.subtract(s.getLandingOffset());
+					}
+					break;
+				default:
 				}
-				break;
-			case LEFT:
-			case RIGHT:
-				// Adjust x and y for ramp.
-				x.add(s.getLandingWidth());
-				
-				y.add(s.getLandingLength().clone().scale(0.5));
-				y.subtract(s.getRampWidth().clone().scale(0.5));
-				y.add(s.getRampOffset());
-
-				g.drawRect(coord(x), coord(y), coord(s.getRampLength()), coord(s.getRampWidth()));
-
-				// Adjust x and y for next section.
-				if (i < r.countSections() - 1) {
-					Section s2 = r.getSection(i + 1);
-
-					x.add(s.getRampLength());
-
-					y.add(s.getRampWidth().clone().scale(0.5));
-					y.subtract(s2.getRampWidth().clone().scale(0.5));
-					y.add(s2.getLandingOffset());
-				}
-				break;
-			default:
 			}
 
+			// If the last section overlaps, do not draw this section. The ramp will also
+			// end.
+			if (!sectionOverlap) {
+				// Draw landing before ramp.
+				g.drawRect(coord(x), coord(y), coord(s.getLandingWidth()), coord(s.getLandingLength()));
+
+				// Draw ramp.
+				switch (s.getDirection()) {
+				case UP:
+					// Adjust x and y for ramp.
+					x.add(s.getLandingWidth().clone().scale(0.5));
+					x.subtract(s.getRampWidth().clone().scale(0.5));
+					x.add(s.getLandingOffset());
+
+					y.subtract(s.getRampLength());
+
+					g.drawRect(coord(x), coord(y), coord(s.getRampWidth()), coord(s.getRampLength()));
+					break;
+				case DOWN:
+					// Adjust x and y for ramp.
+					x.add(s.getLandingWidth().clone().scale(0.5));
+					x.subtract(s.getRampWidth().clone().scale(0.5));
+					x.add(s.getLandingOffset());
+
+					y.add(s.getLandingLength());
+
+					g.drawRect(coord(x), coord(y), coord(s.getRampWidth()), coord(s.getRampLength()));
+					break;
+				case LEFT:
+					// Adjust x and y for ramp.
+					x.subtract(s.getRampLength());
+
+					y.add(s.getLandingLength().clone().scale(0.5));
+					y.subtract(s.getRampWidth().clone().scale(0.5));
+					y.add(s.getRampOffset());
+
+					g.drawRect(coord(x), coord(y), coord(s.getRampLength()), coord(s.getRampWidth()));
+					break;
+				case RIGHT:
+					// Adjust x and y for ramp.
+					x.add(s.getLandingWidth());
+
+					y.add(s.getLandingLength().clone().scale(0.5));
+					y.subtract(s.getRampWidth().clone().scale(0.5));
+					y.subtract(s.getRampOffset());
+
+					g.drawRect(coord(x), coord(y), coord(s.getRampLength()), coord(s.getRampWidth()));
+					break;
+				default:
+				}
+			}
 		}
 	}
 
