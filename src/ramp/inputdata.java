@@ -157,16 +157,17 @@ public class inputdata extends JFrame {
 		sl_contentPane.putConstraint(SpringLayout.WEST, lblStyle, 0, SpringLayout.WEST, lblHeightOfDeck);
 		contentPane.add(lblStyle);
 		
-		JComboBox<Integer> comboRampIn = new JComboBox<Integer>();
-		sl_contentPane.putConstraint(SpringLayout.NORTH, comboRampIn, 0, SpringLayout.NORTH, lblStyle);
-		sl_contentPane.putConstraint(SpringLayout.WEST, comboRampIn, 6, SpringLayout.EAST, lblStyle);
-		sl_contentPane.putConstraint(SpringLayout.EAST, comboRampIn, 59, SpringLayout.EAST, lblStyle);
-		guiUtility.setComboBoxRangeNumber(comboRampIn, -MAX_FEET, MAX_FEET);
-		contentPane.add(comboRampIn);
+		JComboBox<Integer> comboRampOffset = new JComboBox<Integer>();
+		sl_contentPane.putConstraint(SpringLayout.NORTH, comboRampOffset, 0, SpringLayout.NORTH, lblStyle);
+		sl_contentPane.putConstraint(SpringLayout.WEST, comboRampOffset, 6, SpringLayout.EAST, lblStyle);
+		sl_contentPane.putConstraint(SpringLayout.EAST, comboRampOffset, 59, SpringLayout.EAST, lblStyle);
+		guiUtility.setComboBoxRangeNumber(comboRampOffset, -MAX_FEET, MAX_FEET);
+		comboRampOffset.setSelectedIndex(MAX_FEET);
+		contentPane.add(comboRampOffset);
 		
 		JLabel lblRampIn = new JLabel("'' off of the ");
-		sl_contentPane.putConstraint(SpringLayout.NORTH, lblRampIn, 0, SpringLayout.NORTH, comboRampIn);
-		sl_contentPane.putConstraint(SpringLayout.WEST, lblRampIn, 3, SpringLayout.EAST, comboRampIn);
+		sl_contentPane.putConstraint(SpringLayout.NORTH, lblRampIn, 0, SpringLayout.NORTH, comboRampOffset);
+		sl_contentPane.putConstraint(SpringLayout.WEST, lblRampIn, 3, SpringLayout.EAST, comboRampOffset);
 		lblRampIn.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		contentPane.add(lblRampIn);
 		
@@ -231,26 +232,69 @@ public class inputdata extends JFrame {
 		//** changes inches remaining whenever **// 
 		comboFeet.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				changetotal(comboFeet, comboInch, comboInPart, lblInchesRemaining);
+				double update = changetotal(comboFeet.getSelectedIndex(), comboInch.getSelectedIndex(), comboInPart.getSelectedIndex());
+				guiData.setDeckHeight(update);
+				guiData.setRampLengthTotal(update*12);
+				lblInchesRemaining.setText("Ramp inches remaining: " + (update * 12));
 			} 
 		});
 		
 		comboInch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				changetotal(comboFeet, comboInch, comboInPart, lblInchesRemaining);
+				double update = changetotal(comboFeet.getSelectedIndex(), comboInch.getSelectedIndex(), comboInPart.getSelectedIndex());
+				guiData.setDeckHeight(update);
+				guiData.setRampLengthTotal(update*12);
+				lblInchesRemaining.setText("Ramp inches remaining: " + (update * 12));
 			} 
 		});
 		
 		comboInPart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				changetotal(comboFeet, comboInch, comboInPart, lblInchesRemaining);
+				double update = changetotal(comboFeet.getSelectedIndex(), comboInch.getSelectedIndex(), comboInPart.getSelectedIndex());
+				guiData.setDeckHeight(update);
+				guiData.setRampLengthTotal(update*12);
+				lblInchesRemaining.setText("Ramp inches remaining: " + (update * 12));
 			} 
 		});
 		
-		//** Add information on deck dimensions **//
+		//** Updates dimensions in GUI data **//
 		comboDimFtW.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				changetotal(comboFeet, comboInch, comboInPart, lblInchesRemaining);
+				double[] update = guiData.getDeckDimension();
+				update[0] = changetotal(comboFeet.getSelectedIndex(), comboInch.getSelectedIndex(), 0);
+				guiData.setDeckDimension(update);
+			} 
+		});
+		
+		comboDimInW.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				double[] update = guiData.getDeckDimension();
+				update[0] = changetotal(comboFeet.getSelectedIndex(), comboInch.getSelectedIndex(), 0);
+				guiData.setDeckDimension(update);
+			} 
+		});
+		
+		comboDimFtL.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				double[] update = guiData.getDeckDimension();
+				update[1] = changetotal(comboFeet.getSelectedIndex(), comboInch.getSelectedIndex(), 0);
+				guiData.setDeckDimension(update);
+			} 
+		});
+		
+		comboDimInL.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				double[] update = guiData.getDeckDimension();
+				update[1] = changetotal(comboFeet.getSelectedIndex(), comboInch.getSelectedIndex(), 0);
+				guiData.setDeckDimension(update);
+			} 
+		});
+		
+		//** Updates on offset changes **//
+		comboRampOffset.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int update = comboRampOffset.getSelectedIndex() - MAX_FEET;
+				guiData.setDeckOffSet(update);
 			} 
 		});
 		
@@ -296,12 +340,11 @@ public class inputdata extends JFrame {
 	}
 	
 	//*******************changes total remaining value**********************//
-	private void changetotal(JComboBox comboFeet, JComboBox comboInch, JComboBox comboInPart, JLabel lblInchesRemaining){
-		float calcIn = (float) (12.0 * (int) comboFeet.getSelectedIndex());
-		calcIn += (float) comboInch.getSelectedIndex();
-		calcIn += (float) (.125 * (int) comboInPart.getSelectedIndex());
-		guiData.setDeckHeight(calcIn);
-		guiData.setRampLenghtTotal(calcIn*12);
-		lblInchesRemaining.setText("Ramp inches remaining: " + (calcIn * 12));
+	private double changetotal(int comboFeet, int comboInch, int comboInPart){
+		double calcIn = (float) (12.0 * (int) comboFeet);
+		calcIn += (float) comboInch;
+		calcIn += (float) (.125 * (int) comboInPart);
+		return calcIn;
+		
 	}
 }

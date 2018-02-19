@@ -11,12 +11,12 @@ import ramp.geometry.DimensionVector;
  */
 public class GUIData {
 	private String length = ""; // Ramp length
-	private float deckHeight = 0; // Height of deck
-	private float[] deckDimension = { 1, 2 }; // Dimension of deck
+	private double deckHeight = 0; // Height of deck
+	private double[] deckDimension = { 1, 2 }; // Dimension of deck
 	private int deckOffSet = 0; // Offset off of the center
-	private float rampLengthTotal = 0; // Amount of inches until ground
-	private float usedIn = 0; // Total number of inches used
-	private ArrayList<Float> rampLength = new ArrayList<Float>(); // Length of each ramp piece
+	private double rampLengthTotal = 0; // Amount of inches until ground
+	private double usedIn = 0; // Total number of inches used
+	private ArrayList<Double> rampLength = new ArrayList<Double>(); // Length of each ramp piece
 	private ArrayList<Integer> rampDirIndex = new ArrayList<Integer>(); // Direction off of deck/turn around, 0 west, 1
 																		// east, 2 south
 	private int[] turnAround = { 48, 48 }; // Size of turn around
@@ -37,20 +37,20 @@ public class GUIData {
 		this.length = length;
 	}
 
-	public float getDeckHeight() {
+	public double getDeckHeight() {
 		return deckHeight;
 	}
 
-	public void setDeckHeight(float deckHeight) {
+	public void setDeckHeight(double deckHeight) {
 		this.deckHeight = deckHeight;
 	}
 
-	public float[] getDeckDimention() {
+	public double[] getDeckDimension() {
 		return deckDimension;
 	}
 
-	public void setDeckDimention(float[] deckDimention) {
-		this.deckDimension = deckDimention;
+	public void setDeckDimension(double[] deckDimension) {
+		this.deckDimension = deckDimension;
 	}
 
 	public int getDeckOffSet() {
@@ -61,28 +61,28 @@ public class GUIData {
 		this.deckOffSet = deckOffSet;
 	}
 
-	public float getRampLenghtTotal() {
+	public double getRampLengthTotal() {
 		return rampLengthTotal;
 	}
 
-	public void setRampLenghtTotal(float rampLenghtTotal) {
-		this.rampLengthTotal = rampLenghtTotal;
+	public void setRampLengthTotal(double rampLengthTotal) {
+		this.rampLengthTotal = rampLengthTotal;
 	}
 
-	public float getUsedIn() {
+	public double getUsedIn() {
 		return usedIn;
 	}
 
-	public void setUsedIn(float usedIn) {
+	public void setUsedIn(double usedIn) {
 		this.usedIn = usedIn;
 	}
 
-	public ArrayList<Float> getRampLenght() {
+	public ArrayList<Double> getRampLength() {
 		return rampLength;
 	}
 
-	public void setRampLenght(ArrayList<Float> rampLenght) {
-		this.rampLength = rampLenght;
+	public void setRampLength(ArrayList<Double> rampLength) {
+		this.rampLength = rampLength;
 	}
 
 	public ArrayList<Integer> getRampDirIndex() {
@@ -93,13 +93,11 @@ public class GUIData {
 		this.rampDirIndex = rampDirIndex;
 	}
 
-	public int[] getTurnArround() {
+	public int[] getTurnAround() {
 		return turnAround;
 	}
 
-	public void setTurnArround(int[] turnArround) {
-		this.turnAround = turnArround;
+	public void setTurnAround(int[] turnAround) {
+		this.turnAround = turnAround;
 	}
-
-	//////////
 }
