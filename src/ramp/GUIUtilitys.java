@@ -13,6 +13,9 @@ import java.awt.event.MouseEvent;
 import javax.management.loading.PrivateClassLoader;
 import javax.swing.*;
 
+import ramp.diagram.Diagram;
+import ramp.diagram.GUIData;
+
 public class GUIUtilitys{
 	private static GUIData guiData;
 	

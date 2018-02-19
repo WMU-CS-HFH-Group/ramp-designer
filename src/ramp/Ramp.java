@@ -1,5 +1,7 @@
 package ramp;
 
+import ramp.diagram.Direction;
+
 /**
  * The Ramp class is used to store all of the variables necessary to generate a
  * ramp schematic.
