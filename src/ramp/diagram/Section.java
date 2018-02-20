@@ -4,23 +4,26 @@ import ramp.geometry.Dimension;
 
 public class Section {
 	private Direction direction;
+	private Direction hairpinDirection;
 	private Dimension landingOffset, rampOffset;
 	private Dimension rampWidth, rampLength;
 
 	private Dimension landingWidth, landingLength;
 
-	public Section(Direction direction, Dimension landingOffset, Dimension rampOffset, Dimension rampWidth, Dimension rampLength, Dimension landingWidth,
-			Dimension landingLength) {
+	public Section(Direction direction, Dimension landingOffset, Dimension rampOffset, Dimension rampWidth,
+			Dimension rampLength, Dimension landingWidth, Dimension landingLength) {
 		this.direction = direction;
-		
+
 		this.landingOffset = landingOffset;
 		this.rampOffset = rampOffset;
-		
+
 		this.rampWidth = rampWidth;
 		this.rampLength = rampLength;
 
 		this.landingWidth = landingWidth;
 		this.landingLength = landingLength;
+
+		this.hairpinDirection = Direction.UNDEFINED;
 	}
 
 	public Direction getDirection() {
@@ -74,6 +77,14 @@ public class Section {
 	public void setLandingSize(Dimension landingWidth, Dimension landingLength) {
 		this.landingWidth = landingWidth;
 		this.landingLength = landingLength;
+	}
+
+	public Direction getHairpinDirection() {
+		return hairpinDirection;
+	}
+
+	public void setHairpinDirection(Direction hairpinDirection) {
+		this.hairpinDirection = hairpinDirection;
 	}
 
 }

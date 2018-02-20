@@ -22,6 +22,7 @@ public class Diagram extends Component {
 	@Deprecated
 	private static final double LINE_SPACING = 0.25; // Ratio to the text height to leave between lines
 	private static final Dimension MAX_POST_SPACE = new Dimension(6, 0);
+	private static final Dimension POST_SIZE = new Dimension(4);
 
 	// Transformation variables
 	private double scale;
@@ -160,13 +161,13 @@ public class Diagram extends Component {
 		Dimension y = r.getLocation().getY();
 
 		// If this is true, the last section overlaps with this one.
-		boolean sectionOverlap = false;
+		boolean hairPin = false;
 
 		Coordinate[] posts = new Coordinate[0];
-		
+
 		Box landingBox, rampBox;
 
-		for (int i = 0; i < r.countSections() && !sectionOverlap; i++) {
+		for (int i = 0; i < r.countSections(); i++) {
 			Section s = r.getSection(i);
 
 			// Set graphics settings.
@@ -179,49 +180,85 @@ public class Diagram extends Component {
 
 				// Adjust x and y for landing.
 				switch (ls.getDirection()) {
-				case UP:
+				case UP: // The last section was up.
 					if (s.getDirection() == Direction.DOWN) {
-						sectionOverlap = true;
+						if (s.getHairpinDirection() == Direction.LEFT) {
+							x.subtract(POST_SIZE.clone().scale(0.5));
+							x.subtract(s.getLandingWidth().clone().scale(0.5));
+						} else {
+							x.add(s.getRampWidth());
+							x.add(POST_SIZE.clone().scale(0.5));
+							x.subtract(s.getLandingWidth().clone().scale(0.5));
+						}
+						hairPin = true;
 					} else {
 						x.add(ls.getRampWidth().clone().scale(0.5));
 						x.subtract(s.getLandingWidth().clone().scale(0.5));
-						x.subtract(s.getLandingOffset());
-
-						y.subtract(s.getLandingLength());
 					}
+
+					x.subtract(s.getLandingOffset());
+
+					y.subtract(s.getLandingLength());
 					break;
-				case DOWN:
+				case DOWN: // The last section was down.
 					if (s.getDirection() == Direction.UP) {
-						sectionOverlap = true;
+						if (s.getHairpinDirection() == Direction.LEFT) {
+							x.subtract(POST_SIZE.clone().scale(0.5));
+							x.subtract(s.getLandingWidth().clone().scale(0.5));
+						} else {
+							x.add(s.getRampWidth());
+							x.add(POST_SIZE.clone().scale(0.5));
+							x.subtract(s.getLandingWidth().clone().scale(0.5));
+						}
+						hairPin = true;
 					} else {
 						x.add(ls.getRampWidth().clone().scale(0.5));
 						x.subtract(s.getLandingWidth().clone().scale(0.5));
-						x.add(s.getLandingOffset());
-
-						y.add(ls.getRampLength());
 					}
+
+					x.add(s.getLandingOffset());
+
+					y.add(ls.getRampLength());
 					break;
-				case LEFT:
+				case LEFT: // The last section was left.
+					x.subtract(s.getLandingWidth());
+
 					if (s.getDirection() == Direction.RIGHT) {
-						sectionOverlap = true;
+						if (s.getHairpinDirection() == Direction.UP) {
+							y.subtract(POST_SIZE.clone().scale(0.5));
+							y.subtract(s.getLandingLength().clone().scale(0.5));
+						} else {
+							y.add(s.getRampWidth());
+							y.add(POST_SIZE.clone().scale(0.5));
+							y.subtract(s.getLandingLength().clone().scale(0.5));
+						}
+						hairPin = true;
 					} else {
-						x.subtract(s.getLandingWidth());
-
 						y.add(ls.getRampWidth().clone().scale(0.5));
 						y.subtract(s.getLandingLength().clone().scale(0.5));
-						y.add(s.getLandingOffset());
 					}
+
+					y.add(s.getLandingOffset());
 					break;
-				case RIGHT:
-					if (s.getDirection() == Direction.LEFT) {
-						sectionOverlap = true;
-					} else {
-						x.add(s.getRampLength());
+				case RIGHT: // The last section was right.
+					x.add(ls.getRampLength());
 
+					if (s.getDirection() == Direction.LEFT) {
+						if (s.getHairpinDirection() == Direction.UP) {
+							y.subtract(POST_SIZE.clone().scale(0.5));
+							y.subtract(s.getLandingLength().clone().scale(0.5));
+						} else {
+							y.add(s.getRampWidth());
+							y.add(POST_SIZE.clone().scale(0.5));
+							y.subtract(s.getLandingLength().clone().scale(0.5));
+						}
+						hairPin = true;
+					} else {
 						y.add(ls.getRampWidth().clone().scale(0.5));
 						y.subtract(s.getLandingLength().clone().scale(0.5));
-						y.subtract(s.getLandingOffset());
 					}
+
+					y.subtract(s.getLandingOffset());
 					break;
 				default:
 				}
@@ -229,105 +266,154 @@ public class Diagram extends Component {
 
 			// If the last section overlaps, do not draw this section. The ramp will also
 			// end.
-			if (!sectionOverlap) {
-				// Draw landing before ramp.
-				landingBox = new Box(new Coordinate(x, y), s.getLandingWidth(), s.getLandingLength());
-				g.drawRect(coord(x), coord(y), coord(s.getLandingWidth()), coord(s.getLandingLength()));
+			// Draw landing before ramp.
+			landingBox = new Box(new Coordinate(x, y), s.getLandingWidth(), s.getLandingLength());
+			g.drawRect(coord(x), coord(y), coord(s.getLandingWidth()), coord(s.getLandingLength()));
 
-				// Generate and draw a label for the landing.
-				Label landingLabel = new Label(String.format("%s x %s", s.getLandingWidth(), s.getLandingLength()), Alignment.CENTER,
-						Alignment.CENTER, labelFont, Color.black);
-				this.drawLabel(g, landingLabel, landingBox.getCenter());
+			// Generate and draw a label for the landing.
+			Label landingLabel = new Label(String.format("%s x %s", s.getLandingWidth(), s.getLandingLength()),
+					Alignment.CENTER, Alignment.CENTER, labelFont, Color.black);
+			this.drawLabel(g, landingLabel, landingBox.getCenter());
 
-				rampBox = new Box(new Coordinate(x, y), new Dimension(0), new Dimension(0));
-				
-				// Draw ramp.
-				switch (s.getDirection()) {
-				case UP:
-					// Adjust x and y for ramp.
-					x.add(s.getLandingWidth().clone().scale(0.5));
+			rampBox = new Box(new Coordinate(x, y), new Dimension(0), new Dimension(0));
+
+			boolean postsLeftOrTop = true;
+			boolean postsRightOrBottom = true;
+
+			// Draw ramp.
+			switch (s.getDirection()) {
+			case UP:
+				// Adjust x and y for ramp.
+				x.add(s.getLandingWidth().clone().scale(0.5));
+				if (hairPin) {
+					if (s.getHairpinDirection() == Direction.LEFT) {
+						x.subtract(s.getRampWidth());
+						x.subtract(POST_SIZE.clone().scale(0.5));
+						postsRightOrBottom = false;
+					} else {
+						x.add(s.getRampWidth());
+						x.add(POST_SIZE);
+						postsLeftOrTop = false;
+					}
+				} else {
 					x.subtract(s.getRampWidth().clone().scale(0.5));
-					x.add(s.getLandingOffset());
+				}
+				x.add(s.getLandingOffset());
 
-					y.subtract(s.getRampLength());
-					
-					rampBox.setWidth(s.getRampWidth());
-					rampBox.setHeight(s.getRampLength());
-					
-					// Generate posts for ramp.
-					posts = this.generatePosts(new Coordinate(x, y),
-							new Coordinate(s.getRampWidth(), s.getRampLength()), s.getDirection(), new Dimension(4));
+				y.subtract(s.getRampLength());
 
-					g.drawRect(coord(x), coord(y), coord(s.getRampWidth()), coord(s.getRampLength()));
-					break;
-				case DOWN:
-					// Adjust x and y for ramp.
-					x.add(s.getLandingWidth().clone().scale(0.5));
+				rampBox.setWidth(s.getRampWidth());
+				rampBox.setHeight(s.getRampLength());
+
+				// Generate posts for ramp.
+				posts = this.generatePosts(new Coordinate(x, y), new Coordinate(s.getRampWidth(), s.getRampLength()),
+						s.getDirection(), POST_SIZE, postsLeftOrTop, postsRightOrBottom);
+
+				g.drawRect(coord(x), coord(y), coord(s.getRampWidth()), coord(s.getRampLength()));
+				break;
+			case DOWN:
+				// Adjust x and y for ramp.
+				x.add(s.getLandingWidth().clone().scale(0.5));
+				if (hairPin) {
+					if (s.getHairpinDirection() == Direction.LEFT) {
+						x.subtract(s.getRampWidth());
+						x.subtract(POST_SIZE.clone().scale(0.5));
+						postsRightOrBottom = false;
+					} else {
+						x.add(POST_SIZE.clone().scale(0.5));
+						postsLeftOrTop = false;
+					}
+				} else {
 					x.subtract(s.getRampWidth().clone().scale(0.5));
-					x.add(s.getLandingOffset());
-
-					y.add(s.getLandingLength());
-					
-					rampBox.setWidth(s.getRampWidth());
-					rampBox.setHeight(s.getRampLength());
-					
-					// Generate posts for ramp.
-					posts = this.generatePosts(new Coordinate(x, y),
-							new Coordinate(s.getRampWidth(), s.getRampLength()), s.getDirection(), new Dimension(4));
-
-					g.drawRect(coord(x), coord(y), coord(s.getRampWidth()), coord(s.getRampLength()));
-					break;
-				case LEFT:
-					// Adjust x and y for ramp.
-					x.subtract(s.getRampLength());
-
-					y.add(s.getLandingLength().clone().scale(0.5));
-					y.subtract(s.getRampWidth().clone().scale(0.5));
-					y.add(s.getRampOffset());
-					
-					rampBox.setWidth(s.getRampLength());
-					rampBox.setHeight(s.getLandingWidth());
-					
-					// Generate posts for ramp.
-					posts = this.generatePosts(new Coordinate(x, y),
-							new Coordinate(s.getRampLength(), s.getRampWidth()), s.getDirection(), new Dimension(4));
-
-					g.drawRect(coord(x), coord(y), coord(s.getRampLength()), coord(s.getRampWidth()));
-					break;
-				case RIGHT:
-					// Adjust x and y for ramp.
-					x.add(s.getLandingWidth());
-
-					y.add(s.getLandingLength().clone().scale(0.5));
-					y.subtract(s.getRampWidth().clone().scale(0.5));
-					y.subtract(s.getRampOffset());
-					
-					rampBox.setWidth(s.getRampLength());
-					rampBox.setHeight(s.getRampWidth());
-					
-					// Generate posts for ramp.
-					posts = this.generatePosts(new Coordinate(x, y),
-							new Coordinate(s.getRampLength(), s.getRampWidth()), s.getDirection(), new Dimension(4));
-
-					g.drawRect(coord(x), coord(y), coord(s.getRampLength()), coord(s.getRampWidth()));
-					break;
-				default:
 				}
-				
-				// Generate and draw labels for the ramp.
-				Label rampLengthLabel = new Label(s.getRampLength().toString(), Alignment.CENTER, Alignment.CENTER, labelFont, Color.BLACK);
-				this.drawLabel(g, rampLengthLabel, rampBox.getCenter());
-				
-				// Draw the posts
-				for (Coordinate c : posts) {
-					g.fillRect(coord(c.getX()), coord(c.getY()), coord(new Dimension(4)), coord(new Dimension(4)));
+				x.add(s.getLandingOffset());
+
+				y.add(s.getLandingLength());
+
+				rampBox.setWidth(s.getRampWidth());
+				rampBox.setHeight(s.getRampLength());
+
+				// Generate posts for ramp.
+				posts = this.generatePosts(new Coordinate(x, y), new Coordinate(s.getRampWidth(), s.getRampLength()),
+						s.getDirection(), POST_SIZE, postsLeftOrTop, postsRightOrBottom);
+
+				g.drawRect(coord(x), coord(y), coord(s.getRampWidth()), coord(s.getRampLength()));
+				break;
+			case LEFT:
+				// Adjust x and y for ramp.
+				x.subtract(s.getRampLength());
+
+				y.add(s.getLandingLength().clone().scale(0.5));
+				if (hairPin) {
+					if (s.getHairpinDirection() == Direction.UP) {
+						y.subtract(s.getRampWidth());
+						y.subtract(POST_SIZE.clone().scale(0.5));
+						postsRightOrBottom = false;
+					} else {
+						y.add(POST_SIZE.clone().scale(0.5));
+						postsLeftOrTop = false;
+					}
+				} else {
+					y.subtract(s.getRampWidth().clone().scale(0.5));
 				}
+				y.add(s.getRampOffset());
+
+				rampBox.setWidth(s.getRampLength());
+				rampBox.setHeight(s.getLandingWidth());
+
+				// Generate posts for ramp.
+				posts = this.generatePosts(new Coordinate(x, y), new Coordinate(s.getRampLength(), s.getRampWidth()),
+						s.getDirection(), POST_SIZE, postsLeftOrTop, postsRightOrBottom);
+
+				g.drawRect(coord(x), coord(y), coord(s.getRampLength()), coord(s.getRampWidth()));
+				break;
+			case RIGHT:
+				// Adjust x and y for ramp.
+				x.add(s.getLandingWidth());
+
+				y.add(s.getLandingLength().clone().scale(0.5));
+				if (hairPin) {
+					if (s.getHairpinDirection() == Direction.UP) {
+						y.subtract(s.getRampWidth());
+						y.subtract(POST_SIZE.clone().scale(0.5));
+						postsRightOrBottom = false;
+					} else {
+						y.add(POST_SIZE.clone().scale(0.5));
+						postsLeftOrTop = false;
+					}
+				} else {
+					y.subtract(s.getRampWidth().clone().scale(0.5));
+				}
+				y.subtract(s.getRampOffset());
+
+				rampBox.setWidth(s.getRampLength());
+				rampBox.setHeight(s.getRampWidth());
+
+				// Generate posts for ramp.
+				posts = this.generatePosts(new Coordinate(x, y), new Coordinate(s.getRampLength(), s.getRampWidth()),
+						s.getDirection(), POST_SIZE, postsLeftOrTop, postsRightOrBottom);
+
+				g.drawRect(coord(x), coord(y), coord(s.getRampLength()), coord(s.getRampWidth()));
+				break;
+			default:
+			}
+
+			rampBox.setLocation(new Coordinate(x, y));
+			
+			// Generate and draw labels for the ramp.
+			Label rampLengthLabel = new Label(s.getRampLength().toString(), Alignment.CENTER, Alignment.CENTER,
+					labelFont, Color.BLACK);
+			this.drawLabel(g, rampLengthLabel, rampBox.getCenter());
+
+			// Draw the posts
+			for (Coordinate c : posts) {
+				g.fillRect(coord(c.getX()), coord(c.getY()), coord(POST_SIZE), coord(POST_SIZE));
 			}
 		}
 	}
 
 	private Coordinate[] generatePosts(Coordinate rampLocation, Coordinate rampSize, Direction rampDirection,
-			Dimension postSize) {
+			Dimension postSize, boolean leftOrTop, boolean rightOrBottom) {
 		Dimension rampWidth = rampSize.getX();
 		Dimension rampLength = rampSize.getY();
 
@@ -572,10 +658,11 @@ public class Diagram extends Component {
 	private void drawSample(Graphics2D g) {
 		// Draw ramp.
 		Ramp r = new Ramp(new Dimension(36), new Coordinate(new Dimension(18, 0), new Dimension(8, 0)));
-		r.addSection(Direction.DOWN, new Dimension(0), new Dimension(0), new Dimension(40), new Dimension(24, 0),
+		r.addSection(Direction.RIGHT, new Dimension(0), new Dimension(0), new Dimension(40), new Dimension(24, 0),
 				new Dimension(6, 0), new Dimension(6, 0));
-		r.addSection(Direction.RIGHT, new Dimension(4), new Dimension(-4), new Dimension(40), new Dimension(12, 0),
-				new Dimension(4, 0), new Dimension(4, 0));
+		r.addSection(Direction.LEFT, new Dimension(0), new Dimension(0), new Dimension(40), new Dimension(12, 0),
+				new Dimension(4, 0), new Dimension(8, 0));
+		r.getSection(1).setHairpinDirection(Direction.UP);
 
 		this.drawRampTop(g, r);
 
