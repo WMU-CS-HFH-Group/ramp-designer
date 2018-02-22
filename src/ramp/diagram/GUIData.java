@@ -10,14 +10,14 @@ import ramp.geometry.DimensionVector;
  * storing data for the ramp efficiently.
  */
 public class GUIData {
-	private String length = ""; // Ramp length
+	private ArrayList<String> length = new ArrayList<String>(); // Ramp length
 	private double deckHeight = 0; // Height of deck
 	private double[] deckDimension = { 1, 2 }; // Dimension of deck
 	private int deckOffSet = 0; // Offset off of the center
 	private double rampLengthTotal = 0; // Amount of inches until ground
 	private double usedIn = 0; // Total number of inches used
 	private ArrayList<Double> rampLength = new ArrayList<Double>(); // Length of each ramp piece
-	private ArrayList<Integer> rampDirIndex = new ArrayList<Integer>(); // Direction off of deck/turn around, 0 west, 1
+	private ArrayList<Integer> rampDir = new ArrayList<Integer>(); // Direction off of deck/turn around, 0 west, 1
 																		// east, 2 south
 	private int[] turnAround = { 48, 48 }; // Size of turn around
 
@@ -29,11 +29,11 @@ public class GUIData {
 		
 	}
 
-	public String getLength() {
+	public ArrayList<String> getLength() {
 		return length;
 	}
 
-	public void setLength(String length) {
+	public void setLength(ArrayList<String> length) {
 		this.length = length;
 	}
 
@@ -85,12 +85,12 @@ public class GUIData {
 		this.rampLength = rampLength;
 	}
 
-	public ArrayList<Integer> getRampDirIndex() {
-		return rampDirIndex;
+	public ArrayList<Integer> getRampDir() {
+		return rampDir;
 	}
 
-	public void setRampDirIndex(ArrayList<Integer> rampDirIndex) {
-		this.rampDirIndex = rampDirIndex;
+	public void setRampDir(ArrayList<Integer> rampDirIndex) {
+		this.rampDir = rampDirIndex;
 	}
 
 	public int[] getTurnAround() {

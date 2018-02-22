@@ -9,6 +9,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 import javax.management.loading.PrivateClassLoader;
 import javax.swing.*;
@@ -45,23 +46,33 @@ public class GUIUtilitys{
 	 * @param lbl label to enable
 	 * @param data information held in GUIData
 	 */
-	public void clearSaveLenght(JTextArea lbl) {
-		lbl.addFocusListener(new FocusAdapter() {
+	public void clearSaveLenght(JTextArea lbl, int index) {
+		ArrayList<String> update = guiData.getLength();
+		lbl.addFocusListener(new FocusAdapter() {			
 			@Override
 			public void focusGained(FocusEvent arg0) {
-				lbl.setText(guiData.getLength());
+				ArrayList<String> update = guiData.getLength();
+				lbl.setText(update.get(index));
 				lbl.setBackground(Color.white);
 			}
 			@Override
 			public void focusLost(FocusEvent e) {
-				guiData.setLength(lbl.getText());
+				ArrayList<String> update = guiData.getLength();
+				update.set(index, lbl.getText());
+				guiData.setLength(update);
 				lbl.setBackground(Color.GRAY);
 			}
 		});
 	}
 	
 	
-	public void setRamps(JPanel contentPane, SpringLayout sl_contentPane, JTextArea lblRampHor, JTextArea lblRampVert, JButton btnTurnAr) {
+	public void setRamps(JPanel contentPane, SpringLayout sl_contentPane, JTextArea lblRampHor, JTextArea lblRampVert, JButton btnTurnAr, int index) {
+		ArrayList<String> update = guiData.getLength();
+		if (update.size() <= index) {
+			update.add(index, "");
+			guiData.setLength(update);
+		}
+		
 		lblRampHor.setText("#' #\"");
 		lblRampHor.setFont(new Font("Tahoma", Font.BOLD, 20));
 		lblRampHor.setVisible(false);
@@ -86,13 +97,13 @@ public class GUIUtilitys{
 		//**** https://stackoverflow.com/questions/19569302/jtextarea-pressing-enter-adds-unnecessary-new-line ****
 		
 		//**** Clears/Saves input in bar ****
-		clearSaveLenght(lblRampHor);
-		clearSaveLenght(lblRampVert);
+		clearSaveLenght(lblRampHor, index);
+		clearSaveLenght(lblRampVert, index);
 		//**** End Clears/Saves input in bar ****
 		//** End Set length of ramp piece **//
 		
 		//** adds extra ramps on base click **//************************************************************************************************
-		createRamp(btnTurnAr, contentPane, sl_contentPane);
+		createRamp(btnTurnAr, contentPane, sl_contentPane, index);
 	}
 	
 	/**
@@ -104,10 +115,16 @@ public class GUIUtilitys{
 	 * @param lblRampVert
 	 * @param btnTurnAr
 	 */
-	public void setRampDirection(int incase, SpringLayout sl_contentPane, Component pivot, JTextArea lblRampHor, JTextArea lblRampVert, JButton btnTurnAr){
+	public void setRampDirection(int incase, SpringLayout sl_contentPane, Component pivot, JTextArea lblRampHor, JTextArea lblRampVert, JButton btnTurnAr, int index){
 		lblRampHor.setVisible(false);
 		btnTurnAr.setVisible(false);
 		lblRampVert.setVisible(false);
+		ArrayList<Integer> update = guiData.getRampDir();
+		if (update.size() <= index) {
+			update.add(index, 0);	
+		}
+		update.set(index, incase);
+		guiData.setRampDir(update);
 		switch (incase) {
 		case 0:
 			sl_contentPane.putConstraint(SpringLayout.NORTH, lblRampHor, 25, SpringLayout.NORTH, pivot);
@@ -129,7 +146,6 @@ public class GUIUtilitys{
 			lblRampHor.setVisible(true);
 			btnTurnAr.setVisible(true);
 			break;
-
 		default:
 			sl_contentPane.putConstraint(SpringLayout.NORTH, lblRampVert, 0, SpringLayout.SOUTH, pivot);
 			sl_contentPane.putConstraint(SpringLayout.WEST, lblRampVert, 20, SpringLayout.WEST, pivot);
@@ -151,7 +167,7 @@ public class GUIUtilitys{
 	 * @param contentPane
 	 * @param sl_contentPane
 	 */
-	public static void createRamp(JButton pivot, JPanel contentPane, SpringLayout sl_contentPane) {		
+	public static void createRamp(JButton pivot, JPanel contentPane, SpringLayout sl_contentPane, int index) {		
 		pivot.addMouseListener(new MouseAdapter() {
 			JTextArea lblRampHor = new JTextArea();
 			JTextArea lblRampVert = new JTextArea();
@@ -163,14 +179,13 @@ public class GUIUtilitys{
 			public void mouseClicked(MouseEvent arg0) {
 				switch (direction){
 				case -1:
-					utility.setRamps(contentPane, sl_contentPane, lblRampHor, lblRampVert, btnTurnAr);					
-					utility.setRampDirection(direction+1, sl_contentPane, pivot, lblRampHor, lblRampVert, btnTurnAr);
-					utility.createRamp(btnTurnAr, contentPane, sl_contentPane);
+					utility.setRamps(contentPane, sl_contentPane, lblRampHor, lblRampVert, btnTurnAr, index+1);					
+					utility.setRampDirection(direction+1, sl_contentPane, pivot, lblRampHor, lblRampVert, btnTurnAr, index+1);
 					direction+=2;
 				case 0:
 				case 1:
 				case 2:
-					utility.setRampDirection(direction, sl_contentPane, pivot, lblRampHor, lblRampVert, btnTurnAr);
+					utility.setRampDirection(direction, sl_contentPane, pivot, lblRampHor, lblRampVert, btnTurnAr, index);
 					direction++;
 					if (direction>2) {
 						direction = 0;
