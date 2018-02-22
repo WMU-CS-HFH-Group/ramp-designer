@@ -163,6 +163,11 @@ public class Dimension implements Comparable<Dimension> {
 		this.length += d2.getLength();
 		return this;
 	}
+	
+	public Dimension subtract(Dimension d2) {
+		this.length -= d2.getLength();
+		return this;
+	}
 
 	public Dimension negate() {
 		this.length *= -1;
@@ -195,7 +200,7 @@ public class Dimension implements Comparable<Dimension> {
 		
 		// Only concatenate strings for components that are nonzero.
 		if (this.isZero()) {
-			result = "0\"";
+			result = "";
 		}
 		
 		if (this.getFeet() > 0) {

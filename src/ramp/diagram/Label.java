@@ -5,9 +5,6 @@ import java.awt.Font;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 
-import ramp.geometry.Coordinate;
-import ramp.geometry.Dimension;
-
 /**
  * A data storage class for a label's attributes. This information will be used
  * to draw the label on a diagram. It may be aligned in any direction, any
@@ -20,15 +17,13 @@ public class Label {
 	private static final double LINE_SPACING = 0.15; // Ratio to the text height to leave between lines
 
 	private String string;
-	private Coordinate origin;
 	private Alignment alignmentX, alignmentY;
 	private Font font;
 	private Color color;
 
-	public Label(String string, Coordinate origin, Alignment alignmentX, Alignment alignmentY, Font font,
+	public Label(String string, Alignment alignmentX, Alignment alignmentY, Font font,
 			Color color) {
 		this.string = string;
-		this.origin = origin;
 		this.alignmentX = alignmentX;
 		this.alignmentY = alignmentY;
 		this.font = font;
@@ -46,8 +41,8 @@ public class Label {
 	 * @param font
 	 *            The font to render the string with.
 	 */
-	public Label(String string, Coordinate topLeft, Font font) {
-		this(string, topLeft, Alignment.LEFT_OR_TOP, Alignment.LEFT_OR_TOP, font, Color.BLACK);
+	public Label(String string, Font font) {
+		this(string, Alignment.LEFT_OR_TOP, Alignment.LEFT_OR_TOP, font, Color.BLACK);
 	}
 
 	/**
@@ -55,7 +50,7 @@ public class Label {
 	 * it is given other parameters.
 	 */
 	public Label() {
-		this("", new Coordinate(new Dimension(0), new Dimension(0)), new Font("Arial", Font.PLAIN, 12));
+		this("", new Font("Arial", Font.PLAIN, 12));
 	}
 
 	public String getString() {
@@ -64,14 +59,6 @@ public class Label {
 
 	public void setString(String string) {
 		this.string = string;
-	}
-
-	public Coordinate getOrigin() {
-		return origin;
-	}
-
-	public void setOrigin(Coordinate origin) {
-		this.origin = origin;
 	}
 
 	public Alignment getAlignmentX() {
@@ -133,8 +120,6 @@ public class Label {
 			if (lineR.getWidth() > width) {
 				width = lineR.getWidth();
 			}
-			System.out.println("width l: " + lineR.getWidth());
-			System.out.println("width: " + width);
 
 			// Increase the height.
 			height += lineHeight;
