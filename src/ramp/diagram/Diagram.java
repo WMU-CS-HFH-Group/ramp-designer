@@ -302,12 +302,12 @@ public class Diagram extends Component {
 
 				y.subtract(s.getRampLength());
 
+				rampBox.setLocation(new Coordinate(x, y));
 				rampBox.setWidth(s.getRampWidth());
 				rampBox.setHeight(s.getRampLength());
 
 				// Generate posts for ramp.
-				posts = this.generatePosts(new Coordinate(x, y), new Coordinate(s.getRampWidth(), s.getRampLength()),
-						s.getDirection(), POST_SIZE, postsLeftOrTop, postsRightOrBottom);
+				posts = this.generatePosts(rampBox, s.getDirection(), POST_SIZE, postsLeftOrTop, postsRightOrBottom);
 
 				g.drawRect(coord(x), coord(y), coord(s.getRampWidth()), coord(s.getRampLength()));
 				break;
@@ -330,12 +330,12 @@ public class Diagram extends Component {
 
 				y.add(s.getLandingLength());
 
+				rampBox.setLocation(new Coordinate(x, y));
 				rampBox.setWidth(s.getRampWidth());
 				rampBox.setHeight(s.getRampLength());
 
 				// Generate posts for ramp.
-				posts = this.generatePosts(new Coordinate(x, y), new Coordinate(s.getRampWidth(), s.getRampLength()),
-						s.getDirection(), POST_SIZE, postsLeftOrTop, postsRightOrBottom);
+				posts = this.generatePosts(rampBox, s.getDirection(), POST_SIZE, postsLeftOrTop, postsRightOrBottom);
 
 				g.drawRect(coord(x), coord(y), coord(s.getRampWidth()), coord(s.getRampLength()));
 				break;
@@ -358,12 +358,12 @@ public class Diagram extends Component {
 				}
 				y.add(s.getRampOffset());
 
+				rampBox.setLocation(new Coordinate(x, y));
 				rampBox.setWidth(s.getRampLength());
 				rampBox.setHeight(s.getLandingWidth());
 
 				// Generate posts for ramp.
-				posts = this.generatePosts(new Coordinate(x, y), new Coordinate(s.getRampLength(), s.getRampWidth()),
-						s.getDirection(), POST_SIZE, postsLeftOrTop, postsRightOrBottom);
+				posts = this.generatePosts(rampBox, s.getDirection(), POST_SIZE, postsLeftOrTop, postsRightOrBottom);
 
 				g.drawRect(coord(x), coord(y), coord(s.getRampLength()), coord(s.getRampWidth()));
 				break;
@@ -386,20 +386,18 @@ public class Diagram extends Component {
 				}
 				y.subtract(s.getRampOffset());
 
+				rampBox.setLocation(new Coordinate(x, y));
 				rampBox.setWidth(s.getRampLength());
 				rampBox.setHeight(s.getRampWidth());
 
 				// Generate posts for ramp.
-				posts = this.generatePosts(new Coordinate(x, y), new Coordinate(s.getRampLength(), s.getRampWidth()),
-						s.getDirection(), POST_SIZE, postsLeftOrTop, postsRightOrBottom);
+				posts = this.generatePosts(rampBox, s.getDirection(), POST_SIZE, postsLeftOrTop, postsRightOrBottom);
 
 				g.drawRect(coord(x), coord(y), coord(s.getRampLength()), coord(s.getRampWidth()));
 				break;
 			default:
 			}
 
-			rampBox.setLocation(new Coordinate(x, y));
-			
 			// Generate and draw labels for the ramp.
 			Label rampLengthLabel = new Label(s.getRampLength().toString(), Alignment.CENTER, Alignment.CENTER,
 					labelFont, Color.BLACK);
@@ -412,14 +410,14 @@ public class Diagram extends Component {
 		}
 	}
 
-	private Coordinate[] generatePosts(Coordinate rampLocation, Coordinate rampSize, Direction rampDirection,
-			Dimension postSize, boolean leftOrTop, boolean rightOrBottom) {
-		Dimension rampWidth = rampSize.getX();
-		Dimension rampLength = rampSize.getY();
+	private Coordinate[] generatePosts(Box rampBox, Direction rampDirection, Dimension postSize, boolean leftOrTop,
+			boolean rightOrBottom) {
+		Dimension rampWidth = rampBox.getWidth();
+		Dimension rampLength = rampBox.getHeight();
 
 		if (rampDirection == Direction.LEFT || rampDirection == Direction.RIGHT) {
-			rampWidth = rampSize.getY();
-			rampLength = rampSize.getX();
+			rampWidth = rampBox.getHeight();
+			rampLength = rampBox.getWidth();
 		}
 
 		double insideLength = rampLength.clone().add(postSize.clone().negate()).getLength();
@@ -467,7 +465,7 @@ public class Diagram extends Component {
 			}
 
 			// Add the post location vector to the ramp location's
-			postLocation.add(rampLocation);
+			postLocation.add(rampBox.getLocation());
 
 			// Create the post
 			posts[i] = postLocation.clone();
