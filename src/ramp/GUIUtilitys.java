@@ -11,17 +11,24 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
-import javax.management.loading.PrivateClassLoader;
 import javax.swing.*;
 
 import ramp.diagram.Diagram;
 import ramp.diagram.GUIData;
+import ramp.geometry.Dimension;
 
 public class GUIUtilitys{
 	private static GUIData guiData;
 	
 	public GUIUtilitys(GUIData guiData) {
 		this.guiData = guiData;
+	}
+	
+	public double arraylistTotal(ArrayList<Double> list) {
+		double sum = 0;
+		for(int i = 1; i < list.size(); i++)
+		    sum += list.get(i);
+		return sum;
 	}
 
 	/**
@@ -47,30 +54,32 @@ public class GUIUtilitys{
 	 * @param data information held in GUIData
 	 */
 	public void clearSaveLenght(JTextArea lbl, int index) {
-		ArrayList<String> update = guiData.getLength();
 		lbl.addFocusListener(new FocusAdapter() {			
 			@Override
 			public void focusGained(FocusEvent arg0) {
-				ArrayList<String> update = guiData.getLength();
-				lbl.setText(update.get(index));
+				ArrayList<Double> update = guiData.getRampLength();
+				Dimension convert = new Dimension(update.get(index));
+				lbl.setText(convert.toString());
 				lbl.setBackground(Color.white);
 			}
 			@Override
 			public void focusLost(FocusEvent e) {
-				ArrayList<String> update = guiData.getLength();
-				update.set(index, lbl.getText());
-				guiData.setLength(update);
+				ArrayList<Double> update = guiData.getRampLength();
+				Dimension convert = new Dimension(lbl.getText());
+				update.set(index, convert.getLength());
+				guiData.setRampLength(update);
 				lbl.setBackground(Color.GRAY);
+				guiData.setUsedIn(arraylistTotal(update));
 			}
 		});
 	}
 	
 	
 	public void setRamps(JPanel contentPane, SpringLayout sl_contentPane, JTextArea lblRampHor, JTextArea lblRampVert, JButton btnTurnAr, int index) {
-		ArrayList<String> update = guiData.getLength();
+		ArrayList<Double> update = guiData.getRampLength();
 		if (update.size() <= index) {
-			update.add(index, "");
-			guiData.setLength(update);
+			update.add(index, 0.0);
+			guiData.setRampLength(update);
 		}
 		
 		lblRampHor.setText("#' #\"");

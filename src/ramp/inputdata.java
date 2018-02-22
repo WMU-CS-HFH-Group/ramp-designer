@@ -17,7 +17,7 @@ import java.awt.event.MouseEvent;
 public class inputdata extends JFrame {
 
 	private JPanel contentPane;
-	private static GUIData guiData = new GUIData();
+	private GUIData guiData = new GUIData();
 	private GUIUtilitys guiUtility = new GUIUtilitys(guiData);
 	private final int MAX_FEET = 24;
 	private final int MAX_INCH = 48;
@@ -219,7 +219,7 @@ public class inputdata extends JFrame {
 				double update = changetotal(0, comboInch.getSelectedIndex(), comboInPart.getSelectedIndex());
 				guiData.setDeckHeight(update);
 				guiData.setRampLengthTotal(update*12);
-				lblInchesRemaining.setText("Ramp feet remaining: " + update);
+				lblInchesRemaining.setText("Ramp feet remaining: " + (update - guiData.getUsedIn()));
 			} 
 		});
 		
@@ -228,7 +228,7 @@ public class inputdata extends JFrame {
 				double update = changetotal(0, comboInch.getSelectedIndex(), comboInPart.getSelectedIndex());
 				guiData.setDeckHeight(update);
 				guiData.setRampLengthTotal(update*12);
-				lblInchesRemaining.setText("Ramp feet remaining: " + update);
+				lblInchesRemaining.setText("Ramp feet remaining: " + (update - guiData.getUsedIn()));
 			} 
 		});
 		
