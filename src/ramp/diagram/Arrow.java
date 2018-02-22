@@ -1,15 +1,16 @@
 package ramp.diagram;
 
 import java.awt.Color;
-import ramp.geometry.DimensionVector;
+
+import ramp.geometry.Coordinate;
+import ramp.geometry.Dimension;
 
 public class Arrow extends DiagramComponent {
-	@Deprecated
-	private DimensionVector destination;
+	private Direction direction;
+	private Dimension length;
 	private int thickness;
 	private Color color;
 	private boolean twoHeaded;
-	private Label label;
 	private boolean labelShown;
 
 	/**
@@ -27,14 +28,13 @@ public class Arrow extends DiagramComponent {
 	 * @param labelShown
 	 *            Whether to display the label.
 	 */
-	public Arrow(DimensionVector location, DimensionVector destination, int thickness, Color color, boolean twoHeaded,
-			Label label, boolean labelShown) {
+	public Arrow(Coordinate location, Direction direction, Dimension length, int thickness, Color color, boolean twoHeaded, boolean labelShown) {
 		super(location);
-		this.destination = destination;
+		this.direction = direction;
+		this.length = length;
 		this.thickness = thickness;
 		this.setColor(color);
 		this.twoHeaded = twoHeaded;
-		this.label = label;
 		this.labelShown = labelShown;
 	}
 
@@ -48,16 +48,46 @@ public class Arrow extends DiagramComponent {
 	 * @param twoHeaded
 	 *            Whether to render a point on both ends of the arrow.
 	 */
-	public Arrow(DimensionVector location, DimensionVector destination, int thickness, Color color, boolean twoHeaded) {
-		this(location, destination, thickness, color, twoHeaded, new Label(), false);
+	public Arrow(Coordinate location, Direction direction, Dimension length, int thickness, Color color, boolean twoHeaded) {
+		this(location, direction, length, thickness, color, twoHeaded, false);
 	}
 
-	public DimensionVector getDestination() {
-		return destination;
+	/**
+	 * Calculates the location of the other end of this arrow from its location.
+	 * 
+	 * @return A dimension vector with the location of the other end of this arrow.
+	 */
+	public Coordinate calculateDestination() {
+		switch (this.direction) {
+		case UP:
+			return new Coordinate(this.getLocation().getX(),
+					this.getLocation().getY().clone().add(this.getLength().clone().negate()));
+		case DOWN:
+			return new Coordinate(this.getLocation().getX(), this.getLocation().getY().clone().add(this.getLength()));
+		case LEFT:
+			return new Coordinate(this.getLocation().getX().clone().add(this.getLength().clone().negate()),
+					this.getLocation().getY());
+		case RIGHT:
+			return new Coordinate(this.getLocation().getX().clone().add(this.getLength()), this.getLocation().getY());
+		default:
+			return this.getLocation().clone();
+		}
 	}
 
-	public void setDestination(DimensionVector destination) {
-		this.destination = destination;
+	public Direction getDirection() {
+		return direction;
+	}
+
+	public void setDirection(Direction direction) {
+		this.direction = direction;
+	}
+
+	public Dimension getLength() {
+		return length;
+	}
+
+	public void setLength(Dimension length) {
+		this.length = length;
 	}
 
 	public int getThickness() {
@@ -82,14 +112,6 @@ public class Arrow extends DiagramComponent {
 
 	public void setTwoHeaded(boolean twoHeaded) {
 		this.twoHeaded = twoHeaded;
-	}
-
-	public Label getLabel() {
-		return label;
-	}
-
-	public void setLabel(Label label) {
-		this.label = label;
 	}
 
 	public boolean isLabelShown() {

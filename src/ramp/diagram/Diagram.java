@@ -3,7 +3,6 @@ package ramp.diagram;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.font.FontRenderContext;
-import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 
@@ -11,11 +10,8 @@ import javax.swing.JFrame;
 
 import ramp.diagram.Label.Alignment;
 import ramp.diagram.Label.LabelSize;
+import ramp.geometry.Coordinate;
 import ramp.geometry.Dimension;
-import ramp.geometry.DimensionOld;
-import ramp.geometry.DimensionUtil;
-import ramp.geometry.DimensionVector;
-import ramp.geometry.DimensionVector.VectorMismatchException;
 
 import java.util.ArrayList;
 
@@ -154,10 +150,6 @@ public class Diagram extends Component {
 			this.drawGrid(g, grid);
 		}
 
-		// Draw the diagram according to data.
-		g.setColor(Color.BLACK);
-		g.setStroke(new BasicStroke(2));
-
 		this.drawSample(g);
 	}
 
@@ -181,7 +173,7 @@ public class Diagram extends Component {
 				// Draw labels on the top if required.
 				if (grid.isDisplayLabels() && x % grid.getLabelInterval() == 0) {
 					g.setColor(Color.DARK_GRAY);
-					g.drawString(grid.getSize().getScaled((float) x).toString(), xPos, 0);
+					g.drawString(grid.getSize().clone().scale((float) x).toString(), xPos, 0);
 				}
 			}
 
@@ -193,14 +185,114 @@ public class Diagram extends Component {
 				// Draw labels on the side if required.
 				if (grid.isDisplayLabels() && y % grid.getLabelInterval() == 0) {
 					g.setColor(Color.DARK_GRAY);
-					g.drawString(grid.getSize().getScaled((float) y).toString(), 0, yPos);
+					g.drawString(grid.getSize().clone().scale((float) y).toString(), 0, yPos);
 				}
 			}
 		}
 	}
 
 	public void drawArrow(Graphics2D g, Arrow a) {
-		
+		// Draw the line for the arrow.
+		Coordinate destination = a.calculateDestination();
+		g.setColor(a.getColor());
+		g.setStroke(new BasicStroke(a.getThickness()));
+		g.drawLine(toPixels(a.getLocation().getX()), toPixels(a.getLocation().getY()), toPixels(destination.getX()),
+				toPixels(destination.getY()));
+
+		// If the label must be shown, draw a white rectangle behind it.
+		if (a.isLabelShown()) {
+			// Generate a label with the arrow's length.
+			Label l;
+			l = new Label(a.getLength().toString(), a.getLocation().getMidpoint(destination),
+					Alignment.CENTER, Alignment.CENTER, labelFont, a.getColor());
+			
+			// Draw the label.
+			this.drawLabel(g, l);
+		}
+
+		// Draw the head on the destination.
+		int[] xPoints = new int[] { toPixels(destination.getX()), 0, 0 };
+		int[] yPoints = new int[] { toPixels(destination.getY()), 0, 0 };
+
+		int arrowSize = 48;
+
+		switch (a.getDirection()) {
+		case UP:
+			xPoints[1] = toPixels(destination.getX()) - arrowSize / 2;
+			yPoints[1] = toPixels(destination.getY()) + arrowSize;
+
+			xPoints[2] = toPixels(destination.getX()) + arrowSize / 2;
+			yPoints[2] = toPixels(destination.getY()) + arrowSize;
+			break;
+		case DOWN:
+			xPoints[1] = toPixels(destination.getX()) - arrowSize / 2;
+			yPoints[1] = toPixels(destination.getY()) - arrowSize;
+
+			xPoints[2] = toPixels(destination.getX()) + arrowSize / 2;
+			yPoints[2] = toPixels(destination.getY()) - arrowSize;
+			break;
+		case LEFT:
+			xPoints[1] = toPixels(destination.getX()) + arrowSize;
+			yPoints[1] = toPixels(destination.getY()) - arrowSize / 2;
+
+			xPoints[2] = toPixels(destination.getX()) + arrowSize;
+			yPoints[2] = toPixels(destination.getY()) + arrowSize / 2;
+			break;
+		case RIGHT:
+		default:
+			xPoints[1] = toPixels(destination.getX()) - arrowSize;
+			yPoints[1] = toPixels(destination.getY()) - arrowSize / 2;
+
+			xPoints[2] = toPixels(destination.getX()) - arrowSize;
+			yPoints[2] = toPixels(destination.getY()) + arrowSize / 2;
+			break;
+		}
+
+		// Draw the arrow based on the calculated triangle.
+		g.setColor(a.getColor());
+		g.fillPolygon(xPoints, yPoints, 3);
+
+		// If the arrow is two-headed, draw one on the location point.
+		if (a.isTwoHeaded()) {
+			xPoints[0] = toPixels(a.getLocation().getX());
+			yPoints[0] = toPixels(a.getLocation().getY());
+
+			// Flip the arrow's head and translate it to the other end.
+			switch (a.getDirection()) {
+			case DOWN:
+				xPoints[1] = toPixels(a.getLocation().getX()) - arrowSize / 2;
+				yPoints[1] = toPixels(a.getLocation().getY()) + arrowSize;
+
+				xPoints[2] = toPixels(a.getLocation().getX()) + arrowSize / 2;
+				yPoints[2] = toPixels(a.getLocation().getY()) + arrowSize;
+				break;
+			case UP:
+				xPoints[1] = toPixels(a.getLocation().getX()) - arrowSize / 2;
+				yPoints[1] = toPixels(a.getLocation().getY()) - arrowSize;
+
+				xPoints[2] = toPixels(a.getLocation().getX()) + arrowSize / 2;
+				yPoints[2] = toPixels(a.getLocation().getY()) - arrowSize;
+				break;
+			case RIGHT:
+				xPoints[1] = toPixels(a.getLocation().getX()) + arrowSize;
+				yPoints[1] = toPixels(a.getLocation().getY()) - arrowSize / 2;
+
+				xPoints[2] = toPixels(a.getLocation().getX()) + arrowSize;
+				yPoints[2] = toPixels(a.getLocation().getY()) + arrowSize / 2;
+				break;
+			case LEFT:
+			default:
+				xPoints[1] = toPixels(a.getLocation().getX()) - arrowSize;
+				yPoints[1] = toPixels(a.getLocation().getY()) - arrowSize / 2;
+
+				xPoints[2] = toPixels(a.getLocation().getX()) - arrowSize;
+				yPoints[2] = toPixels(a.getLocation().getY()) + arrowSize / 2;
+				break;
+			}
+
+			// Draw the other head of the arrow.
+			g.fillPolygon(xPoints, yPoints, 3);
+		}
 	}
 
 	public void drawLabel(Graphics2D g, Label l) {
@@ -238,42 +330,6 @@ public class Diagram extends Component {
 		}
 	}
 
-	@Deprecated
-	public void drawStrings_(Graphics2D g, String s, Font font, DimensionVector location, boolean center) {
-		// Break the string into lines, if necessary.
-		String[] lines = s.split("\n");
-
-		// Measure the strings.
-		int[] size = Diagram.getStringSize(font, lines);
-
-		int x = Diagram.toPixels(location.getX());
-		int y = Diagram.toPixels(location.getY());
-
-		// Iterate through the strings and draw them.
-		g.setFont(font);
-
-		for (int l = 0; l < lines.length; l++) {
-			int lineX = x;
-			int lineY = y + size[2] * l;
-			if (center) {
-				int lineWidth = Diagram.getStringSize(font, lines[l])[1];
-				lineX += size[1] / 2 - lineWidth / 2;
-			}
-			g.drawString(lines[l], lineX, lineY);
-		}
-	}
-
-	@Deprecated
-	public void centerStrings_(Graphics2D g, String s, Font font, DimensionVector center, DimensionVector offset) {
-		int[] size = Diagram.getStringSize(font, s);
-		DimensionVector halfSize = new DimensionVector((double) size[2] / 2.0, (double) size[1] / 2.0);
-		try {
-			this.drawStrings_(g, s, font, DimensionUtil.getVectorSum(center, halfSize, offset), true);
-		} catch (VectorMismatchException e) {
-			e.printStackTrace();
-		}
-	}
-
 	public void drawLanding(Graphics2D g, Landing l) {
 		// Set state
 		g.setStroke(new BasicStroke(2));
@@ -288,8 +344,8 @@ public class Diagram extends Component {
 		g.setStroke(new BasicStroke(2));
 
 		// Find location and size
-		DimensionVector loc = r.getTopLeft();
-		DimensionVector size = r.getSize();
+		Coordinate loc = r.getTopLeft();
+		Coordinate size = r.getSize();
 
 		// Draw rectangle
 		g.drawRect(toPixels(loc.getX()), toPixels(loc.getY()), toPixels(size.getX()), toPixels(size.getY()));
@@ -306,33 +362,29 @@ public class Diagram extends Component {
 				toPixels(p.getSize()));
 	}
 
-	@Deprecated
-	private void drawCenteredString(Graphics2D g, String s, DimensionVector location, Dimension offsetX,
-			Dimension offsetY) {
+	private void drawSample(Graphics2D g) {
+		// Test dimension parsing.
 		try {
-			this.drawStrings_(g, s, this.labelFont, location.getSum(new DimensionVector(offsetX, offsetY)), true);
-		} catch (VectorMismatchException e) {
+			System.out.println(Dimension.inchesFromString("1 in"));
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
 
-	@Deprecated
-	private void drawCenteredString(Graphics2D g, String s, DimensionVector location) {
-		this.drawCenteredString(g, s, location, new Dimension(0), new Dimension(0));
-	}
-
-	private void drawSample(Graphics2D g) {
 		// Test ramp post generation
-		Ramp r = new Ramp(new DimensionVector(36, 72), new Dimension(18, 0), Direction.DOWN);
+		Ramp r = new Ramp(new Coordinate(new Dimension(36), new Dimension(72)), new Dimension(18, 0), Direction.DOWN);
 		this.drawRamp(g, r);
+
+		// Test arrows.
+		Arrow a = new Arrow(new Coordinate(new Dimension(0), new Dimension(0)), Direction.RIGHT, new Dimension(12, 0), 2, Color.black, true, true);
+		this.drawArrow(g, a);
 
 		// -- Sample diagram --
 
 		// Title
 		Font titleFont = new Font("Arial", Font.BOLD, 100);
-		Label title = new Label("Hickory Hills Mobile Home Park #63", new DimensionVector(12, 12), titleFont);
+		Label title = new Label("Hickory Hills Mobile Home Park #63", new Coordinate(new Dimension(12), new Dimension(12)), titleFont);
 		Label subtitle = new Label("36\" Rise Sidewalk to Landing\nAll Treated Lumber\n12:1 Slope Ratio (or more)",
-				new DimensionVector(12, 24), labelFont);
+				new Coordinate(new Dimension(12), new Dimension(24)), labelFont);
 		this.drawLabel(g, title);
 		this.drawLabel(g, subtitle);
 
@@ -356,7 +408,7 @@ public class Diagram extends Component {
 		// House
 		g.drawRect(Diagram.toPixels(new Dimension(24, 0)), Diagram.toPixels(new Dimension(0)),
 				Diagram.toPixels(new Dimension(24, 0)), Diagram.toPixels(new Dimension(32, 0)));
-		Label houseLabel = new Label("House", new DimensionVector(new Dimension(27, 0), new Dimension(15, 0)),
+		Label houseLabel = new Label("House", new Coordinate(new Dimension(27, 0), new Dimension(15, 0)),
 				Alignment.CENTER, Alignment.CENTER, labelFont, Color.BLACK);
 		this.drawLabel(g, houseLabel);
 
@@ -364,7 +416,7 @@ public class Diagram extends Component {
 		g.drawRect(Diagram.toPixels(new Dimension(18, 0)), Diagram.toPixels(new Dimension(8, 0)),
 				Diagram.toPixels(new Dimension(6, 0)), Diagram.toPixels(new Dimension(6, 0)));
 		Label landingLabel = new Label("6'x6' Landing",
-				new DimensionVector(new Dimension(36).add(new Dimension(18 * 12)),
+				new Coordinate(new Dimension(36).add(new Dimension(18 * 12)),
 						new Dimension(36).add(new Dimension(8 * 12))),
 				Alignment.CENTER, Alignment.CENTER, labelFont, Color.BLACK);
 		this.drawLabel(g, landingLabel);
@@ -372,37 +424,21 @@ public class Diagram extends Component {
 		// First ramp section
 		g.drawRect(Diagram.toPixels(new Dimension(19, 6)), Diagram.toPixels(new Dimension(14, 0)),
 				Diagram.toPixels(new Dimension(40)), Diagram.toPixels(new Dimension(20, 0)));
-		DimensionVector ramp1center = new DimensionVector(new Dimension(19, 6).add(new Dimension(20)),
-				new Dimension(14, 0).add(new Dimension(10, 0)));
-		// TODO: label rotation and arrows
-		this.drawCenteredString(g, "← 40\" →", ramp1center);
-		this.drawCenteredString(g, "20'", ramp1center, new Dimension(0), new Dimension(-3, 0));
-		this.drawCenteredString(g, "↑", ramp1center, new Dimension(0), new Dimension(-4, 0));
-		this.drawCenteredString(g, "↓", ramp1center, new Dimension(0), new Dimension(-2, 0));
 
 		// Turnaround
 		g.drawRect(Diagram.toPixels(new Dimension(19, 6)), Diagram.toPixels(new Dimension(34, 0)),
 				Diagram.toPixels(new Dimension(4, 0)), Diagram.toPixels(new Dimension(4, 0)));
-		this.drawCenteredString(g, "4' x 4'",
-				new DimensionVector(new Dimension(19, 6).add(new Dimension(2, 0)), new Dimension(36, 0)));
 
 		// Second ramp section
 		g.drawRect(Diagram.toPixels(new Dimension(19, 6).add(new Dimension(4, 0))),
-				Diagram.toPixels(new Dimension(35, 0).add(new Dimension(4).getNegation())),
+				Diagram.toPixels(new Dimension(35, 0).add(new Dimension(4).clone().negate())),
 				Diagram.toPixels(new Dimension(12, 0)), Diagram.toPixels(new Dimension(40)));
-
-		DimensionVector ramp2center = new DimensionVector(new Dimension(23, 6).add(new Dimension(6, 0)),
-				new Dimension(34, 8).add(new Dimension(20)));
-		this.drawCenteredString(g, "← 12' →", ramp2center);
-		this.drawCenteredString(g, "40\"", ramp2center, new Dimension(-3, 0), new Dimension(0));
-		this.drawCenteredString(g, "↑", ramp2center, new Dimension(-3, 0), new Dimension(-1, 0));
-		this.drawCenteredString(g, "↓", ramp2center, new Dimension(-3, 0), new Dimension(1, 0));
 
 		// Driveway
 		g.drawRect(Diagram.toPixels(new Dimension(31, 6).add(new Dimension(4, 0))),
 				Diagram.toPixels(new Dimension(32, 0)), Diagram.toPixels(new Dimension(40, 0)),
 				Diagram.toPixels(new Dimension(10, 0)));
-		Label drivewayLabel = new Label("Driveway", new DimensionVector(new Dimension(37, 0), new Dimension(37, 0)),
+		Label drivewayLabel = new Label("Driveway", new Coordinate(new Dimension(37, 0), new Dimension(37, 0)),
 				Alignment.CENTER, Alignment.CENTER, labelFont, Color.BLACK);
 		this.drawLabel(g, drivewayLabel);
 	}

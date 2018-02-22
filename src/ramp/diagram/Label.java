@@ -5,7 +5,8 @@ import java.awt.Font;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 
-import ramp.geometry.DimensionVector;
+import ramp.geometry.Coordinate;
+import ramp.geometry.Dimension;
 
 /**
  * A data storage class for a label's attributes. This information will be used
@@ -19,12 +20,12 @@ public class Label {
 	private static final double LINE_SPACING = 0.15; // Ratio to the text height to leave between lines
 
 	private String string;
-	private DimensionVector origin;
+	private Coordinate origin;
 	private Alignment alignmentX, alignmentY;
 	private Font font;
 	private Color color;
 
-	public Label(String string, DimensionVector origin, Alignment alignmentX, Alignment alignmentY, Font font,
+	public Label(String string, Coordinate origin, Alignment alignmentX, Alignment alignmentY, Font font,
 			Color color) {
 		this.string = string;
 		this.origin = origin;
@@ -45,7 +46,7 @@ public class Label {
 	 * @param font
 	 *            The font to render the string with.
 	 */
-	public Label(String string, DimensionVector topLeft, Font font) {
+	public Label(String string, Coordinate topLeft, Font font) {
 		this(string, topLeft, Alignment.LEFT_OR_TOP, Alignment.LEFT_OR_TOP, font, Color.BLACK);
 	}
 
@@ -54,7 +55,7 @@ public class Label {
 	 * it is given other parameters.
 	 */
 	public Label() {
-		this("", new DimensionVector(0, 0), new Font("Arial", Font.PLAIN, 12));
+		this("", new Coordinate(new Dimension(0), new Dimension(0)), new Font("Arial", Font.PLAIN, 12));
 	}
 
 	public String getString() {
@@ -65,11 +66,11 @@ public class Label {
 		this.string = string;
 	}
 
-	public DimensionVector getOrigin() {
+	public Coordinate getOrigin() {
 		return origin;
 	}
 
-	public void setOrigin(DimensionVector origin) {
+	public void setOrigin(Coordinate origin) {
 		this.origin = origin;
 	}
 
@@ -132,6 +133,8 @@ public class Label {
 			if (lineR.getWidth() > width) {
 				width = lineR.getWidth();
 			}
+			System.out.println("width l: " + lineR.getWidth());
+			System.out.println("width: " + width);
 
 			// Increase the height.
 			height += lineHeight;
