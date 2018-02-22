@@ -355,7 +355,7 @@ public class Diagram extends Component {
 
 				rampBox.setLocation(new Coordinate(x, y));
 				rampBox.setWidth(s.getRampLength());
-				rampBox.setHeight(s.getLandingWidth());
+				rampBox.setHeight(s.getRampWidth());
 
 				// Generate posts for ramp.
 				posts = this.generatePosts(rampBox, s.getDirection(), POST_SIZE, postsLeftOrTop, postsRightOrBottom);
@@ -651,11 +651,11 @@ public class Diagram extends Component {
 	private void drawSample(Graphics2D g) {
 		// Draw ramp.
 		Ramp r = new Ramp(new Dimension(36), new Coordinate(new Dimension(18, 0), new Dimension(8, 0)));
-		r.addSection(Direction.DOWN, new Dimension(0), new Dimension(0), new Dimension(40), new Dimension(24, 0),
+		r.addSection(Direction.LEFT, new Dimension(0), new Dimension(0), new Dimension(40), new Dimension(24, 0),
 				new Dimension(6, 0), new Dimension(6, 0));
-		r.addSection(Direction.UP, new Dimension(0), new Dimension(0), new Dimension(40), new Dimension(12, 0),
-				new Dimension(8, 0), new Dimension(4, 0));
-		r.getSection(1).setHairpinDirection(Direction.RIGHT);
+		r.addSection(Direction.RIGHT, new Dimension(0), new Dimension(0), new Dimension(40), new Dimension(12, 0),
+				new Dimension(4, 0), new Dimension(8, 0));
+		r.getSection(1).setHairpinDirection(Direction.UP);
 
 		this.drawRampTop(g, r);
 
