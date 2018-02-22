@@ -195,7 +195,7 @@ public class Dimension implements Comparable<Dimension> {
 		
 		// Only concatenate strings for components that are nonzero.
 		if (this.isZero()) {
-			result = "0\"";
+			result = "";
 		}
 		
 		if (this.getFeet() > 0) {
