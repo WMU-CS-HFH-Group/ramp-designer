@@ -2,8 +2,6 @@ package ramp.diagram;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.font.FontRenderContext;
-import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -19,8 +17,6 @@ import java.util.ArrayList;
 @SuppressWarnings("serial")
 public class Diagram extends Component {
 	// Constants
-	@Deprecated
-	private static final double LINE_SPACING = 0.25; // Ratio to the text height to leave between lines
 	private static final Dimension MAX_POST_SPACE = new Dimension(6, 0);
 	private static final Dimension POST_SIZE = new Dimension(4);
 
