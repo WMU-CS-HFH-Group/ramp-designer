@@ -163,6 +163,11 @@ public class Dimension implements Comparable<Dimension> {
 		this.length += d2.getLength();
 		return this;
 	}
+	
+	public Dimension subtract(Dimension d2) {
+		this.length -= d2.getLength();
+		return this;
+	}
 
 	public Dimension negate() {
 		this.length *= -1;

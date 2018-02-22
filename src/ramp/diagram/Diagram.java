@@ -10,6 +10,7 @@ import javax.swing.JFrame;
 
 import ramp.diagram.Label.Alignment;
 import ramp.diagram.Label.LabelSize;
+import ramp.geometry.Box;
 import ramp.geometry.Coordinate;
 import ramp.geometry.Dimension;
 
@@ -20,6 +21,8 @@ public class Diagram extends Component {
 	// Constants
 	@Deprecated
 	private static final double LINE_SPACING = 0.25; // Ratio to the text height to leave between lines
+	private static final Dimension MAX_POST_SPACE = new Dimension(6, 0);
+	private static final Dimension POST_SIZE = new Dimension(4);
 
 	// Transformation variables
 	private double scale;
@@ -153,6 +156,327 @@ public class Diagram extends Component {
 		this.drawSample(g);
 	}
 
+	public void drawRampTop(Graphics2D g, Ramp r) {
+		Dimension x = r.getLocation().getX();
+		Dimension y = r.getLocation().getY();
+
+		// If this is true, the last section overlaps with this one.
+		boolean hairPin = false;
+
+		Coordinate[] posts = new Coordinate[0];
+
+		Box landingBox, rampBox;
+
+		for (int i = 0; i < r.countSections(); i++) {
+			Section s = r.getSection(i);
+
+			// Set graphics settings.
+			g.setColor(Color.BLACK);
+			g.setStroke(new BasicStroke(2));
+
+			// Adjust coordinates based on last ramp section.
+			if (i > 0) {
+				Section ls = r.getSection(i - 1);
+
+				// Adjust x and y for landing.
+				switch (ls.getDirection()) {
+				case UP: // The last section was up.
+					if (s.getDirection() == Direction.DOWN) {
+						if (s.getHairpinDirection() == Direction.LEFT) {
+							x.subtract(POST_SIZE.clone().scale(0.5));
+							x.subtract(s.getLandingWidth().clone().scale(0.5));
+						} else {
+							x.add(s.getRampWidth());
+							x.add(POST_SIZE.clone().scale(0.5));
+							x.subtract(s.getLandingWidth().clone().scale(0.5));
+						}
+						hairPin = true;
+					} else {
+						x.add(ls.getRampWidth().clone().scale(0.5));
+						x.subtract(s.getLandingWidth().clone().scale(0.5));
+					}
+
+					x.subtract(s.getLandingOffset());
+
+					y.subtract(s.getLandingLength());
+					break;
+				case DOWN: // The last section was down.
+					if (s.getDirection() == Direction.UP) {
+						if (s.getHairpinDirection() == Direction.LEFT) {
+							x.subtract(POST_SIZE.clone().scale(0.5));
+							x.subtract(s.getLandingWidth().clone().scale(0.5));
+						} else {
+							x.add(s.getRampWidth());
+							x.add(POST_SIZE.clone().scale(0.5));
+							x.subtract(s.getLandingWidth().clone().scale(0.5));
+						}
+						hairPin = true;
+					} else {
+						x.add(ls.getRampWidth().clone().scale(0.5));
+						x.subtract(s.getLandingWidth().clone().scale(0.5));
+					}
+
+					x.add(s.getLandingOffset());
+
+					y.add(ls.getRampLength());
+					break;
+				case LEFT: // The last section was left.
+					x.subtract(s.getLandingWidth());
+
+					if (s.getDirection() == Direction.RIGHT) {
+						if (s.getHairpinDirection() == Direction.UP) {
+							y.subtract(POST_SIZE.clone().scale(0.5));
+							y.subtract(s.getLandingLength().clone().scale(0.5));
+						} else {
+							y.add(s.getRampWidth());
+							y.add(POST_SIZE.clone().scale(0.5));
+							y.subtract(s.getLandingLength().clone().scale(0.5));
+						}
+						hairPin = true;
+					} else {
+						y.add(ls.getRampWidth().clone().scale(0.5));
+						y.subtract(s.getLandingLength().clone().scale(0.5));
+					}
+
+					y.add(s.getLandingOffset());
+					break;
+				case RIGHT: // The last section was right.
+					x.add(ls.getRampLength());
+
+					if (s.getDirection() == Direction.LEFT) {
+						if (s.getHairpinDirection() == Direction.UP) {
+							y.subtract(POST_SIZE.clone().scale(0.5));
+							y.subtract(s.getLandingLength().clone().scale(0.5));
+						} else {
+							y.add(s.getRampWidth());
+							y.add(POST_SIZE.clone().scale(0.5));
+							y.subtract(s.getLandingLength().clone().scale(0.5));
+						}
+						hairPin = true;
+					} else {
+						y.add(ls.getRampWidth().clone().scale(0.5));
+						y.subtract(s.getLandingLength().clone().scale(0.5));
+					}
+
+					y.subtract(s.getLandingOffset());
+					break;
+				default:
+				}
+			}
+
+			// If the last section overlaps, do not draw this section. The ramp will also
+			// end.
+			// Draw landing before ramp.
+			landingBox = new Box(new Coordinate(x, y), s.getLandingWidth(), s.getLandingLength());
+			g.drawRect(coord(x), coord(y), coord(s.getLandingWidth()), coord(s.getLandingLength()));
+
+			// Generate and draw a label for the landing.
+			Label landingLabel = new Label(String.format("%s x %s", s.getLandingWidth(), s.getLandingLength()),
+					Alignment.CENTER, Alignment.CENTER, labelFont, Color.black);
+			this.drawLabel(g, landingLabel, landingBox.getCenter());
+
+			rampBox = new Box(new Coordinate(x, y), new Dimension(0), new Dimension(0));
+
+			boolean postsLeftOrTop = true;
+			boolean postsRightOrBottom = true;
+
+			// Draw ramp.
+			switch (s.getDirection()) {
+			case UP:
+				// Adjust x and y for ramp.
+				x.add(s.getLandingWidth().clone().scale(0.5));
+				if (hairPin) {
+					if (s.getHairpinDirection() == Direction.LEFT) {
+						x.subtract(s.getRampWidth());
+						x.subtract(POST_SIZE.clone().scale(0.5));
+						postsRightOrBottom = false;
+					} else {
+						x.add(s.getRampWidth());
+						x.add(POST_SIZE);
+						postsLeftOrTop = false;
+					}
+				} else {
+					x.subtract(s.getRampWidth().clone().scale(0.5));
+				}
+				x.add(s.getLandingOffset());
+
+				y.subtract(s.getRampLength());
+
+				rampBox.setLocation(new Coordinate(x, y));
+				rampBox.setWidth(s.getRampWidth());
+				rampBox.setHeight(s.getRampLength());
+
+				// Generate posts for ramp.
+				posts = this.generatePosts(rampBox, s.getDirection(), POST_SIZE, postsLeftOrTop, postsRightOrBottom);
+
+				g.drawRect(coord(x), coord(y), coord(s.getRampWidth()), coord(s.getRampLength()));
+				break;
+			case DOWN:
+				// Adjust x and y for ramp.
+				x.add(s.getLandingWidth().clone().scale(0.5));
+				if (hairPin) {
+					if (s.getHairpinDirection() == Direction.LEFT) {
+						x.subtract(s.getRampWidth());
+						x.subtract(POST_SIZE.clone().scale(0.5));
+						postsRightOrBottom = false;
+					} else {
+						x.add(POST_SIZE.clone().scale(0.5));
+						postsLeftOrTop = false;
+					}
+				} else {
+					x.subtract(s.getRampWidth().clone().scale(0.5));
+				}
+				x.add(s.getLandingOffset());
+
+				y.add(s.getLandingLength());
+
+				rampBox.setLocation(new Coordinate(x, y));
+				rampBox.setWidth(s.getRampWidth());
+				rampBox.setHeight(s.getRampLength());
+
+				// Generate posts for ramp.
+				posts = this.generatePosts(rampBox, s.getDirection(), POST_SIZE, postsLeftOrTop, postsRightOrBottom);
+
+				g.drawRect(coord(x), coord(y), coord(s.getRampWidth()), coord(s.getRampLength()));
+				break;
+			case LEFT:
+				// Adjust x and y for ramp.
+				x.subtract(s.getRampLength());
+
+				y.add(s.getLandingLength().clone().scale(0.5));
+				if (hairPin) {
+					if (s.getHairpinDirection() == Direction.UP) {
+						y.subtract(s.getRampWidth());
+						y.subtract(POST_SIZE.clone().scale(0.5));
+						postsRightOrBottom = false;
+					} else {
+						y.add(POST_SIZE.clone().scale(0.5));
+						postsLeftOrTop = false;
+					}
+				} else {
+					y.subtract(s.getRampWidth().clone().scale(0.5));
+				}
+				y.add(s.getRampOffset());
+
+				rampBox.setLocation(new Coordinate(x, y));
+				rampBox.setWidth(s.getRampLength());
+				rampBox.setHeight(s.getLandingWidth());
+
+				// Generate posts for ramp.
+				posts = this.generatePosts(rampBox, s.getDirection(), POST_SIZE, postsLeftOrTop, postsRightOrBottom);
+
+				g.drawRect(coord(x), coord(y), coord(s.getRampLength()), coord(s.getRampWidth()));
+				break;
+			case RIGHT:
+				// Adjust x and y for ramp.
+				x.add(s.getLandingWidth());
+
+				y.add(s.getLandingLength().clone().scale(0.5));
+				if (hairPin) {
+					if (s.getHairpinDirection() == Direction.UP) {
+						y.subtract(s.getRampWidth());
+						y.subtract(POST_SIZE.clone().scale(0.5));
+						postsRightOrBottom = false;
+					} else {
+						y.add(POST_SIZE.clone().scale(0.5));
+						postsLeftOrTop = false;
+					}
+				} else {
+					y.subtract(s.getRampWidth().clone().scale(0.5));
+				}
+				y.subtract(s.getRampOffset());
+
+				rampBox.setLocation(new Coordinate(x, y));
+				rampBox.setWidth(s.getRampLength());
+				rampBox.setHeight(s.getRampWidth());
+
+				// Generate posts for ramp.
+				posts = this.generatePosts(rampBox, s.getDirection(), POST_SIZE, postsLeftOrTop, postsRightOrBottom);
+
+				g.drawRect(coord(x), coord(y), coord(s.getRampLength()), coord(s.getRampWidth()));
+				break;
+			default:
+			}
+
+			// Generate and draw labels for the ramp.
+			Label rampLengthLabel = new Label(s.getRampLength().toString(), Alignment.CENTER, Alignment.CENTER,
+					labelFont, Color.BLACK);
+			this.drawLabel(g, rampLengthLabel, rampBox.getCenter());
+
+			// Draw the posts
+			for (Coordinate c : posts) {
+				g.fillRect(coord(c.getX()), coord(c.getY()), coord(POST_SIZE), coord(POST_SIZE));
+			}
+		}
+	}
+
+	private Coordinate[] generatePosts(Box rampBox, Direction rampDirection, Dimension postSize, boolean leftOrTop,
+			boolean rightOrBottom) {
+		Dimension rampWidth = rampBox.getWidth();
+		Dimension rampLength = rampBox.getHeight();
+
+		if (rampDirection == Direction.LEFT || rampDirection == Direction.RIGHT) {
+			rampWidth = rampBox.getHeight();
+			rampLength = rampBox.getWidth();
+		}
+
+		double insideLength = rampLength.clone().add(postSize.clone().negate()).getLength();
+		int spaceCount = (int) Math.ceil(insideLength / MAX_POST_SPACE.getLength());
+
+		// Calculate the distance d between these posts by the following formula:
+		// d = (l - s) / c
+		double dist = insideLength / spaceCount;
+
+		// Allocate an array of posts
+		Coordinate[] posts = new Coordinate[(spaceCount + 1) * 2];
+
+		// When the ramp is vertical, u = x and v = y. When the ramp is horizontal, u =
+		// y and v = x.
+		double pU = -postSize.getLength();
+		double pV = 0;
+
+		// Generate left or top posts
+		for (int i = 0; i < posts.length; i++) {
+			// If we have finished the first side, switch to the next side.
+			if (i == posts.length / 2) {
+				// Adjust the u and v coordinates accordingly.
+				pU = rampWidth.getLength();
+				pV = 0;
+			}
+
+			// Perform coordinate calculations for the post based on the u, v coordinates
+			Coordinate postLocation = new Coordinate(new Dimension(pU), new Dimension(pV));
+
+			switch (rampDirection) {
+			case LEFT:
+				postLocation.getY().negate();
+				postLocation.getY().add(postSize.clone().negate());
+				postLocation.swapXY();
+				break;
+			case RIGHT:
+				postLocation.swapXY();
+				break;
+			case UP:
+				postLocation.getY().negate();
+				postLocation.getY().add(postSize.clone().negate());
+				break;
+			default: // Down
+				// No transformations necessary
+			}
+
+			// Add the post location vector to the ramp location's
+			postLocation.add(rampBox.getLocation());
+
+			// Create the post
+			posts[i] = postLocation.clone();
+
+			// Increase the lengthwise position
+			pV += dist;
+		}
+
+		return posts;
+	}
+
 	public void drawGrid(Graphics2D g, Grid grid) {
 		// Determine whether the grid should be drawn from the scale.
 		if (this.scale > grid.getDisappearAtScale()) {
@@ -166,9 +490,9 @@ public class Diagram extends Component {
 
 			// Draw all the gridlines.
 			for (int x = 0; x < verticals && x < 1000; x++) {
-				int xPos = x * Diagram.toPixels(grid.getSize());
+				int xPos = x * Diagram.coord(grid.getSize());
 				g.setColor(grid.getColor());
-				g.drawLine(xPos, 0, xPos, Diagram.toPixels(this.maxHeight));
+				g.drawLine(xPos, 0, xPos, Diagram.coord(this.maxHeight));
 
 				// Draw labels on the top if required.
 				if (grid.isDisplayLabels() && x % grid.getLabelInterval() == 0) {
@@ -178,9 +502,9 @@ public class Diagram extends Component {
 			}
 
 			for (int y = 0; y < horizontals & y < 1000; y++) {
-				int yPos = y * Diagram.toPixels(grid.getSize());
+				int yPos = y * Diagram.coord(grid.getSize());
 				g.setColor(grid.getColor());
-				g.drawLine(0, yPos, Diagram.toPixels(this.maxWidth), yPos);
+				g.drawLine(0, yPos, Diagram.coord(this.maxWidth), yPos);
 
 				// Draw labels on the side if required.
 				if (grid.isDisplayLabels() && y % grid.getLabelInterval() == 0) {
@@ -196,55 +520,54 @@ public class Diagram extends Component {
 		Coordinate destination = a.calculateDestination();
 		g.setColor(a.getColor());
 		g.setStroke(new BasicStroke(a.getThickness()));
-		g.drawLine(toPixels(a.getLocation().getX()), toPixels(a.getLocation().getY()), toPixels(destination.getX()),
-				toPixels(destination.getY()));
+		g.drawLine(coord(a.getLocation().getX()), coord(a.getLocation().getY()), coord(destination.getX()),
+				coord(destination.getY()));
 
 		// If the label must be shown, draw a white rectangle behind it.
 		if (a.isLabelShown()) {
 			// Generate a label with the arrow's length.
 			Label l;
-			l = new Label(a.getLength().toString(), a.getLocation().getMidpoint(destination),
-					Alignment.CENTER, Alignment.CENTER, labelFont, a.getColor());
-			
+			l = new Label(a.getLength().toString(), Alignment.CENTER, Alignment.CENTER, labelFont, a.getColor());
+
 			// Draw the label.
-			this.drawLabel(g, l);
+			this.drawLabel(g, l, a.getLocation().getMidpoint(destination));
 		}
 
 		// Draw the head on the destination.
-		int[] xPoints = new int[] { toPixels(destination.getX()), 0, 0 };
-		int[] yPoints = new int[] { toPixels(destination.getY()), 0, 0 };
+		int[] xPoints = new int[] { coord(destination.getX()), 0, 0 };
+		int[] yPoints = new int[] { coord(destination.getY()), 0, 0 };
 
 		int arrowSize = 48;
 
 		switch (a.getDirection()) {
 		case UP:
-			xPoints[1] = toPixels(destination.getX()) - arrowSize / 2;
-			yPoints[1] = toPixels(destination.getY()) + arrowSize;
+			xPoints[1] = coord(destination.getX()) - arrowSize / 2;
+			yPoints[1] = coord(destination.getY()) + arrowSize;
 
-			xPoints[2] = toPixels(destination.getX()) + arrowSize / 2;
-			yPoints[2] = toPixels(destination.getY()) + arrowSize;
+			xPoints[2] = coord(destination.getX()) + arrowSize / 2;
+			yPoints[2] = coord(destination.getY()) + arrowSize;
 			break;
 		case DOWN:
-			xPoints[1] = toPixels(destination.getX()) - arrowSize / 2;
-			yPoints[1] = toPixels(destination.getY()) - arrowSize;
+			xPoints[1] = coord(destination.getX()) - arrowSize / 2;
+			yPoints[1] = coord(destination.getY()) - arrowSize;
 
-			xPoints[2] = toPixels(destination.getX()) + arrowSize / 2;
-			yPoints[2] = toPixels(destination.getY()) - arrowSize;
+			xPoints[2] = coord(destination.getX()) + arrowSize / 2;
+			yPoints[2] = coord(destination.getY()) - arrowSize;
 			break;
 		case LEFT:
-			xPoints[1] = toPixels(destination.getX()) + arrowSize;
-			yPoints[1] = toPixels(destination.getY()) - arrowSize / 2;
+			xPoints[1] = coord(destination.getX()) + arrowSize;
+			yPoints[1] = coord(destination.getY()) - arrowSize / 2;
 
-			xPoints[2] = toPixels(destination.getX()) + arrowSize;
-			yPoints[2] = toPixels(destination.getY()) + arrowSize / 2;
+			xPoints[2] = coord(destination.getX()) + arrowSize;
+			yPoints[2] = coord(destination.getY()) + arrowSize / 2;
 			break;
 		case RIGHT:
 		default:
-			xPoints[1] = toPixels(destination.getX()) - arrowSize;
-			yPoints[1] = toPixels(destination.getY()) - arrowSize / 2;
+			xPoints[1] = coord(destination.getX()) - arrowSize;
+			yPoints[1] = coord(destination.getY()) - arrowSize / 2;
 
-			xPoints[2] = toPixels(destination.getX()) - arrowSize;
-			yPoints[2] = toPixels(destination.getY()) + arrowSize / 2;
+			xPoints[2] = coord(destination.getX()) - arrowSize;
+			yPoints[2] = coord(destination.getY()) + arrowSize / 2;
 			break;
 		}
 
@@ -254,39 +577,39 @@ public class Diagram extends Component {
 
 		// If the arrow is two-headed, draw one on the location point.
 		if (a.isTwoHeaded()) {
-			xPoints[0] = toPixels(a.getLocation().getX());
-			yPoints[0] = toPixels(a.getLocation().getY());
+			xPoints[0] = coord(a.getLocation().getX());
+			yPoints[0] = coord(a.getLocation().getY());
 
 			// Flip the arrow's head and translate it to the other end.
 			switch (a.getDirection()) {
 			case DOWN:
-				xPoints[1] = toPixels(a.getLocation().getX()) - arrowSize / 2;
-				yPoints[1] = toPixels(a.getLocation().getY()) + arrowSize;
+				xPoints[1] = coord(a.getLocation().getX()) - arrowSize / 2;
+				yPoints[1] = coord(a.getLocation().getY()) + arrowSize;
 
-				xPoints[2] = toPixels(a.getLocation().getX()) + arrowSize / 2;
-				yPoints[2] = toPixels(a.getLocation().getY()) + arrowSize;
+				xPoints[2] = coord(a.getLocation().getX()) + arrowSize / 2;
+				yPoints[2] = coord(a.getLocation().getY()) + arrowSize;
 				break;
 			case UP:
-				xPoints[1] = toPixels(a.getLocation().getX()) - arrowSize / 2;
-				yPoints[1] = toPixels(a.getLocation().getY()) - arrowSize;
+				xPoints[1] = coord(a.getLocation().getX()) - arrowSize / 2;
+				yPoints[1] = coord(a.getLocation().getY()) - arrowSize;
 
-				xPoints[2] = toPixels(a.getLocation().getX()) + arrowSize / 2;
-				yPoints[2] = toPixels(a.getLocation().getY()) - arrowSize;
+				xPoints[2] = coord(a.getLocation().getX()) + arrowSize / 2;
+				yPoints[2] = coord(a.getLocation().getY()) - arrowSize;
 				break;
 			case RIGHT:
-				xPoints[1] = toPixels(a.getLocation().getX()) + arrowSize;
-				yPoints[1] = toPixels(a.getLocation().getY()) - arrowSize / 2;
+				xPoints[1] = coord(a.getLocation().getX()) + arrowSize;
+				yPoints[1] = coord(a.getLocation().getY()) - arrowSize / 2;
 
-				xPoints[2] = toPixels(a.getLocation().getX()) + arrowSize;
-				yPoints[2] = toPixels(a.getLocation().getY()) + arrowSize / 2;
+				xPoints[2] = coord(a.getLocation().getX()) + arrowSize;
+				yPoints[2] = coord(a.getLocation().getY()) + arrowSize / 2;
 				break;
 			case LEFT:
 			default:
-				xPoints[1] = toPixels(a.getLocation().getX()) - arrowSize;
-				yPoints[1] = toPixels(a.getLocation().getY()) - arrowSize / 2;
+				xPoints[1] = coord(a.getLocation().getX()) - arrowSize;
+				yPoints[1] = coord(a.getLocation().getY()) - arrowSize / 2;
 
-				xPoints[2] = toPixels(a.getLocation().getX()) - arrowSize;
-				yPoints[2] = toPixels(a.getLocation().getY()) + arrowSize / 2;
+				xPoints[2] = coord(a.getLocation().getX()) - arrowSize;
+				yPoints[2] = coord(a.getLocation().getY()) + arrowSize / 2;
 				break;
 			}
 
@@ -295,11 +618,11 @@ public class Diagram extends Component {
 		}
 	}
 
-	public void drawLabel(Graphics2D g, Label l) {
+	public void drawLabel(Graphics2D g, Label l, Coordinate origin) {
 		LabelSize size = l.calculateSize();
 		String[] lines = l.toLines();
-		int x = Diagram.toPixels(l.getOrigin().getX());
-		int y = Diagram.toPixels(l.getOrigin().getY());
+		int x = coord(origin.getX());
+		int y = coord(origin.getY());
 
 		// Calculate the location of the bottom-left corner based on the vertical
 		// alignment.
@@ -330,144 +653,85 @@ public class Diagram extends Component {
 		}
 	}
 
-	public void drawLanding(Graphics2D g, Landing l) {
-		// Set state
-		g.setStroke(new BasicStroke(2));
-
-		// Draw rectangle
-		g.drawRect(toPixels(l.getLocation().getX()), toPixels(l.getLocation().getY()), toPixels(l.getSize().getX()),
-				toPixels(l.getSize().getY()));
-	}
-
-	public void drawRamp(Graphics2D g, Ramp r) {
-		// Set state
-		g.setStroke(new BasicStroke(2));
-
-		// Find location and size
-		Coordinate loc = r.getTopLeft();
-		Coordinate size = r.getSize();
-
-		// Draw rectangle
-		g.drawRect(toPixels(loc.getX()), toPixels(loc.getY()), toPixels(size.getX()), toPixels(size.getY()));
-
-		// Draw posts
-		for (Post p : r.generatePosts()) {
-			this.drawPost(g, p);
-		}
-	}
-
-	public void drawPost(Graphics2D g, Post p) {
-		// Draw filled rectangle
-		g.fillRect(toPixels(p.getLocation().getX()), toPixels(p.getLocation().getY()), toPixels(p.getSize()),
-				toPixels(p.getSize()));
-	}
-
 	private void drawSample(Graphics2D g) {
-		// Test dimension parsing.
-		try {
-			System.out.println(Dimension.inchesFromString("1 in"));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		// Draw ramp.
+		Ramp r = new Ramp(new Dimension(36), new Coordinate(new Dimension(18, 0), new Dimension(8, 0)));
+		r.addSection(Direction.RIGHT, new Dimension(0), new Dimension(0), new Dimension(40), new Dimension(24, 0),
+				new Dimension(6, 0), new Dimension(6, 0));
+		r.addSection(Direction.LEFT, new Dimension(0), new Dimension(0), new Dimension(40), new Dimension(12, 0),
+				new Dimension(4, 0), new Dimension(8, 0));
+		r.getSection(1).setHairpinDirection(Direction.UP);
 
-		// Test ramp post generation
-		Ramp r = new Ramp(new Coordinate(new Dimension(36), new Dimension(72)), new Dimension(18, 0), Direction.DOWN);
-		this.drawRamp(g, r);
+		this.drawRampTop(g, r);
 
-		// Test arrows.
-		Arrow a = new Arrow(new Coordinate(new Dimension(0), new Dimension(0)), Direction.RIGHT, new Dimension(12, 0), 2, Color.black, true, true);
-		this.drawArrow(g, a);
-
-		// -- Sample diagram --
-
-		// Title
-		Font titleFont = new Font("Arial", Font.BOLD, 100);
-		Label title = new Label("Hickory Hills Mobile Home Park #63", new Coordinate(new Dimension(12), new Dimension(12)), titleFont);
-		Label subtitle = new Label("36\" Rise Sidewalk to Landing\nAll Treated Lumber\n12:1 Slope Ratio (or more)",
-				new Coordinate(new Dimension(12), new Dimension(24)), labelFont);
-		this.drawLabel(g, title);
-		this.drawLabel(g, subtitle);
-
-		// Old Title
-		// g.setFont(new Font("Arial", Font.BOLD, 100));
-		// g.drawString("Hickory Hills Mobile Home Park #63", new Dimension(1,
-		// 0).toFractionalParts(8),
-		// new Dimension(1, 0).toFractionalParts(8));
-		// g.setFont(new Font("Arial", Font.PLAIN, 100));
-		// g.drawString("36\" Rise Sidewalk to Landing", new Dimension(1,
-		// 0).toFractionalParts(8),
-		// new Dimension(2, 0).toFractionalParts(8));
-		// g.drawString("All Treated Lumber", new Dimension(1, 0).toFractionalParts(8),
-		// new Dimension(3, 0).toFractionalParts(8));
-		// g.drawString("12:1 Slope Ratio (or more)", new Dimension(1,
-		// 0).toFractionalParts(8),
-		// new Dimension(4, 0).toFractionalParts(8));
-
-		g.setFont(new Font("Arial", Font.PLAIN, 100));
-
-		// House
-		g.drawRect(Diagram.toPixels(new Dimension(24, 0)), Diagram.toPixels(new Dimension(0)),
-				Diagram.toPixels(new Dimension(24, 0)), Diagram.toPixels(new Dimension(32, 0)));
-		Label houseLabel = new Label("House", new Coordinate(new Dimension(27, 0), new Dimension(15, 0)),
-				Alignment.CENTER, Alignment.CENTER, labelFont, Color.BLACK);
-		this.drawLabel(g, houseLabel);
-
-		// Landing
-		g.drawRect(Diagram.toPixels(new Dimension(18, 0)), Diagram.toPixels(new Dimension(8, 0)),
-				Diagram.toPixels(new Dimension(6, 0)), Diagram.toPixels(new Dimension(6, 0)));
-		Label landingLabel = new Label("6'x6' Landing",
-				new Coordinate(new Dimension(36).add(new Dimension(18 * 12)),
-						new Dimension(36).add(new Dimension(8 * 12))),
-				Alignment.CENTER, Alignment.CENTER, labelFont, Color.BLACK);
-		this.drawLabel(g, landingLabel);
-
-		// First ramp section
-		g.drawRect(Diagram.toPixels(new Dimension(19, 6)), Diagram.toPixels(new Dimension(14, 0)),
-				Diagram.toPixels(new Dimension(40)), Diagram.toPixels(new Dimension(20, 0)));
-
-		// Turnaround
-		g.drawRect(Diagram.toPixels(new Dimension(19, 6)), Diagram.toPixels(new Dimension(34, 0)),
-				Diagram.toPixels(new Dimension(4, 0)), Diagram.toPixels(new Dimension(4, 0)));
-
-		// Second ramp section
-		g.drawRect(Diagram.toPixels(new Dimension(19, 6).add(new Dimension(4, 0))),
-				Diagram.toPixels(new Dimension(35, 0).add(new Dimension(4).clone().negate())),
-				Diagram.toPixels(new Dimension(12, 0)), Diagram.toPixels(new Dimension(40)));
-
-		// Driveway
-		g.drawRect(Diagram.toPixels(new Dimension(31, 6).add(new Dimension(4, 0))),
-				Diagram.toPixels(new Dimension(32, 0)), Diagram.toPixels(new Dimension(40, 0)),
-				Diagram.toPixels(new Dimension(10, 0)));
-		Label drivewayLabel = new Label("Driveway", new Coordinate(new Dimension(37, 0), new Dimension(37, 0)),
-				Alignment.CENTER, Alignment.CENTER, labelFont, Color.BLACK);
-		this.drawLabel(g, drivewayLabel);
+		/*
+		 * // Test dimension parsing. try {
+		 * System.out.println(Dimension.inchesFromString("1 in")); } catch (Exception e)
+		 * { e.printStackTrace(); }
+		 * 
+		 * // Test arrows. Arrow a = new Arrow(new Coordinate(new Dimension(0), new
+		 * Dimension(0)), Direction.RIGHT, new Dimension(12, 0), 2, Color.black, true,
+		 * true); this.drawArrow(g, a);
+		 * 
+		 * // -- Sample diagram --
+		 * 
+		 * // Title Font titleFont = new Font("Arial", Font.BOLD, 100); Label title =
+		 * new Label("Hickory Hills Mobile Home Park #63", new Coordinate(new
+		 * Dimension(12), new Dimension(12)), titleFont); Label subtitle = new
+		 * Label("36\" Rise Sidewalk to Landing\nAll Treated Lumber\n12:1 Slope Ratio (or more)"
+		 * , new Coordinate(new Dimension(12), new Dimension(24)), labelFont);
+		 * this.drawLabel(g, title); this.drawLabel(g, subtitle);
+		 * 
+		 * // Old Title // g.setFont(new Font("Arial", Font.BOLD, 100)); //
+		 * g.drawString("Hickory Hills Mobile Home Park #63", new Dimension(1, //
+		 * 0).toFractionalParts(8), // new Dimension(1, 0).toFractionalParts(8)); //
+		 * g.setFont(new Font("Arial", Font.PLAIN, 100)); //
+		 * g.drawString("36\" Rise Sidewalk to Landing", new Dimension(1, //
+		 * 0).toFractionalParts(8), // new Dimension(2, 0).toFractionalParts(8)); //
+		 * g.drawString("All Treated Lumber", new Dimension(1, 0).toFractionalParts(8),
+		 * // new Dimension(3, 0).toFractionalParts(8)); //
+		 * g.drawString("12:1 Slope Ratio (or more)", new Dimension(1, //
+		 * 0).toFractionalParts(8), // new Dimension(4, 0).toFractionalParts(8));
+		 * 
+		 * g.setFont(new Font("Arial", Font.PLAIN, 100));
+		 * 
+		 * // House g.drawRect(Diagram.coord(new Dimension(24, 0)), Diagram.coord(new
+		 * Dimension(0)), Diagram.coord(new Dimension(24, 0)), Diagram.coord(new
+		 * Dimension(32, 0))); Label houseLabel = new Label("House", new Coordinate(new
+		 * Dimension(27, 0), new Dimension(15, 0)), Alignment.CENTER, Alignment.CENTER,
+		 * labelFont, Color.BLACK); this.drawLabel(g, houseLabel);
+		 * 
+		 * // Landing g.drawRect(Diagram.coord(new Dimension(18, 0)), Diagram.coord(new
+		 * Dimension(8, 0)), Diagram.coord(new Dimension(6, 0)), Diagram.coord(new
+		 * Dimension(6, 0))); Label landingLabel = new Label("6'x6' Landing", new
+		 * Coordinate(new Dimension(36).add(new Dimension(18 * 12)), new
+		 * Dimension(36).add(new Dimension(8 * 12))), Alignment.CENTER,
+		 * Alignment.CENTER, labelFont, Color.BLACK); this.drawLabel(g, landingLabel);
+		 * 
+		 * // First ramp section g.drawRect(Diagram.coord(new Dimension(19, 6)),
+		 * Diagram.coord(new Dimension(14, 0)), Diagram.coord(new Dimension(40)),
+		 * Diagram.coord(new Dimension(20, 0)));
+		 * 
+		 * // Turnaround g.drawRect(Diagram.coord(new Dimension(19, 6)),
+		 * Diagram.coord(new Dimension(34, 0)), Diagram.coord(new Dimension(4, 0)),
+		 * Diagram.coord(new Dimension(4, 0)));
+		 * 
+		 * // Second ramp section g.drawRect(Diagram.coord(new Dimension(19, 6).add(new
+		 * Dimension(4, 0))), Diagram.coord(new Dimension(35, 0).add(new
+		 * Dimension(4).clone().negate())), Diagram.coord(new Dimension(12, 0)),
+		 * Diagram.coord(new Dimension(40)));
+		 * 
+		 * // Driveway g.drawRect(Diagram.coord(new Dimension(31, 6).add(new
+		 * Dimension(4, 0))), Diagram.coord(new Dimension(32, 0)), Diagram.coord(new
+		 * Dimension(40, 0)), Diagram.coord(new Dimension(10, 0))); Label drivewayLabel
+		 * = new Label("Driveway", new Coordinate(new Dimension(37, 0), new
+		 * Dimension(37, 0)), Alignment.CENTER, Alignment.CENTER, labelFont,
+		 * Color.BLACK); this.drawLabel(g, drivewayLabel);
+		 */
 	}
 
-	public static int toPixels(Dimension d) {
+	public static int coord(Dimension d) {
 		return d.toFractionalParts(8);
 	}
 
-	@Deprecated
-	public static int[] getStringSize(Font font, String... ss) {
-		FontRenderContext context = new FontRenderContext(null, true, true);
-		double width = 0.0;
-		double height = 0.0;
-		double lineHeight = 0.0;
-
-		for (int l = 0; l < ss.length; l++) {
-			Rectangle2D lineR = font.getStringBounds(ss[l], context);
-
-			// Compare the width
-			int iWidth = (int) Math.round(lineR.getWidth());
-			if (iWidth > width) {
-				width = iWidth;
-			}
-
-			// Increase the height
-			lineHeight = lineR.getHeight() * (1 + Diagram.LINE_SPACING);
-			height += lineHeight;
-		}
-
-		return new int[] { (int) Math.round(width), (int) Math.round(height), (int) Math.round(lineHeight) };
-	}
 }
