@@ -291,8 +291,7 @@ public class Diagram extends Component {
 						x.subtract(POST_SIZE.clone().scale(0.5));
 						postsRightOrBottom = false;
 					} else {
-						x.add(s.getRampWidth());
-						x.add(POST_SIZE);
+						x.add(POST_SIZE.clone().scale(0.5));
 						postsLeftOrTop = false;
 					}
 				} else {
@@ -449,16 +448,16 @@ public class Diagram extends Component {
 
 			switch (rampDirection) {
 			case LEFT:
-				postLocation.getY().negate();
-				postLocation.getY().add(postSize.clone().negate());
+//				postLocation.getY().negate();
+//				postLocation.getY().subtract(postSize);
 				postLocation.swapXY();
 				break;
 			case RIGHT:
 				postLocation.swapXY();
 				break;
 			case UP:
-				postLocation.getY().negate();
-				postLocation.getY().add(postSize.clone().negate());
+//				postLocation.getY().negate();
+//				postLocation.getY().subtract(postSize);
 				break;
 			default: // Down
 				// No transformations necessary
@@ -656,11 +655,11 @@ public class Diagram extends Component {
 	private void drawSample(Graphics2D g) {
 		// Draw ramp.
 		Ramp r = new Ramp(new Dimension(36), new Coordinate(new Dimension(18, 0), new Dimension(8, 0)));
-		r.addSection(Direction.RIGHT, new Dimension(0), new Dimension(0), new Dimension(40), new Dimension(24, 0),
+		r.addSection(Direction.DOWN, new Dimension(0), new Dimension(0), new Dimension(40), new Dimension(24, 0),
 				new Dimension(6, 0), new Dimension(6, 0));
-		r.addSection(Direction.LEFT, new Dimension(0), new Dimension(0), new Dimension(40), new Dimension(12, 0),
-				new Dimension(4, 0), new Dimension(8, 0));
-		r.getSection(1).setHairpinDirection(Direction.UP);
+		r.addSection(Direction.UP, new Dimension(0), new Dimension(0), new Dimension(40), new Dimension(12, 0),
+				new Dimension(8, 0), new Dimension(4, 0));
+		r.getSection(1).setHairpinDirection(Direction.RIGHT);
 
 		this.drawRampTop(g, r);
 
