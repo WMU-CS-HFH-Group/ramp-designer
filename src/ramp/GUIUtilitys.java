@@ -28,7 +28,7 @@ public class GUIUtilitys{
 	
 	public double arraylistTotal(ArrayList<Double> list) {
 		double sum = 0;
-		for(int i = 1; i < list.size(); i++)
+		for(int i = 0; i < list.size(); i++)
 		    sum += list.get(i);
 		return sum;
 	}
@@ -86,9 +86,12 @@ public class GUIUtilitys{
 				update.set(index, convert.getLength());
 				guiData.setRampLength(update);
 				lbl.setBackground(Color.GRAY);
-				guiData.setUsedIn(arraylistTotal(update));  //**************************why is this not working ???? ******************************
-				System.out.println(guiData.getUsedIn());
-				lblFeetRemain.setText("Ramp feet remaining: " + (guiData.getRampLengthTotal()/12 - guiData.getUsedIn()/12));
+				guiData.setUsedIn(arraylistTotal(update));  
+				if((guiData.getRampLengthTotal()/12 - guiData.getUsedIn()/12) < 0){
+					lblFeetRemain.setText("Ramp feet remaining: 0.0");
+				} else{
+					lblFeetRemain.setText("Ramp feet remaining: " + (guiData.getRampLengthTotal()/12 - guiData.getUsedIn()/12));
+				}
 			}
 		});
 	}
@@ -273,6 +276,6 @@ public class GUIUtilitys{
 		double update = calcTotalIn(feet, inch, inPart);
 		guiData.setDeckHeight(update);
 		guiData.setRampLengthTotal(update*12);
-		lblFeetRemain.setText("Ramp feet remaining: " + (update - guiData.getUsedIn()));
+		lblFeetRemain.setText("Ramp feet remaining: " + (update - guiData.getUsedIn()/12));
 	}
 }
