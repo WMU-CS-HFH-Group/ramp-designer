@@ -86,7 +86,7 @@ public class GUIUtilitys{
 				update.set(index, convert.getLength());
 				guiData.setRampLength(update);
 				lbl.setBackground(Color.GRAY);
-				guiData.setUsedIn(arraylistTotal(update));
+				guiData.setUsedIn(arraylistTotal(update));  //**************************why is this not working ???? ******************************
 				System.out.println(guiData.getUsedIn());
 				lblFeetRemain.setText("Ramp feet remaining: " + (guiData.getRampLengthTotal()/12 - guiData.getUsedIn()/12));
 			}
