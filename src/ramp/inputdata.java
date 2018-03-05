@@ -180,12 +180,13 @@ public class inputdata extends JFrame {
 		sl_contentPane.putConstraint(SpringLayout.EAST, btnSubmit, -25, SpringLayout.EAST, contentPane);
 		contentPane.add(btnSubmit);
 		
-		JLabel lblInchesRemaining = new JLabel("Ramp feet remaining: ");
-		sl_contentPane.putConstraint(SpringLayout.EAST, lblInchesRemaining, -25, SpringLayout.WEST, btnSubmit);
-		lblInchesRemaining.setFont(new Font("Dialog", Font.PLAIN, 14));
-		lblInchesRemaining.setHorizontalAlignment(SwingConstants.RIGHT);
-		sl_contentPane.putConstraint(SpringLayout.NORTH, lblInchesRemaining, 0, SpringLayout.NORTH, btnSubmit);
-		contentPane.add(lblInchesRemaining);
+		JLabel lblFeetRemain = new JLabel("Ramp feet remaining: ");
+		sl_contentPane.putConstraint(SpringLayout.EAST, lblFeetRemain, -25, SpringLayout.WEST, btnSubmit);
+		lblFeetRemain.setFont(new Font("Dialog", Font.PLAIN, 14));
+		lblFeetRemain.setHorizontalAlignment(SwingConstants.RIGHT);
+		sl_contentPane.putConstraint(SpringLayout.NORTH, lblFeetRemain, 0, SpringLayout.NORTH, btnSubmit);
+		contentPane.add(lblFeetRemain);
+		guiUtility.setLblFeetRemain(lblFeetRemain);
 		
 		JScrollPane scrollRamps = new JScrollPane();
 		scrollRamps.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -212,31 +213,14 @@ public class inputdata extends JFrame {
 		JTextArea lblRampVert = new JTextArea();
 		JButton btnTurnAr = new JButton();
 		
-		guiUtility.setRamps(scrollPanel, sl_scrollPanel, lblRampHor, lblRampVert, btnTurnAr, 0);
-		
-		comboInch.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				double update = changetotal(0, comboInch.getSelectedIndex(), comboInPart.getSelectedIndex());
-				guiData.setDeckHeight(update);
-				guiData.setRampLengthTotal(update*12);
-				lblInchesRemaining.setText("Ramp feet remaining: " + (update - guiData.getUsedIn()));
-			} 
-		});
-		
-		comboInPart.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				double update = changetotal(0, comboInch.getSelectedIndex(), comboInPart.getSelectedIndex());
-				guiData.setDeckHeight(update);
-				guiData.setRampLengthTotal(update*12);
-				lblInchesRemaining.setText("Ramp feet remaining: " + (update - guiData.getUsedIn()));
-			} 
-		});
+		guiUtility.setRamps(scrollPanel, sl_scrollPanel, lblRampHor, lblRampVert, btnTurnAr, lblFeetRemain, 0);
+		guiUtility.comboChangeTotal(comboInch, comboInPart);
 		
 		//** Updates dimensions in GUI data **//
 		comboDimFtW.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				double[] update = guiData.getDeckDimension();
-				update[0] = changetotal(comboDimFtW.getSelectedIndex(), comboInch.getSelectedIndex(), 0);
+				update[0] = guiUtility.calcTotalIn(comboDimFtW.getSelectedIndex(), comboInch.getSelectedIndex(), 0);
 				guiData.setDeckDimension(update);
 			} 
 		});
@@ -244,7 +228,7 @@ public class inputdata extends JFrame {
 		comboDimInW.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				double[] update = guiData.getDeckDimension();
-				update[0] = changetotal(comboDimFtW.getSelectedIndex(), comboInch.getSelectedIndex(), 0);
+				update[0] = guiUtility.calcTotalIn(comboDimFtW.getSelectedIndex(), comboInch.getSelectedIndex(), 0);
 				guiData.setDeckDimension(update);
 			} 
 		});
@@ -252,7 +236,7 @@ public class inputdata extends JFrame {
 		comboDimFtL.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				double[] update = guiData.getDeckDimension();
-				update[1] = changetotal(comboDimFtL.getSelectedIndex(), comboInch.getSelectedIndex(), 0);
+				update[1] = guiUtility.calcTotalIn(comboDimFtL.getSelectedIndex(), comboInch.getSelectedIndex(), 0);
 				guiData.setDeckDimension(update);
 			} 
 		});
@@ -260,7 +244,7 @@ public class inputdata extends JFrame {
 		comboDimInL.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				double[] update = guiData.getDeckDimension();
-				update[1] = changetotal(comboDimFtL.getSelectedIndex(), comboInch.getSelectedIndex(), 0);
+				update[1] = guiUtility.calcTotalIn(comboDimFtL.getSelectedIndex(), comboInch.getSelectedIndex(), 0);
 				guiData.setDeckDimension(update);
 			} 
 		});
@@ -314,12 +298,5 @@ public class inputdata extends JFrame {
 		combo.addItem("7/8");
 	}
 	
-	//*******************changes total remaining value**********************//
-	private double changetotal(int comboFeet, int comboInch, int comboInPart){
-		double calcIn = (float) (12.0 * (int) comboFeet);
-		calcIn += (float) comboInch;
-		calcIn += (float) (.125 * (int) comboInPart);
-		return calcIn;
-		
-	}
+	
 }

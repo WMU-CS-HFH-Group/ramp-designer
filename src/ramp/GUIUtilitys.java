@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
@@ -18,7 +19,8 @@ import ramp.diagram.GUIData;
 import ramp.geometry.Dimension;
 
 public class GUIUtilitys{
-	private static GUIData guiData;
+	private GUIData guiData;
+	private static JLabel lblFeetRemain;
 	
 	public GUIUtilitys(GUIData guiData) {
 		this.guiData = guiData;
@@ -29,6 +31,21 @@ public class GUIUtilitys{
 		for(int i = 1; i < list.size(); i++)
 		    sum += list.get(i);
 		return sum;
+	}
+	
+	/****** Adds listener to comboBox ******/
+	public void comboChangeTotal(JComboBox comboInch, JComboBox comboInPart){
+		comboInch.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				updateFeetRemain(0, comboInch.getSelectedIndex(), comboInPart.getSelectedIndex());
+			} 
+		});
+		
+		comboInPart.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				updateFeetRemain(0, comboInch.getSelectedIndex(), comboInPart.getSelectedIndex());
+			} 
+		});
 	}
 
 	/**
@@ -70,12 +87,14 @@ public class GUIUtilitys{
 				guiData.setRampLength(update);
 				lbl.setBackground(Color.GRAY);
 				guiData.setUsedIn(arraylistTotal(update));
+				System.out.println(guiData.getUsedIn());
+				lblFeetRemain.setText("Ramp feet remaining: " + (guiData.getRampLengthTotal()/12 - guiData.getUsedIn()/12));
 			}
 		});
 	}
 	
 	
-	public void setRamps(JPanel contentPane, SpringLayout sl_contentPane, JTextArea lblRampHor, JTextArea lblRampVert, JButton btnTurnAr, int index) {
+	public void setRamps(JPanel contentPane, SpringLayout sl_contentPane, JTextArea lblRampHor, JTextArea lblRampVert, JButton btnTurnAr, JLabel lblFeetRemain, int index) {
 		ArrayList<Double> update = guiData.getRampLength();
 		if (update.size() <= index) {
 			update.add(index, 0.0);
@@ -112,7 +131,7 @@ public class GUIUtilitys{
 		//** End Set length of ramp piece **//
 		
 		//** adds extra ramps on base click **//************************************************************************************************
-		createRamp(btnTurnAr, contentPane, sl_contentPane, index);
+		createRamp(btnTurnAr, contentPane, sl_contentPane, lblFeetRemain, index);
 	}
 	
 	/**
@@ -176,25 +195,24 @@ public class GUIUtilitys{
 	 * @param contentPane
 	 * @param sl_contentPane
 	 */
-	public static void createRamp(JButton pivot, JPanel contentPane, SpringLayout sl_contentPane, int index) {		
+	public void createRamp(JButton pivot, JPanel contentPane, SpringLayout sl_contentPane, JLabel lblFeetRemain, int index) {		
 		pivot.addMouseListener(new MouseAdapter() {
 			JTextArea lblRampHor = new JTextArea();
 			JTextArea lblRampVert = new JTextArea();
-			JButton btnTurnAr = new JButton();
-			GUIUtilitys utility = new GUIUtilitys(guiData);		
+			JButton btnTurnAr = new JButton();	
 			int direction = -1;
 			
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				switch (direction){
 				case -1:
-					utility.setRamps(contentPane, sl_contentPane, lblRampHor, lblRampVert, btnTurnAr, index+1);					
-					utility.setRampDirection(direction+1, sl_contentPane, pivot, lblRampHor, lblRampVert, btnTurnAr, index+1);
+					setRamps(contentPane, sl_contentPane, lblRampHor, lblRampVert, btnTurnAr, lblFeetRemain, index+1);					
+					setRampDirection(direction+1, sl_contentPane, pivot, lblRampHor, lblRampVert, btnTurnAr, index+1);
 					direction+=2;
 				case 0:
 				case 1:
 				case 2:
-					utility.setRampDirection(direction, sl_contentPane, pivot, lblRampHor, lblRampVert, btnTurnAr, index);
+					setRampDirection(direction, sl_contentPane, pivot, lblRampHor, lblRampVert, btnTurnAr, index);
 					direction++;
 					if (direction>2) {
 						direction = 0;
@@ -234,5 +252,27 @@ public class GUIUtilitys{
 			combo.addItem(i);
 		}
 	}
+	
+	//*******************changes feet, in, parts to Inches**********************//
+	public double calcTotalIn(int comboFeet, int comboInch, int comboInPart){
+		double calcIn = (float) (12.0 * (int) comboFeet);
+		calcIn += (float) comboInch;
+		calcIn += (float) (.125 * (int) comboInPart);
+		return calcIn;
+	}
 
+	public static JLabel getLblFeetRemain() {
+		return lblFeetRemain;
+	}
+
+	public static void setLblFeetRemain(JLabel lblFeetRemain) {
+		GUIUtilitys.lblFeetRemain = lblFeetRemain;
+	}
+
+	private void updateFeetRemain(int feet, int inch, int inPart){
+		double update = calcTotalIn(feet, inch, inPart);
+		guiData.setDeckHeight(update);
+		guiData.setRampLengthTotal(update*12);
+		lblFeetRemain.setText("Ramp feet remaining: " + (update - guiData.getUsedIn()));
+	}
 }
