@@ -272,6 +272,7 @@ public class Diagram extends Component {
 			this.drawLabel(g, landingLabel, landingBox.getCenter());
 
 			rampBox = new Box(new Coordinate(x, y), new Dimension(0), new Dimension(0));
+			Coordinate widthLabelOffset = new Coordinate(new Dimension(0), new Dimension(0));
 
 			boolean postsLeftOrTop = true;
 			boolean postsRightOrBottom = true;
@@ -301,6 +302,8 @@ public class Diagram extends Component {
 				rampBox.setWidth(s.getRampWidth());
 				rampBox.setHeight(s.getRampLength());
 
+				widthLabelOffset.setY(new Dimension(3, 0));
+
 				// Generate posts for ramp.
 				posts = this.generatePosts(rampBox, s.getDirection(), POST_SIZE, postsLeftOrTop, postsRightOrBottom);
 
@@ -328,6 +331,8 @@ public class Diagram extends Component {
 				rampBox.setLocation(new Coordinate(x, y));
 				rampBox.setWidth(s.getRampWidth());
 				rampBox.setHeight(s.getRampLength());
+
+				widthLabelOffset.setY(new Dimension(3, 0));
 
 				// Generate posts for ramp.
 				posts = this.generatePosts(rampBox, s.getDirection(), POST_SIZE, postsLeftOrTop, postsRightOrBottom);
@@ -357,6 +362,8 @@ public class Diagram extends Component {
 				rampBox.setWidth(s.getRampLength());
 				rampBox.setHeight(s.getRampWidth());
 
+				widthLabelOffset.setX(new Dimension(3, 0));
+
 				// Generate posts for ramp.
 				posts = this.generatePosts(rampBox, s.getDirection(), POST_SIZE, postsLeftOrTop, postsRightOrBottom);
 
@@ -385,6 +392,8 @@ public class Diagram extends Component {
 				rampBox.setWidth(s.getRampLength());
 				rampBox.setHeight(s.getRampWidth());
 
+				widthLabelOffset.setX(new Dimension(3, 0));
+
 				// Generate posts for ramp.
 				posts = this.generatePosts(rampBox, s.getDirection(), POST_SIZE, postsLeftOrTop, postsRightOrBottom);
 
@@ -397,6 +406,10 @@ public class Diagram extends Component {
 			Label rampLengthLabel = new Label(s.getRampLength().toString(), Alignment.CENTER, Alignment.CENTER,
 					labelFont, Color.BLACK);
 			this.drawLabel(g, rampLengthLabel, rampBox.getCenter());
+
+			Label rampWidthLabel = new Label(s.getRampWidth().toString(), Alignment.CENTER, Alignment.CENTER, labelFont,
+					Color.BLACK);
+			this.drawLabel(g, rampWidthLabel, rampBox.getCenter().clone().add(widthLabelOffset));
 
 			// Draw the posts
 			for (Coordinate c : posts) {
@@ -444,16 +457,16 @@ public class Diagram extends Component {
 
 			switch (rampDirection) {
 			case LEFT:
-//				postLocation.getY().negate();
-//				postLocation.getY().subtract(postSize);
+				// postLocation.getY().negate();
+				// postLocation.getY().subtract(postSize);
 				postLocation.swapXY();
 				break;
 			case RIGHT:
 				postLocation.swapXY();
 				break;
 			case UP:
-//				postLocation.getY().negate();
-//				postLocation.getY().subtract(postSize);
+				// postLocation.getY().negate();
+				// postLocation.getY().subtract(postSize);
 				break;
 			default: // Down
 				// No transformations necessary
@@ -510,22 +523,36 @@ public class Diagram extends Component {
 		}
 	}
 
-	public void drawArrow(Graphics2D g, Arrow a) {
+	public void drawArrow(Graphics2D g, Coordinate location, Direction direction, Dimension length, boolean twoHeaded,
+			boolean showLabel) {
+		// Locate the end of the arrow.
+		Coordinate destination = location.clone();
+		switch (direction) {
+		case UP:
+			destination = new Coordinate(location.getX(), location.getY().clone().add(length.clone().negate()));
+		case DOWN:
+			destination = new Coordinate(location.getX(), location.getY().clone().add(length));
+		case LEFT:
+			destination = new Coordinate(location.getX().clone().add(length.clone().negate()), location.getY());
+		case RIGHT:
+			destination = new Coordinate(location.getX().clone().add(length), location.getY());
+		default:
+		}
+
 		// Draw the line for the arrow.
-		Coordinate destination = a.calculateDestination();
-		g.setColor(a.getColor());
-		g.setStroke(new BasicStroke(a.getThickness()));
-		g.drawLine(coord(a.getLocation().getX()), coord(a.getLocation().getY()), coord(destination.getX()),
+		g.setColor(Color.BLACK);
+		g.setStroke(new BasicStroke(1));
+		g.drawLine(coord(location.getX()), coord(location.getY()), coord(destination.getX()),
 				coord(destination.getY()));
 
 		// If the label must be shown, draw a white rectangle behind it.
-		if (a.isLabelShown()) {
+		if (showLabel) {
 			// Generate a label with the arrow's length.
 			Label l;
-			l = new Label(a.getLength().toString(), Alignment.CENTER, Alignment.CENTER, labelFont, a.getColor());
+			l = new Label(length.toString(), Alignment.CENTER, Alignment.CENTER, labelFont, Color.BLACK);
 
 			// Draw the label.
-			this.drawLabel(g, l, a.getLocation().getMidpoint(destination));
+			this.drawLabel(g, l, location.getMidpoint(destination));
 		}
 
 		// Draw the head on the destination.
@@ -534,7 +561,7 @@ public class Diagram extends Component {
 
 		int arrowSize = 48;
 
-		switch (a.getDirection()) {
+		switch (direction) {
 		case UP:
 			xPoints[1] = coord(destination.getX()) - arrowSize / 2;
 			yPoints[1] = coord(destination.getY()) + arrowSize;
@@ -567,44 +594,44 @@ public class Diagram extends Component {
 		}
 
 		// Draw the arrow based on the calculated triangle.
-		g.setColor(a.getColor());
+		g.setColor(Color.BLACK);
 		g.fillPolygon(xPoints, yPoints, 3);
 
 		// If the arrow is two-headed, draw one on the location point.
-		if (a.isTwoHeaded()) {
-			xPoints[0] = coord(a.getLocation().getX());
-			yPoints[0] = coord(a.getLocation().getY());
+		if (twoHeaded) {
+			xPoints[0] = coord(location.getX());
+			yPoints[0] = coord(location.getY());
 
 			// Flip the arrow's head and translate it to the other end.
-			switch (a.getDirection()) {
+			switch (direction) {
 			case DOWN:
-				xPoints[1] = coord(a.getLocation().getX()) - arrowSize / 2;
-				yPoints[1] = coord(a.getLocation().getY()) + arrowSize;
+				xPoints[1] = coord(location.getX()) - arrowSize / 2;
+				yPoints[1] = coord(location.getY()) + arrowSize;
 
-				xPoints[2] = coord(a.getLocation().getX()) + arrowSize / 2;
-				yPoints[2] = coord(a.getLocation().getY()) + arrowSize;
+				xPoints[2] = coord(location.getX()) + arrowSize / 2;
+				yPoints[2] = coord(location.getY()) + arrowSize;
 				break;
 			case UP:
-				xPoints[1] = coord(a.getLocation().getX()) - arrowSize / 2;
-				yPoints[1] = coord(a.getLocation().getY()) - arrowSize;
+				xPoints[1] = coord(location.getX()) - arrowSize / 2;
+				yPoints[1] = coord(location.getY()) - arrowSize;
 
-				xPoints[2] = coord(a.getLocation().getX()) + arrowSize / 2;
-				yPoints[2] = coord(a.getLocation().getY()) - arrowSize;
+				xPoints[2] = coord(location.getX()) + arrowSize / 2;
+				yPoints[2] = coord(location.getY()) - arrowSize;
 				break;
 			case RIGHT:
-				xPoints[1] = coord(a.getLocation().getX()) + arrowSize;
-				yPoints[1] = coord(a.getLocation().getY()) - arrowSize / 2;
+				xPoints[1] = coord(location.getX()) + arrowSize;
+				yPoints[1] = coord(location.getY()) - arrowSize / 2;
 
-				xPoints[2] = coord(a.getLocation().getX()) + arrowSize;
-				yPoints[2] = coord(a.getLocation().getY()) + arrowSize / 2;
+				xPoints[2] = coord(location.getX()) + arrowSize;
+				yPoints[2] = coord(location.getY()) + arrowSize / 2;
 				break;
 			case LEFT:
 			default:
-				xPoints[1] = coord(a.getLocation().getX()) - arrowSize;
-				yPoints[1] = coord(a.getLocation().getY()) - arrowSize / 2;
+				xPoints[1] = coord(location.getX()) - arrowSize;
+				yPoints[1] = coord(location.getY()) - arrowSize / 2;
 
-				xPoints[2] = coord(a.getLocation().getX()) - arrowSize;
-				yPoints[2] = coord(a.getLocation().getY()) + arrowSize / 2;
+				xPoints[2] = coord(location.getX()) - arrowSize;
+				yPoints[2] = coord(location.getY()) + arrowSize / 2;
 				break;
 			}
 

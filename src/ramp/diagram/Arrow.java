@@ -5,6 +5,7 @@ import java.awt.Color;
 import ramp.geometry.Coordinate;
 import ramp.geometry.Dimension;
 
+@Deprecated
 public class Arrow extends DiagramComponent {
 	private Direction direction;
 	private Dimension length;
