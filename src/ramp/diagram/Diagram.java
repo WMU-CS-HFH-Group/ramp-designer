@@ -302,8 +302,6 @@ public class Diagram extends Component {
 				rampBox.setWidth(s.getRampWidth());
 				rampBox.setHeight(s.getRampLength());
 
-				widthLabelOffset.setY(new Dimension(3, 0));
-
 				// Generate posts for ramp.
 				posts = this.generatePosts(rampBox, s.getDirection(), POST_SIZE, postsLeftOrTop, postsRightOrBottom);
 
@@ -331,8 +329,6 @@ public class Diagram extends Component {
 				rampBox.setLocation(new Coordinate(x, y));
 				rampBox.setWidth(s.getRampWidth());
 				rampBox.setHeight(s.getRampLength());
-
-				widthLabelOffset.setY(new Dimension(3, 0));
 
 				// Generate posts for ramp.
 				posts = this.generatePosts(rampBox, s.getDirection(), POST_SIZE, postsLeftOrTop, postsRightOrBottom);
@@ -362,8 +358,6 @@ public class Diagram extends Component {
 				rampBox.setWidth(s.getRampLength());
 				rampBox.setHeight(s.getRampWidth());
 
-				widthLabelOffset.setX(new Dimension(3, 0));
-
 				// Generate posts for ramp.
 				posts = this.generatePosts(rampBox, s.getDirection(), POST_SIZE, postsLeftOrTop, postsRightOrBottom);
 
@@ -392,8 +386,6 @@ public class Diagram extends Component {
 				rampBox.setWidth(s.getRampLength());
 				rampBox.setHeight(s.getRampWidth());
 
-				widthLabelOffset.setX(new Dimension(3, 0));
-
 				// Generate posts for ramp.
 				posts = this.generatePosts(rampBox, s.getDirection(), POST_SIZE, postsLeftOrTop, postsRightOrBottom);
 
@@ -403,13 +395,9 @@ public class Diagram extends Component {
 			}
 
 			// Generate and draw labels for the ramp.
-			Label rampLengthLabel = new Label(s.getRampLength().toString(), Alignment.CENTER, Alignment.CENTER,
+			Label rampLengthLabel = new Label(s.getRampLength().toString() + " x " + s.getRampWidth().toString(), Alignment.CENTER, Alignment.CENTER,
 					labelFont, Color.BLACK);
 			this.drawLabel(g, rampLengthLabel, rampBox.getCenter());
-
-			Label rampWidthLabel = new Label(s.getRampWidth().toString(), Alignment.CENTER, Alignment.CENTER, labelFont,
-					Color.BLACK);
-			this.drawLabel(g, rampWidthLabel, rampBox.getCenter().clone().add(widthLabelOffset));
 
 			// Draw the posts
 			for (Coordinate c : posts) {
