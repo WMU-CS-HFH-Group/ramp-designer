@@ -149,7 +149,31 @@ public class Diagram extends Component {
 			this.drawGrid(g, grid);
 		}
 
-		this.drawSample(g);
+		// this.drawSample(g);
+		Ramp ramp = new Ramp(new Dimension(this.guiData.getDeckHeight()),
+				new Coordinate(new Dimension(25, 0), new Dimension(0)));
+		for (int i = 0; i < this.guiData.getRampLenght().size(); i++) {
+			Direction d = Direction.UNDEFINED;
+			switch (this.guiData.getRampDirIndex().get(i)) {
+			case 0:
+				d = Direction.LEFT;
+				break;
+			case 1:
+				d = Direction.RIGHT;
+				break;
+			case 2:
+				d = Direction.DOWN;
+				break;
+			default:
+				d = Direction.UP;
+				break;
+			}
+			Section s = new Section(d, new Dimension(0), new Dimension(0), new Dimension(40),
+					new Dimension(this.guiData.getRampLenght().get(i)), new Dimension(4, 0), new Dimension(4, 0));
+			ramp.addSection(s);
+		}
+		ramp.getSection(0).setRampOffset(new Dimension(this.guiData.getDeckOffSet()));
+		this.drawRampTop(g, ramp);
 	}
 
 	public void drawRampTop(Graphics2D g, Ramp r) {
@@ -272,7 +296,6 @@ public class Diagram extends Component {
 			this.drawLabel(g, landingLabel, landingBox.getCenter());
 
 			rampBox = new Box(new Coordinate(x, y), new Dimension(0), new Dimension(0));
-			Coordinate widthLabelOffset = new Coordinate(new Dimension(0), new Dimension(0));
 
 			boolean postsLeftOrTop = true;
 			boolean postsRightOrBottom = true;
@@ -395,8 +418,8 @@ public class Diagram extends Component {
 			}
 
 			// Generate and draw labels for the ramp.
-			Label rampLengthLabel = new Label(s.getRampLength().toString() + " x " + s.getRampWidth().toString(), Alignment.CENTER, Alignment.CENTER,
-					labelFont, Color.BLACK);
+			Label rampLengthLabel = new Label(s.getRampLength().toString() + " x " + s.getRampWidth().toString(),
+					Alignment.CENTER, Alignment.CENTER, labelFont, Color.BLACK);
 			this.drawLabel(g, rampLengthLabel, rampBox.getCenter());
 
 			// Draw the posts
