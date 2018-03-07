@@ -103,7 +103,7 @@ public class Diagram extends Component {
 		JFrame frame;
 
 		frame = new JFrame("Ramp Diagram");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
 		frame.setSize(800, 800);
 		frame.setBackground(Color.white);

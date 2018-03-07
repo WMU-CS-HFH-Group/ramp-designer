@@ -15,7 +15,6 @@ import java.awt.event.MouseEvent;
 
 
 public class inputdata extends JFrame {
-
 	private JPanel contentPane;
 	private GUIData guiData = new GUIData();
 	private GUIUtilitys guiUtility = new GUIUtilitys(guiData);

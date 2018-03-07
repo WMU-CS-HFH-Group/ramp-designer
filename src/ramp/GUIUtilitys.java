@@ -246,8 +246,12 @@ public class GUIUtilitys{
 		btnSubmit.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				Diagram diagram = new Diagram(guiData);
-				diagram.launch();
+				try{
+					Diagram diagram = new Diagram(guiData);
+					diagram.launch();
+				} catch (Exception bad) {
+					// TODO: pop up saying something went wrong
+				}
 			}
 		});
 	}
