@@ -2,8 +2,6 @@ package ramp.diagram;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.font.FontRenderContext;
-import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -19,8 +17,6 @@ import java.util.ArrayList;
 @SuppressWarnings("serial")
 public class Diagram extends Component {
 	// Constants
-	@Deprecated
-	private static final double LINE_SPACING = 0.25; // Ratio to the text height to leave between lines
 	private static final Dimension MAX_POST_SPACE = new Dimension(6, 0);
 	private static final Dimension POST_SIZE = new Dimension(4);
 
@@ -153,7 +149,31 @@ public class Diagram extends Component {
 			this.drawGrid(g, grid);
 		}
 
-		this.drawSample(g);
+		// this.drawSample(g);
+		Ramp ramp = new Ramp(new Dimension(this.guiData.getDeckHeight()),
+				new Coordinate(new Dimension(25, 0), new Dimension(0)));
+		for (int i = 0; i < this.guiData.getRampLenght().size(); i++) {
+			Direction d = Direction.UNDEFINED;
+			switch (this.guiData.getRampDirIndex().get(i)) {
+			case 0:
+				d = Direction.LEFT;
+				break;
+			case 1:
+				d = Direction.RIGHT;
+				break;
+			case 2:
+				d = Direction.DOWN;
+				break;
+			default:
+				d = Direction.UP;
+				break;
+			}
+			Section s = new Section(d, new Dimension(0), new Dimension(0), new Dimension(40),
+					new Dimension(this.guiData.getRampLenght().get(i)), new Dimension(4, 0), new Dimension(4, 0));
+			ramp.addSection(s);
+		}
+		ramp.getSection(0).setRampOffset(new Dimension(this.guiData.getDeckOffSet()));
+		this.drawRampTop(g, ramp);
 	}
 
 	public void drawRampTop(Graphics2D g, Ramp r) {
@@ -359,7 +379,7 @@ public class Diagram extends Component {
 
 				rampBox.setLocation(new Coordinate(x, y));
 				rampBox.setWidth(s.getRampLength());
-				rampBox.setHeight(s.getLandingWidth());
+				rampBox.setHeight(s.getRampWidth());
 
 				// Generate posts for ramp.
 				posts = this.generatePosts(rampBox, s.getDirection(), POST_SIZE, postsLeftOrTop, postsRightOrBottom);
@@ -398,8 +418,8 @@ public class Diagram extends Component {
 			}
 
 			// Generate and draw labels for the ramp.
-			Label rampLengthLabel = new Label(s.getRampLength().toString(), Alignment.CENTER, Alignment.CENTER,
-					labelFont, Color.BLACK);
+			Label rampLengthLabel = new Label(s.getRampLength().toString() + " x " + s.getRampWidth().toString(),
+					Alignment.CENTER, Alignment.CENTER, labelFont, Color.BLACK);
 			this.drawLabel(g, rampLengthLabel, rampBox.getCenter());
 
 			// Draw the posts
@@ -448,16 +468,16 @@ public class Diagram extends Component {
 
 			switch (rampDirection) {
 			case LEFT:
-//				postLocation.getY().negate();
-//				postLocation.getY().subtract(postSize);
+				// postLocation.getY().negate();
+				// postLocation.getY().subtract(postSize);
 				postLocation.swapXY();
 				break;
 			case RIGHT:
 				postLocation.swapXY();
 				break;
 			case UP:
-//				postLocation.getY().negate();
-//				postLocation.getY().subtract(postSize);
+				// postLocation.getY().negate();
+				// postLocation.getY().subtract(postSize);
 				break;
 			default: // Down
 				// No transformations necessary
@@ -514,22 +534,36 @@ public class Diagram extends Component {
 		}
 	}
 
-	public void drawArrow(Graphics2D g, Arrow a) {
+	public void drawArrow(Graphics2D g, Coordinate location, Direction direction, Dimension length, boolean twoHeaded,
+			boolean showLabel) {
+		// Locate the end of the arrow.
+		Coordinate destination = location.clone();
+		switch (direction) {
+		case UP:
+			destination = new Coordinate(location.getX(), location.getY().clone().add(length.clone().negate()));
+		case DOWN:
+			destination = new Coordinate(location.getX(), location.getY().clone().add(length));
+		case LEFT:
+			destination = new Coordinate(location.getX().clone().add(length.clone().negate()), location.getY());
+		case RIGHT:
+			destination = new Coordinate(location.getX().clone().add(length), location.getY());
+		default:
+		}
+
 		// Draw the line for the arrow.
-		Coordinate destination = a.calculateDestination();
-		g.setColor(a.getColor());
-		g.setStroke(new BasicStroke(a.getThickness()));
-		g.drawLine(coord(a.getLocation().getX()), coord(a.getLocation().getY()), coord(destination.getX()),
+		g.setColor(Color.BLACK);
+		g.setStroke(new BasicStroke(1));
+		g.drawLine(coord(location.getX()), coord(location.getY()), coord(destination.getX()),
 				coord(destination.getY()));
 
 		// If the label must be shown, draw a white rectangle behind it.
-		if (a.isLabelShown()) {
+		if (showLabel) {
 			// Generate a label with the arrow's length.
 			Label l;
-			l = new Label(a.getLength().toString(), Alignment.CENTER, Alignment.CENTER, labelFont, a.getColor());
+			l = new Label(length.toString(), Alignment.CENTER, Alignment.CENTER, labelFont, Color.BLACK);
 
 			// Draw the label.
-			this.drawLabel(g, l, a.getLocation().getMidpoint(destination));
+			this.drawLabel(g, l, location.getMidpoint(destination));
 		}
 
 		// Draw the head on the destination.
@@ -538,7 +572,7 @@ public class Diagram extends Component {
 
 		int arrowSize = 48;
 
-		switch (a.getDirection()) {
+		switch (direction) {
 		case UP:
 			xPoints[1] = coord(destination.getX()) - arrowSize / 2;
 			yPoints[1] = coord(destination.getY()) + arrowSize;
@@ -571,44 +605,44 @@ public class Diagram extends Component {
 		}
 
 		// Draw the arrow based on the calculated triangle.
-		g.setColor(a.getColor());
+		g.setColor(Color.BLACK);
 		g.fillPolygon(xPoints, yPoints, 3);
 
 		// If the arrow is two-headed, draw one on the location point.
-		if (a.isTwoHeaded()) {
-			xPoints[0] = coord(a.getLocation().getX());
-			yPoints[0] = coord(a.getLocation().getY());
+		if (twoHeaded) {
+			xPoints[0] = coord(location.getX());
+			yPoints[0] = coord(location.getY());
 
 			// Flip the arrow's head and translate it to the other end.
-			switch (a.getDirection()) {
+			switch (direction) {
 			case DOWN:
-				xPoints[1] = coord(a.getLocation().getX()) - arrowSize / 2;
-				yPoints[1] = coord(a.getLocation().getY()) + arrowSize;
+				xPoints[1] = coord(location.getX()) - arrowSize / 2;
+				yPoints[1] = coord(location.getY()) + arrowSize;
 
-				xPoints[2] = coord(a.getLocation().getX()) + arrowSize / 2;
-				yPoints[2] = coord(a.getLocation().getY()) + arrowSize;
+				xPoints[2] = coord(location.getX()) + arrowSize / 2;
+				yPoints[2] = coord(location.getY()) + arrowSize;
 				break;
 			case UP:
-				xPoints[1] = coord(a.getLocation().getX()) - arrowSize / 2;
-				yPoints[1] = coord(a.getLocation().getY()) - arrowSize;
+				xPoints[1] = coord(location.getX()) - arrowSize / 2;
+				yPoints[1] = coord(location.getY()) - arrowSize;
 
-				xPoints[2] = coord(a.getLocation().getX()) + arrowSize / 2;
-				yPoints[2] = coord(a.getLocation().getY()) - arrowSize;
+				xPoints[2] = coord(location.getX()) + arrowSize / 2;
+				yPoints[2] = coord(location.getY()) - arrowSize;
 				break;
 			case RIGHT:
-				xPoints[1] = coord(a.getLocation().getX()) + arrowSize;
-				yPoints[1] = coord(a.getLocation().getY()) - arrowSize / 2;
+				xPoints[1] = coord(location.getX()) + arrowSize;
+				yPoints[1] = coord(location.getY()) - arrowSize / 2;
 
-				xPoints[2] = coord(a.getLocation().getX()) + arrowSize;
-				yPoints[2] = coord(a.getLocation().getY()) + arrowSize / 2;
+				xPoints[2] = coord(location.getX()) + arrowSize;
+				yPoints[2] = coord(location.getY()) + arrowSize / 2;
 				break;
 			case LEFT:
 			default:
-				xPoints[1] = coord(a.getLocation().getX()) - arrowSize;
-				yPoints[1] = coord(a.getLocation().getY()) - arrowSize / 2;
+				xPoints[1] = coord(location.getX()) - arrowSize;
+				yPoints[1] = coord(location.getY()) - arrowSize / 2;
 
-				xPoints[2] = coord(a.getLocation().getX()) - arrowSize;
-				yPoints[2] = coord(a.getLocation().getY()) + arrowSize / 2;
+				xPoints[2] = coord(location.getX()) - arrowSize;
+				yPoints[2] = coord(location.getY()) + arrowSize / 2;
 				break;
 			}
 
@@ -655,11 +689,11 @@ public class Diagram extends Component {
 	private void drawSample(Graphics2D g) {
 		// Draw ramp.
 		Ramp r = new Ramp(new Dimension(36), new Coordinate(new Dimension(18, 0), new Dimension(8, 0)));
-		r.addSection(Direction.DOWN, new Dimension(0), new Dimension(0), new Dimension(40), new Dimension(24, 0),
+		r.addSection(Direction.LEFT, new Dimension(0), new Dimension(0), new Dimension(40), new Dimension(24, 0),
 				new Dimension(6, 0), new Dimension(6, 0));
-		r.addSection(Direction.UP, new Dimension(0), new Dimension(0), new Dimension(40), new Dimension(12, 0),
-				new Dimension(8, 0), new Dimension(4, 0));
-		r.getSection(1).setHairpinDirection(Direction.RIGHT);
+		r.addSection(Direction.RIGHT, new Dimension(0), new Dimension(0), new Dimension(40), new Dimension(12, 0),
+				new Dimension(4, 0), new Dimension(8, 0));
+		r.getSection(1).setHairpinDirection(Direction.UP);
 
 		this.drawRampTop(g, r);
 
