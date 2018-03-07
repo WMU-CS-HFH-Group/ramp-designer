@@ -34,7 +34,7 @@ public class GUIUtilitys{
 	}
 	
 	/****** Adds listener to comboBox ******/
-	public void comboChangeTotal(JComboBox comboInch, JComboBox comboInPart){
+	public void comboChangeTotal(JComboBox<Integer> comboInch, JComboBox<String> comboInPart){
 		comboInch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				updateFeetRemain(0, comboInch.getSelectedIndex(), comboInPart.getSelectedIndex());
@@ -58,6 +58,11 @@ public class GUIUtilitys{
 		KeyStroke enterStrokeHor = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
 		inputMapHor.put(enterStrokeHor, enterStrokeHor.toString());
 		actionMapHor.put(enterStrokeHor.toString(), new AbstractAction() {
+			/**
+			 * used for the abstract action
+			 */
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				lbl.transferFocus();
@@ -192,50 +197,8 @@ public class GUIUtilitys{
 			sl_contentPane.putConstraint(SpringLayout.EAST, btnTurnAr, 0, SpringLayout.WEST, lblRamp);
 			break;
 		}
-	}	/**
-	 * Sets initial ramp information and listeners
-	 * @param contentPane Pane that the ramps and turn around
-	 * @param sl_contentPane used for placing content in specific locations
-	 * @param lblRamp Ramp label used for taking in length information
-	 * @param btnTurnAr button used to create new ramps
-	 * @param lblFeetRemain How many feet left until ground
-	 * @param index Which section of ramp is being used
-	 */
-	public void setRamps(JPanel contentPane, SpringLayout sl_contentPane, JTextArea lblRamp, JButton btnTurnAr, JLabel lblFeetRemain, int index) {
-		ArrayList<Double> update = guiData.getRampLength();
-		ArrayList<Integer> turnaround = guiData.getTurnAround();
-		if (update.size() <= index) {
-			update.add(index, 0.0);
-			guiData.setRampLength(update);
-			turnaround.add(index, 0);
-		}
+	}	
 		
-		lblRamp.setText("#' #\"");
-		lblRamp.setFont(new Font("Tahoma", Font.BOLD, 20));
-		lblRamp.setLineWrap(true);
-		lblRamp.setWrapStyleWord(true);
-		lblRamp.setVisible(false);
-		contentPane.add(lblRamp);
-				
-		btnTurnAr.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/turnAround.png")));
-		btnTurnAr.setVisible(false);
-		contentPane.add(btnTurnAr);
-		
-		//** Set length of ramp piece **
-		//**** Un-focus from enter length on enter ****
-		removeFocusEnter(lblRamp);
-		//**** End Un-focus from enter length on enter ****
-		//**** https://stackoverflow.com/questions/19569302/jtextarea-pressing-enter-adds-unnecessary-new-line ****
-		
-		//**** Clears/Saves input in bar ****
-		clearSaveLenght(lblRamp, index);
-		//**** End Clears/Saves input in bar ****
-		//** End Set length of ramp piece **//
-		
-		//** adds extra ramps on base click **//************************************************************************************************
-		createRamp(btnTurnAr, lblRamp, contentPane, sl_contentPane, lblFeetRemain, index);
-	}
-	
 	/**
 	 * Basic turn around not including U-turn
 	 * @param incase         Case 0 is left, Case 1 is right, any other Case is down
@@ -295,9 +258,7 @@ public class GUIUtilitys{
 			public void mouseClicked(MouseEvent arg0) {
 				switch (direction){
 				case -1:
-					setRamps(contentPane, sl_contentPane, lblRamp, btnTurnAr, lblFeetRemain, index+1);					
-					//setRampDirection(direction+1, sl_contentPane, pivot, lblRamp, btnTurnAr, index+1);
-					//direction+=2;
+					setRamps(contentPane, sl_contentPane, lblRamp, btnTurnAr, lblFeetRemain, index+1);			
 					direction++;
 				case 0:
 				case 1:
@@ -314,6 +275,50 @@ public class GUIUtilitys{
 				}
 			}
 		});
+	}
+	
+	/**
+	 * Sets initial ramp information and listeners
+	 * @param contentPane Pane that the ramps and turn around
+	 * @param sl_contentPane used for placing content in specific locations
+	 * @param lblRamp Ramp label used for taking in length information
+	 * @param btnTurnAr button used to create new ramps
+	 * @param lblFeetRemain How many feet left until ground
+	 * @param index Which section of ramp is being used
+	 */
+	public void setRamps(JPanel contentPane, SpringLayout sl_contentPane, JTextArea lblRamp, JButton btnTurnAr, JLabel lblFeetRemain, int index) {
+		ArrayList<Double> update = guiData.getRampLength();
+		ArrayList<Integer> turnaround = guiData.getTurnAround();
+		if (update.size() <= index) {
+			update.add(index, 0.0);
+			guiData.setRampLength(update);
+			turnaround.add(index, 0);
+		}
+		
+		lblRamp.setText("#' #\"");
+		lblRamp.setFont(new Font("Tahoma", Font.BOLD, 20));
+		lblRamp.setLineWrap(true);
+		lblRamp.setWrapStyleWord(true);
+		lblRamp.setVisible(false);
+		contentPane.add(lblRamp);
+				
+		btnTurnAr.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/turnAround.png")));
+		btnTurnAr.setVisible(false);
+		contentPane.add(btnTurnAr);
+		
+		//** Set length of ramp piece **
+		//**** Un-focus from enter length on enter ****
+		removeFocusEnter(lblRamp);
+		//**** End Un-focus from enter length on enter ****
+		//**** https://stackoverflow.com/questions/19569302/jtextarea-pressing-enter-adds-unnecessary-new-line ****
+		
+		//**** Clears/Saves input in bar ****
+		clearSaveLenght(lblRamp, index);
+		//**** End Clears/Saves input in bar ****
+		//** End Set length of ramp piece **//
+		
+		//** adds extra ramps on base click **//************************************************************************************************
+		createRamp(btnTurnAr, lblRamp, contentPane, sl_contentPane, lblFeetRemain, index);
 	}
 	
 	/**
@@ -354,11 +359,11 @@ public class GUIUtilitys{
 		return calcIn;
 	}
 
-	public static JLabel getLblFeetRemain() {
+	public JLabel getLblFeetRemain() {
 		return lblFeetRemain;
 	}
 
-	public static void setLblFeetRemain(JLabel lblFeetRemain) {
+	public void setLblFeetRemain(JLabel lblFeetRemain) {
 		GUIUtilitys.lblFeetRemain = lblFeetRemain;
 	}
 

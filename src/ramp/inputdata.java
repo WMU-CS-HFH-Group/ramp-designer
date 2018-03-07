@@ -1,6 +1,4 @@
 package ramp;
-import java.awt.Component;
-import java.awt.EventQueue;
 import java.awt.Font;
 
 import javax.swing.*;
@@ -15,6 +13,11 @@ import java.awt.event.MouseEvent;
 
 
 public class inputdata extends JFrame {
+	/**
+	 * Just to make java happy
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private JPanel contentPane;
 	private GUIData guiData = new GUIData();
 	private GUIUtilitys guiUtility = new GUIUtilitys(guiData);
