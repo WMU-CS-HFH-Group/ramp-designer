@@ -173,7 +173,8 @@ public class Diagram extends Component {
 			ramp.addSection(s);
 		}
 		ramp.getSection(0).setRampOffset(new Dimension(this.guiData.getDeckOffSet()));
-		this.drawRampTop(g, ramp);
+		// this.drawRampTop(g, ramp);
+		this.drawRampSide(g, ramp);
 	}
 
 	public void drawRampTop(Graphics2D g, Ramp r) {
@@ -428,14 +429,87 @@ public class Diagram extends Component {
 			}
 		}
 	}
-	
+
 	public void drawRampSide(Graphics2D g, Ramp r) {
-		Section s;
-		
-		try {
-			s = r.getLongestSection();
-		} catch (Exception e) {
-			return;
+		int longestSectionIndex = r.getLongestSection();
+
+		if (longestSectionIndex >= 0) {
+			Section s = r.getSection(longestSectionIndex);
+			Coordinate origin = new Coordinate(new Dimension(0), new Dimension(0));
+			Box rampBox = new Box(new Coordinate(new Dimension(0), new Dimension(0)), s.getRampWidth(),
+					s.getRampLength());
+			if (s.getDirection() == Direction.LEFT || s.getDirection() == Direction.RIGHT) {
+				rampBox.swapWidthHeight();
+			}
+			Coordinate[] posts = generatePosts(rampBox, s.getDirection(), POST_SIZE, true, false);
+			Dimension landingWidth = s.getLandingWidth().clone();
+			if (s.getDirection() == Direction.UP || s.getDirection() == Direction.DOWN) {
+				landingWidth = s.getLandingLength().clone();
+			}
+			Dimension landingHeight = r.calculateSectionHeight(longestSectionIndex);
+			Dimension nextLandingHeight = r.calculateSectionHeight(longestSectionIndex + 1);
+			Dimension railingHeight = new Dimension(36);
+			Dimension firstPostHeight = railingHeight.clone().add(landingHeight);
+			Dimension spindleSpace = new Dimension(6);
+			Dimension spindleWidth = new Dimension(2);
+
+			// Set up graphics
+			g.setStroke(new BasicStroke(2));
+			g.setColor(Color.BLACK);
+
+			// Draw the landing
+			g.drawRect(coord(origin.getX()), coord(origin.getY()) - coord(landingHeight) - coord(new Dimension(6)),
+					coord(landingWidth), coord(new Dimension(6)));
+
+			// Draw ramp floor
+			g.drawPolygon(
+					new int[] { coord(origin.getX()) + coord(landingWidth),
+							coord(origin.getX()) + coord(landingWidth) + coord(s.getRampLength()),
+							coord(origin.getX()) + coord(landingWidth) + coord(s.getRampLength()),
+							coord(origin.getX()) + coord(landingWidth) },
+					new int[] { coord(origin.getY()) - coord(landingHeight),
+							coord(origin.getY()) - coord(nextLandingHeight),
+							coord(origin.getY()) - coord(nextLandingHeight) - coord(new Dimension(6)),
+							coord(origin.getY()) - coord(landingHeight) - coord(new Dimension(6)) },
+					4);
+
+			// Draw posts for landing
+			g.drawRect(coord(origin.getX()), coord(origin.getY()) - coord(firstPostHeight), coord(new Dimension(4)),
+					coord(railingHeight) + coord(landingHeight));
+
+			// Draw posts and supports for ramp
+			for (int i = 0; i < posts.length; i++) {
+				Dimension postX = posts[i].getX();
+				if (s.getDirection() == Direction.UP || s.getDirection() == Direction.DOWN) {
+					postX = posts[i].getY();
+				}
+
+				Dimension heightDelta = new Dimension(postX.getLength() * Ramp.SLOPE);
+
+				// Draw posts
+				g.drawRect(coord(origin.getX()) + coord(landingWidth) + coord(postX),
+						coord(origin.getY()) - coord(firstPostHeight) + coord(heightDelta), coord(new Dimension(4)),
+						coord(firstPostHeight) - coord(heightDelta));
+
+				// Draw supports
+				g.drawRect(coord(origin.getX()) + coord(landingWidth) + coord(postX) + coord(new Dimension(4)),
+						coord(origin.getY()) - coord(landingHeight) + coord(heightDelta), coord(new Dimension(2)),
+						coord(new Dimension(6)));
+			}
+
+			// If the landing is above 30", draw spindles
+			if (landingHeight.getLength() >= 30) {
+				double insideLength = landingWidth.getLength() - 4; // landing width minus post width
+				int spaceCount = (int) Math.ceil(insideLength / spindleSpace.getLength());
+				
+				for (int j = 0; j < spaceCount; j++) {
+					
+				}
+			} else {
+				// Otherwise, draw horizontal rails
+			}
+
+			// Draw railings for ramp
 		}
 	}
 

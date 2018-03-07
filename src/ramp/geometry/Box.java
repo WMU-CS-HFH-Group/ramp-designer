@@ -37,4 +37,10 @@ public class Box {
 	public Coordinate getCenter() {
 		return this.location.clone().add(new Coordinate(width.clone().scale(0.5), height.clone().scale(0.5)));
 	}
+	
+	public void swapWidthHeight() {
+		Dimension newHeight = this.width;
+		this.width = this.height;
+		this.height = newHeight;
+	}
 }

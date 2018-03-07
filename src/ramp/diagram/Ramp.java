@@ -7,7 +7,7 @@ import ramp.geometry.Coordinate;
 import ramp.geometry.Dimension;
 
 public class Ramp {
-	public static final double SLOPE = (1 / 12);
+	public static final double SLOPE = 0.083333;
 
 	private Coordinate location;
 	private Dimension height;
@@ -50,18 +50,21 @@ public class Ramp {
 	public Section getSection(int index) {
 		return this.sections.get(index);
 	}
-	
-	public Section getLongestSection() throws Exception {
+
+	public int getLongestSection() {
 		if (this.sections.size() > 0) {
-			Section longest = this.getSection(0);
-			for (Section s : this.sections) {
+			int index = 0;
+			Section longest = this.getSection(index);
+			for (int i = 0; i < this.sections.size(); i++) {
+				Section s = this.getSection(i);
 				if (s.getRampLength().getLength() > longest.getRampLength().getLength()) {
 					longest = s;
+					index = i;
 				}
 			}
-			return longest;
+			return index;
 		} else {
-			throw new Exception("No ramp sections.");
+			return -1;
 		}
 	}
 
