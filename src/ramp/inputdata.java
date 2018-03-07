@@ -159,6 +159,16 @@ public class inputdata extends JFrame {
 		sl_contentPane.putConstraint(SpringLayout.EAST, lblHouse, 0, SpringLayout.EAST, contentPane);
 		contentPane.add(lblHouse);
 		
+		JButton btnSave = new JButton("Save");
+		sl_contentPane.putConstraint(SpringLayout.SOUTH, btnSave, -10, SpringLayout.SOUTH, contentPane);
+		sl_contentPane.putConstraint(SpringLayout.WEST, btnSave, 10, SpringLayout.WEST, contentPane);
+		contentPane.add(btnSave);
+		
+		JButton btnLoad = new JButton("Load");
+		sl_contentPane.putConstraint(SpringLayout.NORTH, btnLoad, 0, SpringLayout.NORTH, btnSave);
+		sl_contentPane.putConstraint(SpringLayout.WEST, btnLoad, 5, SpringLayout.EAST, btnSave);
+		contentPane.add(btnLoad);
+		
 		JButton btnSubmit = new JButton("Submit");
 		sl_contentPane.putConstraint(SpringLayout.SOUTH, btnSubmit, -10, SpringLayout.SOUTH, contentPane);
 		sl_contentPane.putConstraint(SpringLayout.EAST, btnSubmit, -25, SpringLayout.EAST, contentPane);
@@ -261,6 +271,20 @@ public class inputdata extends JFrame {
 		});
 		
 		
+		btnSave.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				//************************************************TODO: Add save function ***************************************//
+			}
+		});
+		
+		btnLoad.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				//************************************************TODO: Add save function ***************************************//
+			}
+		});
+		
 		
 		//** Set Submit button **//
 		guiUtility.submitButtonActions(btnSubmit);
@@ -280,6 +304,4 @@ public class inputdata extends JFrame {
 		combo.addItem("3/4");
 		combo.addItem("7/8");
 	}
-	
-	
 }

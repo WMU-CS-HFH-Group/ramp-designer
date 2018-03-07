@@ -96,22 +96,30 @@ public class GUIUtilitys{
 		});
 	}
 	
-	
-	public void setRamps(JPanel contentPane, SpringLayout sl_contentPane, JTextArea lblRampHor, JButton btnTurnAr, JLabel lblFeetRemain, int index) {
+	/**
+	 * Sets initial ramp information and listeners
+	 * @param contentPane Pane that the ramps and turn around
+	 * @param sl_contentPane used for placing content in specific locations
+	 * @param lblRamp Ramp label used for taking in length information
+	 * @param btnTurnAr button used to create new ramps
+	 * @param lblFeetRemain How many feet left until ground
+	 * @param index Which section of ramp is being used
+	 */
+	public void setRamps(JPanel contentPane, SpringLayout sl_contentPane, JTextArea lblRamp, JButton btnTurnAr, JLabel lblFeetRemain, int index) {
 		ArrayList<Double> update = guiData.getRampLength();
 		ArrayList<Integer> turnaround = guiData.getTurnAround();
 		if (update.size() <= index) {
 			update.add(index, 0.0);
 			guiData.setRampLength(update);
-			turnaround.add(index, 48);
+			turnaround.add(index, 0);
 		}
 		
-		lblRampHor.setText("#' #\"");
-		lblRampHor.setFont(new Font("Tahoma", Font.BOLD, 20));
-		lblRampHor.setLineWrap(true);
-		lblRampHor.setWrapStyleWord(true);
-		lblRampHor.setVisible(false);
-		contentPane.add(lblRampHor);
+		lblRamp.setText("#' #\"");
+		lblRamp.setFont(new Font("Tahoma", Font.BOLD, 20));
+		lblRamp.setLineWrap(true);
+		lblRamp.setWrapStyleWord(true);
+		lblRamp.setVisible(false);
+		contentPane.add(lblRamp);
 				
 		btnTurnAr.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/turnAround.png")));
 		btnTurnAr.setVisible(false);
@@ -119,12 +127,12 @@ public class GUIUtilitys{
 		
 		//** Set length of ramp piece **
 		//**** Un-focus from enter length on enter ****
-		removeFocusEnter(lblRampHor);
+		removeFocusEnter(lblRamp);
 		//**** End Un-focus from enter length on enter ****
 		//**** https://stackoverflow.com/questions/19569302/jtextarea-pressing-enter-adds-unnecessary-new-line ****
 		
 		//**** Clears/Saves input in bar ****
-		clearSaveLenght(lblRampHor, index);
+		clearSaveLenght(lblRamp, index);
 		//**** End Clears/Saves input in bar ****
 		//** End Set length of ramp piece **//
 		
@@ -145,11 +153,35 @@ public class GUIUtilitys{
 		lblRamp.setVisible(false);
 		btnTurnAr.setVisible(false);
 		ArrayList<Integer> update = guiData.getRampDir();
+		ArrayList<Integer> turn = guiData.getTurnAround();
 		if (update.size() <= index) {
 			update.add(index, 0);	
 		}
+		if (index > 0){
+			if ((update.get(index)-update.get(index-1))%2 == 0) {
+				if (incase == 0 || incase == 2){
+					turn.set(index-1, 1);
+					setUturn(incase, sl_contentPane, pivot, lblRamp, btnTurnAr);
+				}else{
+					turn.set(index-1, 2);
+					setUturn(incase, sl_contentPane, pivot, lblRamp, btnTurnAr);
+				}
+			} else {
+				turn.set(index-1, 0);
+				setTurnAround(incase, sl_contentPane, pivot, lblRamp, btnTurnAr);
+			}
+		} else {
+			setTurnAround(incase, sl_contentPane, pivot, lblRamp, btnTurnAr);
+		}
+		
 		update.set(index, incase);
 		guiData.setRampDir(update);
+		guiData.setTurnAround(turn);
+		lblRamp.setVisible(true);
+		btnTurnAr.setVisible(true);
+	}
+	
+	private void setTurnAround(int incase, SpringLayout sl_contentPane, Component pivot, JTextArea lblRamp, JButton btnTurnAr) {
 		switch (incase) {
 		case 0: //Up
 			sl_contentPane.putConstraint(SpringLayout.NORTH, lblRamp, -100, SpringLayout.NORTH, pivot);
@@ -192,9 +224,52 @@ public class GUIUtilitys{
 			sl_contentPane.putConstraint(SpringLayout.EAST, btnTurnAr, 0, SpringLayout.WEST, lblRamp);
 			break;
 		}
-		lblRamp.setVisible(true);
-		btnTurnAr.setVisible(true);
-		
+	}
+	
+	private void setUturn(int incase, SpringLayout sl_contentPane, Component pivot, JTextArea lblRamp, JButton btnTurnAr) {
+		switch (incase) {
+		case 0: //Up
+			//pivot.
+			sl_contentPane.putConstraint(SpringLayout.NORTH, lblRamp, -100, SpringLayout.NORTH, pivot);
+			sl_contentPane.putConstraint(SpringLayout.WEST, lblRamp, pivot.getWidth()/2 - 15, SpringLayout.WEST, pivot);
+			sl_contentPane.putConstraint(SpringLayout.SOUTH, lblRamp, 0, SpringLayout.NORTH, pivot);
+			sl_contentPane.putConstraint(SpringLayout.EAST, lblRamp, pivot.getWidth()/2 + 15, SpringLayout.WEST, pivot);
+			sl_contentPane.putConstraint(SpringLayout.NORTH, btnTurnAr, -50, SpringLayout.NORTH, lblRamp);
+			sl_contentPane.putConstraint(SpringLayout.WEST, btnTurnAr, -10, SpringLayout.WEST, lblRamp);
+			sl_contentPane.putConstraint(SpringLayout.SOUTH, btnTurnAr, 0, SpringLayout.NORTH, lblRamp);
+			sl_contentPane.putConstraint(SpringLayout.EAST, btnTurnAr, 10, SpringLayout.EAST, lblRamp);
+			break;
+		case 1: //Right
+			sl_contentPane.putConstraint(SpringLayout.NORTH, lblRamp, pivot.getHeight()/2 - 15, SpringLayout.NORTH, pivot);
+			sl_contentPane.putConstraint(SpringLayout.WEST, lblRamp, 0, SpringLayout.EAST, pivot);
+			sl_contentPane.putConstraint(SpringLayout.SOUTH, lblRamp, pivot.getHeight()/2 + 15, SpringLayout.NORTH, pivot);
+			sl_contentPane.putConstraint(SpringLayout.EAST, lblRamp, 100, SpringLayout.EAST, pivot);
+			sl_contentPane.putConstraint(SpringLayout.NORTH, btnTurnAr, -10, SpringLayout.NORTH, lblRamp);
+			sl_contentPane.putConstraint(SpringLayout.WEST, btnTurnAr, 0, SpringLayout.EAST, lblRamp);
+			sl_contentPane.putConstraint(SpringLayout.SOUTH, btnTurnAr, 10, SpringLayout.SOUTH, lblRamp);
+			sl_contentPane.putConstraint(SpringLayout.EAST, btnTurnAr, 50, SpringLayout.EAST, lblRamp);			
+			break;
+		case 2: //Down
+			sl_contentPane.putConstraint(SpringLayout.NORTH, lblRamp, 0, SpringLayout.SOUTH, pivot);
+			sl_contentPane.putConstraint(SpringLayout.WEST, lblRamp, pivot.getWidth()/2 - 15, SpringLayout.WEST, pivot);
+			sl_contentPane.putConstraint(SpringLayout.SOUTH, lblRamp, 100, SpringLayout.SOUTH, pivot);
+			sl_contentPane.putConstraint(SpringLayout.EAST, lblRamp, pivot.getWidth()/2 + 15, SpringLayout.WEST, pivot);
+			sl_contentPane.putConstraint(SpringLayout.NORTH, btnTurnAr, 0, SpringLayout.SOUTH, lblRamp);
+			sl_contentPane.putConstraint(SpringLayout.WEST, btnTurnAr, -10, SpringLayout.WEST, lblRamp);
+			sl_contentPane.putConstraint(SpringLayout.SOUTH, btnTurnAr, 50, SpringLayout.SOUTH, lblRamp);
+			sl_contentPane.putConstraint(SpringLayout.EAST, btnTurnAr, 10, SpringLayout.EAST, lblRamp);
+			break;
+		default: //Left
+			sl_contentPane.putConstraint(SpringLayout.NORTH, lblRamp, pivot.getHeight()/2 - 15, SpringLayout.NORTH, pivot);
+			sl_contentPane.putConstraint(SpringLayout.WEST, lblRamp, -100, SpringLayout.WEST, pivot);
+			sl_contentPane.putConstraint(SpringLayout.SOUTH, lblRamp, pivot.getHeight()/2 + 15, SpringLayout.NORTH, pivot);
+			sl_contentPane.putConstraint(SpringLayout.EAST, lblRamp, 0, SpringLayout.WEST, pivot);
+			sl_contentPane.putConstraint(SpringLayout.NORTH, btnTurnAr, -10, SpringLayout.NORTH, lblRamp);
+			sl_contentPane.putConstraint(SpringLayout.WEST, btnTurnAr, -50, SpringLayout.WEST, lblRamp);
+			sl_contentPane.putConstraint(SpringLayout.SOUTH, btnTurnAr, 10, SpringLayout.SOUTH, lblRamp);
+			sl_contentPane.putConstraint(SpringLayout.EAST, btnTurnAr, 0, SpringLayout.WEST, lblRamp);
+			break;
+		}
 	}
 	
 	/**

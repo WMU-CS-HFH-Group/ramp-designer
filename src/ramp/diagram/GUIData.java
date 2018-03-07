@@ -15,7 +15,7 @@ public class GUIData {
 	private static ArrayList<Double> rampLength = new ArrayList<Double>(); // Length of each ramp piece
 	private static ArrayList<Integer> rampDir = new ArrayList<Integer>(); // Direction off of deck/turn around: 0 up, 1 right
 																		// 2 down, 3 left
-	private static ArrayList<Integer> turnAround; // Type of turn around: 0 normal, 1 uturn up/down, 2 uturn left/right
+	private static ArrayList<Integer> turnAround = new ArrayList<Integer>(); // Type of turn around: 0 normal, 1 uturn up/down, 2 uturn left/right
 
 	public GUIData() {
 		
