@@ -152,9 +152,9 @@ public class Diagram extends Component {
 		// this.drawSample(g);
 		Ramp ramp = new Ramp(new Dimension(this.guiData.getDeckHeight()),
 				new Coordinate(new Dimension(25, 0), new Dimension(0)));
-		for (int i = 0; i < this.guiData.getRampLenght().size(); i++) {
+		for (int i = 0; i < this.guiData.getRampLength().size(); i++) {
 			Direction d = Direction.UNDEFINED;
-			switch (this.guiData.getRampDirIndex().get(i)) {
+			switch (this.guiData.getRampDir().get(i)) {
 			case 0:
 				d = Direction.LEFT;
 				break;
@@ -169,7 +169,7 @@ public class Diagram extends Component {
 				break;
 			}
 			Section s = new Section(d, new Dimension(0), new Dimension(0), new Dimension(40),
-					new Dimension(this.guiData.getRampLenght().get(i)), new Dimension(4, 0), new Dimension(4, 0));
+					new Dimension(this.guiData.getRampLength().get(i)), new Dimension(4, 0), new Dimension(4, 0));
 			ramp.addSection(s);
 		}
 		ramp.getSection(0).setRampOffset(new Dimension(this.guiData.getDeckOffSet()));
