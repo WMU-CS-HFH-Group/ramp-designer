@@ -452,6 +452,8 @@ public class Diagram extends Component {
 			Dimension firstPostHeight = railingHeight.clone().add(landingHeight);
 			Dimension spindleSpace = new Dimension(6);
 			Dimension spindleWidth = new Dimension(2);
+			Dimension rail1Height = new Dimension(16); // Height from landing for bottom railing
+			Dimension rail2Height = new Dimension(26); // Height from landing for middle railing
 
 			// Set up graphics
 			g.setStroke(new BasicStroke(2));
@@ -497,19 +499,68 @@ public class Diagram extends Component {
 						coord(new Dimension(6)));
 			}
 
+			// Draw top landing rail
+			g.drawRect(coord(origin.getX()), coord(origin.getY()) - coord(firstPostHeight),
+					coord(landingWidth) + coord(new Dimension(4)), coord(new Dimension(4)));
+
 			// If the landing is above 30", draw spindles
 			if (landingHeight.getLength() >= 30) {
 				double insideLength = landingWidth.getLength() - 4; // landing width minus post width
-				int spaceCount = (int) Math.ceil(insideLength / spindleSpace.getLength());
-				
-				for (int j = 0; j < spaceCount; j++) {
-					
+				int spaceCount = (int) Math.ceil(insideLength / spindleSpace.getLength()) - 1;
+				Dimension dist = new Dimension(insideLength / spaceCount);
+
+				for (int j = 1; j < spaceCount; j++) {
+					g.drawRect(
+							coord(origin.getX()) + coord(new Dimension(4)) + j * coord(dist) - coord(spindleWidth) / 2,
+							coord(origin.getY()) - coord(firstPostHeight), coord(spindleWidth), coord(railingHeight));
 				}
 			} else {
 				// Otherwise, draw horizontal rails
+				g.drawRect(coord(origin.getX()), coord(origin.getY()) - coord(landingHeight) - coord(rail1Height),
+						coord(landingWidth) + coord(new Dimension(4)), coord(new Dimension(4)));
+
+				g.drawRect(coord(origin.getX()), coord(origin.getY()) - coord(landingHeight) - coord(rail2Height),
+						coord(landingWidth) + coord(new Dimension(4)), coord(new Dimension(4)));
 			}
 
 			// Draw railings for ramp
+			g.drawPolygon(
+					new int[] { coord(origin.getX()) + coord(landingWidth),
+							coord(origin.getX()) + coord(landingWidth) + coord(s.getRampLength()),
+							coord(origin.getX()) + coord(landingWidth) + coord(s.getRampLength()),
+							coord(origin.getX()) + coord(landingWidth) },
+					new int[] { coord(origin.getY()) - coord(landingHeight) - coord(rail1Height),
+							coord(origin.getY()) - coord(nextLandingHeight) - coord(rail1Height),
+							coord(origin.getY()) - coord(nextLandingHeight) - coord(rail1Height)
+									+ coord(new Dimension(4)),
+							coord(origin.getY()) - coord(landingHeight) - coord(rail1Height)
+									+ coord(new Dimension(4)) },
+					4);
+
+			g.drawPolygon(
+					new int[] { coord(origin.getX()) + coord(landingWidth),
+							coord(origin.getX()) + coord(landingWidth) + coord(s.getRampLength()),
+							coord(origin.getX()) + coord(landingWidth) + coord(s.getRampLength()),
+							coord(origin.getX()) + coord(landingWidth) },
+					new int[] { coord(origin.getY()) - coord(landingHeight) - coord(rail2Height),
+							coord(origin.getY()) - coord(nextLandingHeight) - coord(rail2Height),
+							coord(origin.getY()) - coord(nextLandingHeight) - coord(rail2Height)
+									+ coord(new Dimension(4)),
+							coord(origin.getY()) - coord(landingHeight) - coord(rail2Height)
+									+ coord(new Dimension(4)) },
+					4);
+
+			g.drawPolygon(
+					new int[] { coord(origin.getX()) + coord(landingWidth),
+							coord(origin.getX()) + coord(landingWidth) + coord(s.getRampLength()),
+							coord(origin.getX()) + coord(landingWidth) + coord(s.getRampLength()),
+							coord(origin.getX()) + coord(landingWidth) },
+					new int[] { coord(origin.getY()) - coord(firstPostHeight),
+							coord(origin.getY()) - coord(nextLandingHeight) - coord(railingHeight),
+							coord(origin.getY()) - coord(nextLandingHeight) - coord(railingHeight)
+									+ coord(new Dimension(4)),
+							coord(origin.getY()) - coord(firstPostHeight) + coord(new Dimension(4)) },
+					4);
 		}
 	}
 
