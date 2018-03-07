@@ -13,8 +13,8 @@ public class GUIData {
 	private static double rampLengthTotal = 0; // Amount of in until ground
 	private static double usedIn = 0; // Total number of inches used
 	private static ArrayList<Double> rampLength = new ArrayList<Double>(); // Length of each ramp piece
-	private static ArrayList<Integer> rampDir = new ArrayList<Integer>(); // Direction off of deck/turn around, 0 west, 1
-																		// east, 2 south, eventually 3 north
+	private static ArrayList<Integer> rampDir = new ArrayList<Integer>(); // Direction off of deck/turn around, 0 up, 1 right
+																		// 2 down, 3 left
 	private int[] turnAround = { 48, 48 }; // Size of turn around
 
 	public GUIData() {

@@ -162,9 +162,9 @@ public class inputdata extends JFrame {
 		sl_contentPane.putConstraint(SpringLayout.NORTH, comboFromDeck, 0, SpringLayout.NORTH, lblRampIn);
 		sl_contentPane.putConstraint(SpringLayout.WEST, comboFromDeck, 3, SpringLayout.EAST, lblRampIn);
 		sl_contentPane.putConstraint(SpringLayout.EAST, comboFromDeck, 66, SpringLayout.EAST, lblRampIn);
-		comboFromDeck.addItem("Left");
 		comboFromDeck.addItem("Right");
 		comboFromDeck.addItem("Center");
+		comboFromDeck.addItem("Left");
 		contentPane.add(comboFromDeck);
 		
 		JLabel lblHouse = new JLabel("");
@@ -209,11 +209,10 @@ public class inputdata extends JFrame {
 		lblDeck.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/Deck.png")));
 		scrollPanel.add(lblDeck);
 		
-		JTextArea lblRampHor = new JTextArea();
-		JTextArea lblRampVert = new JTextArea();
+		JTextArea lblRamp = new JTextArea();
 		JButton btnTurnAr = new JButton();
 		
-		guiUtility.setRamps(scrollPanel, sl_scrollPanel, lblRampHor, lblRampVert, btnTurnAr, lblFeetRemain, 0);
+		guiUtility.setRamps(scrollPanel, sl_scrollPanel, lblRamp, btnTurnAr, lblFeetRemain, 0);
 		guiUtility.comboChangeTotal(comboInch, comboInPart);
 		
 		//** Updates dimensions in GUI data **//
@@ -260,7 +259,7 @@ public class inputdata extends JFrame {
 		//** changes direction of first ramp **//
 		comboFromDeck.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				guiUtility.setRampDirection(comboFromDeck.getSelectedIndex(), sl_scrollPanel, lblDeck, lblRampHor, lblRampVert, btnTurnAr, 0);
+				guiUtility.setRampDirection(comboFromDeck.getSelectedIndex()+1, sl_scrollPanel, lblDeck, lblRamp, btnTurnAr, 0);
 			}
 		});
 		
@@ -273,7 +272,7 @@ public class inputdata extends JFrame {
 				} else {
 					comboFromDeck.setSelectedIndex(comboFromDeck.getSelectedIndex() + 1);
 				}
-				guiUtility.setRampDirection(comboFromDeck.getSelectedIndex(), sl_scrollPanel, lblDeck, lblRampHor, lblRampVert, btnTurnAr, 0);
+				guiUtility.setRampDirection(comboFromDeck.getSelectedIndex()+1, sl_scrollPanel, lblDeck, lblRamp, btnTurnAr, 0);
 			}
 		});
 		
