@@ -22,10 +22,19 @@ public class GUIUtilitys{
 	private GUIData guiData;
 	private static JLabel lblFeetRemain;
 	
+	/**
+	 * BAsic constructor for the GUIUtility class
+	 * @param guiData data container for program
+	 */
 	public GUIUtilitys(GUIData guiData) {
 		this.guiData = guiData;
 	}
 	
+	/**
+	 * Finds the total of the array list containing the ramp lengths
+	 * @param list    Array list containing the ramp lengths
+	 * @return double Sum total of all ramp lengths
+	 */
 	public double arraylistTotal(ArrayList<Double> list) {
 		double sum = 0;
 		for(int i = 0; i < list.size(); i++)
@@ -33,7 +42,11 @@ public class GUIUtilitys{
 		return sum;
 	}
 	
-	/****** Adds listener to comboBox ******/
+	/**
+	 * Adds listener to comboBox
+	 * @param comboInch   Inches of the deck in height
+	 * @param comboInPart Eight of an inch of the deck height
+	 */
 	public void comboChangeTotal(JComboBox<Integer> comboInch, JComboBox<String> comboInPart){
 		comboInch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -50,6 +63,7 @@ public class GUIUtilitys{
 
 	/**
 	 * Removes focus from object on Enter/Return key for JTextAreas
+	 * https://stackoverflow.com/questions/19569302/jtextarea-pressing-enter-adds-unnecessary-new-line
 	 * @param lbl JTextArea to have return remove focus
 	 */
 	public void removeFocusEnter(JTextArea lbl) {
@@ -75,7 +89,7 @@ public class GUIUtilitys{
 	 * @param lbl label to enable
 	 * @param data information held in GUIData
 	 */
-	public void clearSaveLenght(JTextArea lbl, int index) {
+	public void updateRAmpText(JTextArea lbl, int index) {
 		lbl.addFocusListener(new FocusAdapter() {			
 			@Override
 			public void focusGained(FocusEvent arg0) {
@@ -306,18 +320,8 @@ public class GUIUtilitys{
 		btnTurnAr.setVisible(false);
 		contentPane.add(btnTurnAr);
 		
-		//** Set length of ramp piece **
-		//**** Un-focus from enter length on enter ****
 		removeFocusEnter(lblRamp);
-		//**** End Un-focus from enter length on enter ****
-		//**** https://stackoverflow.com/questions/19569302/jtextarea-pressing-enter-adds-unnecessary-new-line ****
-		
-		//**** Clears/Saves input in bar ****
-		clearSaveLenght(lblRamp, index);
-		//**** End Clears/Saves input in bar ****
-		//** End Set length of ramp piece **//
-		
-		//** adds extra ramps on base click **//************************************************************************************************
+		updateRAmpText(lblRamp, index);
 		createRamp(btnTurnAr, lblRamp, contentPane, sl_contentPane, lblFeetRemain, index);
 	}
 	
@@ -351,7 +355,13 @@ public class GUIUtilitys{
 		}
 	}
 	
-	//*******************changes feet, in, parts to Inches**********************//
+	/**
+	 * Calculates total inches based on feet, inches, and parts of inches
+	 * @param feet    number of feet to convert
+	 * @param inch    number of inches to add to
+	 * @param inPart  number of eight of an inch to convert
+	 * @return double number of inches
+	 */
 	public double calcTotalIn(int comboFeet, int comboInch, int comboInPart){
 		double calcIn = (float) (12.0 * (int) comboFeet);
 		calcIn += (float) comboInch;
@@ -359,18 +369,24 @@ public class GUIUtilitys{
 		return calcIn;
 	}
 
-	public JLabel getLblFeetRemain() {
-		return lblFeetRemain;
-	}
-
-	public void setLblFeetRemain(JLabel lblFeetRemain) {
-		GUIUtilitys.lblFeetRemain = lblFeetRemain;
-	}
-
+	/**
+	 * Method for updating GUIData with information
+	 * @param feet   Amount of feet
+	 * @param inch   Amount of inches
+	 * @param inPart Amount of eight of inches
+	 */
 	private void updateFeetRemain(int feet, int inch, int inPart){
 		double update = calcTotalIn(feet, inch, inPart);
 		guiData.setDeckHeight(update);
 		guiData.setRampLengthTotal(update*12);
 		lblFeetRemain.setText("Ramp feet remaining: " + (update - guiData.getUsedIn()/12));
+	}
+	
+	/**
+	 * Sets the label for feet remaining so it can be updated in this method
+	 * @param lblFeetRemain label to output feet remaining
+	 */
+	public void setLblFeetRemain(JLabel lblFeetRemain) {
+		GUIUtilitys.lblFeetRemain = lblFeetRemain;
 	}
 }

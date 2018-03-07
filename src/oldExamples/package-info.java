@@ -1,8 +1,0 @@
-/**
- * 
- */
-/**
- * @author Wulf
- *
- */
-package oldExamples;
