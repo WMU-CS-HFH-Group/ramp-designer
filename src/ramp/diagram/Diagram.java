@@ -173,8 +173,8 @@ public class Diagram extends Component {
 			ramp.addSection(s);
 		}
 		ramp.getSection(0).setRampOffset(new Dimension(this.guiData.getDeckOffSet()));
-		// this.drawRampTop(g, ramp);
-		this.drawRampSide(g, ramp);
+		this.drawRampTop(g, ramp);
+		// this.drawRampSide(g, ramp);
 	}
 
 	public void drawRampTop(Graphics2D g, Ramp r) {
