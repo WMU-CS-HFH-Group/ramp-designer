@@ -50,6 +50,20 @@ public class Ramp {
 	public Section getSection(int index) {
 		return this.sections.get(index);
 	}
+	
+	public Section getLongestSection() throws Exception {
+		if (this.sections.size() > 0) {
+			Section longest = this.getSection(0);
+			for (Section s : this.sections) {
+				if (s.getRampLength().getLength() > longest.getRampLength().getLength()) {
+					longest = s;
+				}
+			}
+			return longest;
+		} else {
+			throw new Exception("No ramp sections.");
+		}
+	}
 
 	public int countSections() {
 		return this.sections.size();
