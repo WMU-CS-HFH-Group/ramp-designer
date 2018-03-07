@@ -15,7 +15,7 @@ public class GUIData {
 	private static ArrayList<Double> rampLength = new ArrayList<Double>(); // Length of each ramp piece
 	private static ArrayList<Integer> rampDir = new ArrayList<Integer>(); // Direction off of deck/turn around, 0 up, 1 right
 																		// 2 down, 3 left
-	private int[] turnAround = { 48, 48 }; // Size of turn around
+	private static ArrayList<Integer> turnAround; // Size of turn around
 
 	public GUIData() {
 		
@@ -81,11 +81,11 @@ public class GUIData {
 		this.rampDir = rampDirIndex;
 	}
 
-	public int[] getTurnAround() {
+	public ArrayList<Integer> getTurnAround() {
 		return turnAround;
 	}
 
-	public void setTurnAround(int[] turnAround) {
-		this.turnAround = turnAround;
+	public void setTurnAround(ArrayList<Integer> turnAround) {
+		GUIData.turnAround = turnAround;
 	}
 }

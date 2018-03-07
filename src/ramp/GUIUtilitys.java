@@ -99,9 +99,11 @@ public class GUIUtilitys{
 	
 	public void setRamps(JPanel contentPane, SpringLayout sl_contentPane, JTextArea lblRampHor, JButton btnTurnAr, JLabel lblFeetRemain, int index) {
 		ArrayList<Double> update = guiData.getRampLength();
+		ArrayList<Integer> turnaround = guiData.getTurnAround();
 		if (update.size() <= index) {
 			update.add(index, 0.0);
 			guiData.setRampLength(update);
+			turnaround.add(index, 48);
 		}
 		
 		lblRampHor.setText("#' #\"");
@@ -110,14 +112,7 @@ public class GUIUtilitys{
 		lblRampHor.setWrapStyleWord(true);
 		lblRampHor.setVisible(false);
 		contentPane.add(lblRampHor);
-		
-//		lblRampVert.setText("#' #\"");
-//		lblRampVert.setFont(new Font("Tahoma", Font.BOLD, 20));
-//		lblRampVert.setLineWrap(true);
-//		lblRampVert.setWrapStyleWord(true);
-//		lblRampVert.setVisible(false);
-//		contentPane.add(lblRampVert);
-		
+				
 		btnTurnAr.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/turnAround.png")));
 		btnTurnAr.setVisible(false);
 		contentPane.add(btnTurnAr);

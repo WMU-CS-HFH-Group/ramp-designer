@@ -20,25 +20,9 @@ public class inputdata extends JFrame {
 	private GUIUtilitys guiUtility = new GUIUtilitys(guiData);
 	private final int MAX_FEET = 24;
 	private final int MAX_INCH = 48;
-	
-//	/**
-//	 * Launch the application.
-//	 */
-//	public static void main(String[] args) {
-//		EventQueue.invokeLater(new Runnable() {
-//			public void run() {
-//				try {
-//					inputdata frame = new inputdata();
-//					frame.setVisible(true);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
-//	}
 
 	/**
-	 * Create the frame.
+	 * Create the frame and basic GUI.
 	 */
 	public inputdata() {
 		setTitle("RampDesign by Lana-Wulf Soft");
@@ -50,6 +34,7 @@ public class inputdata extends JFrame {
 		SpringLayout sl_contentPane = new SpringLayout();
 		contentPane.setLayout(sl_contentPane);
 		
+		//****************** Setting up each component ******************//
 		JLabel lblHeightOfDeck = new JLabel("Height of Deck");
 		sl_contentPane.putConstraint(SpringLayout.NORTH, lblHeightOfDeck, 10, SpringLayout.NORTH, contentPane);
 		sl_contentPane.putConstraint(SpringLayout.WEST, lblHeightOfDeck, 10, SpringLayout.WEST, contentPane);
