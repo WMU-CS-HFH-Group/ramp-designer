@@ -97,90 +97,13 @@ public class GUIUtilitys{
 	}
 	
 	/**
-	 * Sets initial ramp information and listeners
-	 * @param contentPane Pane that the ramps and turn around
-	 * @param sl_contentPane used for placing content in specific locations
-	 * @param lblRamp Ramp label used for taking in length information
-	 * @param btnTurnAr button used to create new ramps
-	 * @param lblFeetRemain How many feet left until ground
-	 * @param index Which section of ramp is being used
+	 * Changes ramp configuration for non-Uturns
+	 * @param incase         Direction for ramp to point
+	 * @param sl_contentPane Used to determine position of ramps
+	 * @param pivot          What the content is pivoting around
+	 * @param lblRamp        Ramp with length data
+	 * @param btnTurnAr      Button to create new ramps
 	 */
-	public void setRamps(JPanel contentPane, SpringLayout sl_contentPane, JTextArea lblRamp, JButton btnTurnAr, JLabel lblFeetRemain, int index) {
-		ArrayList<Double> update = guiData.getRampLength();
-		ArrayList<Integer> turnaround = guiData.getTurnAround();
-		if (update.size() <= index) {
-			update.add(index, 0.0);
-			guiData.setRampLength(update);
-			turnaround.add(index, 0);
-		}
-		
-		lblRamp.setText("#' #\"");
-		lblRamp.setFont(new Font("Tahoma", Font.BOLD, 20));
-		lblRamp.setLineWrap(true);
-		lblRamp.setWrapStyleWord(true);
-		lblRamp.setVisible(false);
-		contentPane.add(lblRamp);
-				
-		btnTurnAr.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/turnAround.png")));
-		btnTurnAr.setVisible(false);
-		contentPane.add(btnTurnAr);
-		
-		//** Set length of ramp piece **
-		//**** Un-focus from enter length on enter ****
-		removeFocusEnter(lblRamp);
-		//**** End Un-focus from enter length on enter ****
-		//**** https://stackoverflow.com/questions/19569302/jtextarea-pressing-enter-adds-unnecessary-new-line ****
-		
-		//**** Clears/Saves input in bar ****
-		clearSaveLenght(lblRamp, index);
-		//**** End Clears/Saves input in bar ****
-		//** End Set length of ramp piece **//
-		
-		//** adds extra ramps on base click **//************************************************************************************************
-		createRamp(btnTurnAr, contentPane, sl_contentPane, lblFeetRemain, index);
-	}
-	
-	/**
-	 * Basic turn around not including U-turn
-	 * @param incase         Case 0 is left, Case 1 is right, any other Case is down
-	 * @param sl_contentPane Pane that contains the ramp
-	 * @param pivot          What the labels pivot around    
-	 * @param lblRampHor     
-	 * @param lblRampVert
-	 * @param btnTurnAr
-	 */
-	public void setRampDirection(int incase, SpringLayout sl_contentPane, Component pivot, JTextArea lblRamp, JButton btnTurnAr, int index){
-		lblRamp.setVisible(false);
-		btnTurnAr.setVisible(false);
-		ArrayList<Integer> update = guiData.getRampDir();
-		ArrayList<Integer> turn = guiData.getTurnAround();
-		if (update.size() <= index) {
-			update.add(index, 0);	
-		}
-		if (index > 0){
-			if ((update.get(index)-update.get(index-1))%2 == 0) {
-				if (incase == 0 || incase == 2){
-					turn.set(index-1, 1);
-					setUturn(incase, sl_contentPane, pivot, lblRamp, btnTurnAr);
-				}else{
-					turn.set(index-1, 2);
-					setUturn(incase, sl_contentPane, pivot, lblRamp, btnTurnAr);
-				}
-			} else {
-				turn.set(index-1, 0);
-				setTurnAround(incase, sl_contentPane, pivot, lblRamp, btnTurnAr);
-			}
-		} else {
-			setTurnAround(incase, sl_contentPane, pivot, lblRamp, btnTurnAr);
-		}
-		
-		update.set(index, incase);
-		guiData.setRampDir(update);
-		guiData.setTurnAround(turn);
-		lblRamp.setVisible(true);
-		btnTurnAr.setVisible(true);
-	}
-	
 	private void setTurnAround(int incase, SpringLayout sl_contentPane, Component pivot, JTextArea lblRamp, JButton btnTurnAr) {
 		switch (incase) {
 		case 0: //Up
@@ -229,7 +152,6 @@ public class GUIUtilitys{
 	private void setUturn(int incase, SpringLayout sl_contentPane, Component pivot, JTextArea lblRamp, JButton btnTurnAr) {
 		switch (incase) {
 		case 0: //Up
-			//pivot.
 			sl_contentPane.putConstraint(SpringLayout.NORTH, lblRamp, -100, SpringLayout.NORTH, pivot);
 			sl_contentPane.putConstraint(SpringLayout.WEST, lblRamp, pivot.getWidth()/2 - 15, SpringLayout.WEST, pivot);
 			sl_contentPane.putConstraint(SpringLayout.SOUTH, lblRamp, 0, SpringLayout.NORTH, pivot);
@@ -270,6 +192,91 @@ public class GUIUtilitys{
 			sl_contentPane.putConstraint(SpringLayout.EAST, btnTurnAr, 0, SpringLayout.WEST, lblRamp);
 			break;
 		}
+	}	/**
+	 * Sets initial ramp information and listeners
+	 * @param contentPane Pane that the ramps and turn around
+	 * @param sl_contentPane used for placing content in specific locations
+	 * @param lblRamp Ramp label used for taking in length information
+	 * @param btnTurnAr button used to create new ramps
+	 * @param lblFeetRemain How many feet left until ground
+	 * @param index Which section of ramp is being used
+	 */
+	public void setRamps(JPanel contentPane, SpringLayout sl_contentPane, JTextArea lblRamp, JButton btnTurnAr, JLabel lblFeetRemain, int index) {
+		ArrayList<Double> update = guiData.getRampLength();
+		ArrayList<Integer> turnaround = guiData.getTurnAround();
+		if (update.size() <= index) {
+			update.add(index, 0.0);
+			guiData.setRampLength(update);
+			turnaround.add(index, 0);
+		}
+		
+		lblRamp.setText("#' #\"");
+		lblRamp.setFont(new Font("Tahoma", Font.BOLD, 20));
+		lblRamp.setLineWrap(true);
+		lblRamp.setWrapStyleWord(true);
+		lblRamp.setVisible(false);
+		contentPane.add(lblRamp);
+				
+		btnTurnAr.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/turnAround.png")));
+		btnTurnAr.setVisible(false);
+		contentPane.add(btnTurnAr);
+		
+		//** Set length of ramp piece **
+		//**** Un-focus from enter length on enter ****
+		removeFocusEnter(lblRamp);
+		//**** End Un-focus from enter length on enter ****
+		//**** https://stackoverflow.com/questions/19569302/jtextarea-pressing-enter-adds-unnecessary-new-line ****
+		
+		//**** Clears/Saves input in bar ****
+		clearSaveLenght(lblRamp, index);
+		//**** End Clears/Saves input in bar ****
+		//** End Set length of ramp piece **//
+		
+		//** adds extra ramps on base click **//************************************************************************************************
+		createRamp(btnTurnAr, lblRamp, contentPane, sl_contentPane, lblFeetRemain, index);
+	}
+	
+	/**
+	 * Basic turn around not including U-turn
+	 * @param incase         Case 0 is left, Case 1 is right, any other Case is down
+	 * @param sl_contentPane Pane that contains the ramp
+	 * @param pivot          What the labels pivot around    
+	 * @param lblRamp        Label for taking in ramp length
+	 * @param btnTurnAr      Button for creating a new turn around
+	 */
+	public void setRampDirection(int incase, SpringLayout sl_contentPane, Component pivot, JTextArea preRamp, JTextArea lblRamp, JButton btnTurnAr, int index){
+		lblRamp.setVisible(false);
+		btnTurnAr.setVisible(false);
+		ArrayList<Integer> update = guiData.getRampDir();
+		ArrayList<Integer> turn = guiData.getTurnAround();
+		if (update.size() <= index) {
+			update.add(index, 0);	
+		}
+		update.set(index, incase);
+		if (index > 0){
+			if ((update.get(index)-update.get(index-1))%2 == 0 && update.get(index) != update.get(index-1)) {
+				if (incase == 0 || incase == 2){
+					turn.set(index-1, 1);
+					((JButton) pivot).setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/turnUHorizontal.png")));
+					setUturn(incase, sl_contentPane, pivot, lblRamp, btnTurnAr);
+				}else{
+					turn.set(index-1, 2);
+					((JButton) pivot).setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/turnUVertical.png")));
+					setUturn(incase, sl_contentPane, pivot, lblRamp, btnTurnAr);
+				}
+			} else {
+				turn.set(index-1, 0);
+				((JButton) pivot).setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/turnAround.png")));
+				setTurnAround(incase, sl_contentPane, pivot, lblRamp, btnTurnAr);
+			}
+		} else {
+			setTurnAround(incase, sl_contentPane, pivot, lblRamp, btnTurnAr);
+		}
+		
+		guiData.setRampDir(update);
+		guiData.setTurnAround(turn);
+		lblRamp.setVisible(true);
+		btnTurnAr.setVisible(true);
 	}
 	
 	/**
@@ -278,7 +285,7 @@ public class GUIUtilitys{
 	 * @param contentPane
 	 * @param sl_contentPane
 	 */
-	public void createRamp(JButton pivot, JPanel contentPane, SpringLayout sl_contentPane, JLabel lblFeetRemain, int index) {		
+	public void createRamp(JButton pivot, JTextArea preRamp, JPanel contentPane, SpringLayout sl_contentPane, JLabel lblFeetRemain, int index) {		
 		pivot.addMouseListener(new MouseAdapter() {
 			JTextArea lblRamp = new JTextArea();
 			JButton btnTurnAr = new JButton();	
@@ -289,13 +296,14 @@ public class GUIUtilitys{
 				switch (direction){
 				case -1:
 					setRamps(contentPane, sl_contentPane, lblRamp, btnTurnAr, lblFeetRemain, index+1);					
-					setRampDirection(direction+1, sl_contentPane, pivot, lblRamp, btnTurnAr, index+1);
-					direction+=2;
+					//setRampDirection(direction+1, sl_contentPane, pivot, lblRamp, btnTurnAr, index+1);
+					//direction+=2;
+					direction++;
 				case 0:
 				case 1:
 				case 2:
 				case 3:
-					setRampDirection(direction, sl_contentPane, pivot, lblRamp, btnTurnAr, index);
+					setRampDirection(direction, sl_contentPane, pivot, preRamp, lblRamp, btnTurnAr, index+1);
 					direction++;
 					if (direction>3) {
 						direction = 0;
