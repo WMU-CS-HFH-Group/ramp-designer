@@ -156,7 +156,7 @@ public class Diagram extends Component {
 			Direction d = Direction.UNDEFINED;
 			switch (this.guiData.getRampDir().get(i)) {
 			case 0:
-				d = Direction.LEFT;
+				d = Direction.UP;
 				break;
 			case 1:
 				d = Direction.RIGHT;
@@ -165,7 +165,7 @@ public class Diagram extends Component {
 				d = Direction.DOWN;
 				break;
 			default:
-				d = Direction.UP;
+				d = Direction.LEFT;
 				break;
 			}
 			Section s = new Section(d, new Dimension(0), new Dimension(0), new Dimension(40),
