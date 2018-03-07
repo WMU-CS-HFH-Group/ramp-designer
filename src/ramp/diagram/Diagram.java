@@ -428,6 +428,16 @@ public class Diagram extends Component {
 			}
 		}
 	}
+	
+	public void drawRampSide(Graphics2D g, Ramp r) {
+		Section s;
+		
+		try {
+			s = r.getLongestSection();
+		} catch (Exception e) {
+			return;
+		}
+	}
 
 	private Coordinate[] generatePosts(Box rampBox, Direction rampDirection, Dimension postSize, boolean leftOrTop,
 			boolean rightOrBottom) {
