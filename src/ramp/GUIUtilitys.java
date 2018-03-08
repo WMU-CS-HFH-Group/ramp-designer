@@ -306,15 +306,12 @@ public class GUIUtilitys{
 			JToggleButton toggle, JTextArea lblRamp, JButton btnTurnAr, int index){
 		lblRamp.setVisible(false);
 		btnTurnAr.setVisible(false);
-		ArrayList<Integer> update = guiData.getRampDir();
+		ArrayList<Integer> rampDir = guiData.getRampDir();
 		ArrayList<Integer> turn = guiData.getTurnAround();
-		if (update.size() <= index) {
-			update.add(index, 0);	
-		}
-		update.set(index, incase);
+		rampDir.set(index, incase);
 		
 		if (index > 0){
-			if ((update.get(index)-update.get(index-1))%2 == 0 && update.get(index) != update.get(index-1)) {
+			if ((rampDir.get(index)-rampDir.get(index-1))%2 == 0 && rampDir.get(index) != rampDir.get(index-1)) {
 				if (incase == 0 || incase == 2){
 					((JButton) pivot).setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/turnUHorizontal.png")));
 					if (incase == 0){
@@ -351,6 +348,7 @@ public class GUIUtilitys{
 							lblRamp.setVisible(false);
 							btnTurnAr.setVisible(false);
 							turn.set(index-1, setUturn(incase, sl_contentPane, pivot, preRamp, toggle, lblRamp, btnTurnAr));
+							guiData.setTurnAround(turn);
 							lblRamp.setVisible(true);
 							btnTurnAr.setVisible(true);
 						} catch (Exception bad) {
@@ -368,7 +366,7 @@ public class GUIUtilitys{
 			setTurnAround(incase, sl_contentPane, pivot, lblRamp, btnTurnAr);
 		}
 		
-		guiData.setRampDir(update);
+		guiData.setRampDir(rampDir);
 		guiData.setTurnAround(turn);
 		lblRamp.setVisible(true);
 		btnTurnAr.setVisible(true);
@@ -421,12 +419,16 @@ public class GUIUtilitys{
 	 */
 	public void setRamps(JPanel contentPane, SpringLayout sl_contentPane, JTextArea lblRamp, JButton btnTurnAr, 
 			JLabel lblFeetRemain, int index) {
-		ArrayList<Double> update = guiData.getRampLength();
-		ArrayList<Integer> turnaround = guiData.getTurnAround();
-		if (update.size() <= index) {
-			update.add(index, 0.0);
-			guiData.setRampLength(update);
-			turnaround.add(index, 0);
+		ArrayList<Double> rampLength = guiData.getRampLength();
+		ArrayList<Integer> turnAround = guiData.getTurnAround();
+		ArrayList<Integer> rampDir = guiData.getRampDir();
+		if (rampLength.size() <= index) {
+			rampLength.add(index, 0.0);
+			guiData.setRampLength(rampLength);
+			turnAround.add(index, 0);
+			guiData.setTurnAround(turnAround);
+			rampDir.set(index, 0);
+			guiData.setRampDir(rampDir);
 		}
 		
 		lblRamp.setText("#' #\"");
