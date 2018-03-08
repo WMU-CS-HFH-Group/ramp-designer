@@ -16,8 +16,10 @@ public class GUIData {
 	private static ArrayList<Integer> rampDir = new ArrayList<Integer>(); // Direction off of deck/turn around: 0 up, 1 right
 																		// 2 down, 3 left
 	private static ArrayList<Integer> turnAround = new ArrayList<Integer>(); // Type of turn around: 0 normal, 
-																			// 1 uturn up/down right, 2 uturn up/down left, 
-																			// 3 uturn left/right up, 4 uturn left/right down
+																			// 1 uturn up right, 2 uturn up left, 
+																			// 3 uturn down right, 4 uturn down left, 
+																			// 5 uturn left up, 6 uturn left down,
+																			// 7 uturn right up, 8 uturn right down
 
 	public GUIData() {
 		
