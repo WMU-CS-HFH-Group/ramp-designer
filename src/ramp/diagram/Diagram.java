@@ -107,7 +107,7 @@ public class Diagram extends Component implements Printable {
 	public void launch() {
 		DiagramFrame frame;
 		String title = "Ramp Diagram";
-		
+
 		if (this.side) {
 			title = "Ramp Diagram - Side View";
 		}
@@ -375,7 +375,7 @@ public class Diagram extends Component implements Printable {
 				} else {
 					x.subtract(s.getRampWidth().clone().scale(0.5));
 				}
-				x.add(s.getLandingOffset());
+				x.add(s.getRampOffset());
 
 				y.subtract(s.getRampLength());
 
@@ -403,7 +403,7 @@ public class Diagram extends Component implements Printable {
 				} else {
 					x.subtract(s.getRampWidth().clone().scale(0.5));
 				}
-				x.add(s.getLandingOffset());
+				x.add(s.getRampOffset());
 
 				y.add(s.getLandingLength());
 
@@ -474,9 +474,15 @@ public class Diagram extends Component implements Printable {
 				break;
 			default:
 			}
+			
+			String labelString = s.getRampLength().toString() + " x " + s.getRampWidth().toString();
+			
+			if (s.getDirection() == Direction.UP || s.getDirection() == Direction.DOWN) {
+				labelString = s.getRampLength().toString() + "\nx\n" + s.getRampWidth().toString();
+			}
 
 			// Generate and draw labels for the ramp.
-			Label rampLengthLabel = new Label(s.getRampLength().toString() + " x " + s.getRampWidth().toString(),
+			Label rampLengthLabel = new Label(labelString,
 					Alignment.CENTER, Alignment.CENTER, labelFont, Color.BLACK);
 			this.drawLabel(g, rampLengthLabel, rampBox.getCenter());
 
@@ -511,16 +517,16 @@ public class Diagram extends Component implements Printable {
 			Dimension firstPostHeight = railingHeight.clone().add(landingHeight);
 			Dimension spindleSpace = new Dimension(6);
 			Dimension spindleWidth = new Dimension(2);
-			Dimension rail1Height = new Dimension(16); // Height from landing for bottom railing
-			Dimension rail2Height = new Dimension(26); // Height from landing for middle railing
+			Dimension rail1Height = new Dimension(12); // Height from landing for bottom railing
+			Dimension rail2Height = new Dimension(24); // Height from landing for middle railing
 
 			// Set up graphics
 			g.setStroke(new BasicStroke(2));
 			g.setColor(Color.BLACK);
 
 			// Draw the landing
-			g.drawRect(coord(origin.getX()), coord(origin.getY()) - coord(landingHeight) - coord(new Dimension(6)),
-					coord(landingWidth), coord(new Dimension(6)));
+			g.drawRect(coord(origin.getX()), coord(origin.getY()) - coord(landingHeight), coord(landingWidth),
+					coord(new Dimension(6)));
 
 			// Draw ramp floor
 			g.drawPolygon(
@@ -530,8 +536,8 @@ public class Diagram extends Component implements Printable {
 							coord(origin.getX()) + coord(landingWidth) },
 					new int[] { coord(origin.getY()) - coord(landingHeight),
 							coord(origin.getY()) - coord(nextLandingHeight),
-							coord(origin.getY()) - coord(nextLandingHeight) - coord(new Dimension(6)),
-							coord(origin.getY()) - coord(landingHeight) - coord(new Dimension(6)) },
+							coord(origin.getY()) - coord(nextLandingHeight) + coord(new Dimension(6)),
+							coord(origin.getY()) - coord(landingHeight) + coord(new Dimension(6)) },
 					4);
 
 			// Draw posts for landing
@@ -552,10 +558,12 @@ public class Diagram extends Component implements Printable {
 						coord(origin.getY()) - coord(firstPostHeight) + coord(heightDelta), coord(new Dimension(4)),
 						coord(firstPostHeight) - coord(heightDelta));
 
-				// Draw supports
-				g.drawRect(coord(origin.getX()) + coord(landingWidth) + coord(postX) + coord(new Dimension(4)),
-						coord(origin.getY()) - coord(landingHeight) + coord(heightDelta), coord(new Dimension(2)),
-						coord(new Dimension(6)));
+				if (i < posts.length - 1) {
+					// Draw supports
+					g.drawRect(coord(origin.getX()) + coord(landingWidth) + coord(postX) + coord(new Dimension(4)),
+							coord(origin.getY()) - coord(landingHeight) + coord(heightDelta) + coord(new Dimension(6)),
+							coord(new Dimension(2)), coord(new Dimension(6)));
+				}
 			}
 
 			// Draw top landing rail
@@ -571,7 +579,8 @@ public class Diagram extends Component implements Printable {
 				for (int j = 1; j < spaceCount; j++) {
 					g.drawRect(
 							coord(origin.getX()) + coord(new Dimension(4)) + j * coord(dist) - coord(spindleWidth) / 2,
-							coord(origin.getY()) - coord(firstPostHeight), coord(spindleWidth), coord(railingHeight));
+							coord(origin.getY()) - coord(firstPostHeight), coord(spindleWidth),
+							coord(railingHeight) + coord(new Dimension(6)));
 				}
 			} else {
 				// Otherwise, draw horizontal rails
@@ -966,12 +975,12 @@ public class Diagram extends Component implements Printable {
 		if (pageIndex > 0) {
 			return NO_SUCH_PAGE;
 		}
-		
+
 		Graphics2D g = (Graphics2D) graphics;
 		g.translate(pageFormat.getImageableX(), pageFormat.getImageableY());
-		
+
 		this.printAll(g);
-		
+
 		return PAGE_EXISTS;
 	}
 }
