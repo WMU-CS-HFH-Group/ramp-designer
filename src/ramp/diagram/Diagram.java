@@ -160,7 +160,7 @@ public class Diagram extends Component {
 
 			if (i > 0) {
 				if (this.guiData.getTurnAround().get(i) > 4) {
-					turnaroundHeight = new Dimension(8, 0);
+					turnaroundHeight = new Dimension(8, 0); 
 				} else if (this.guiData.getTurnAround().get(i) > 0) {
 					turnaroundWidth = new Dimension(8, 0);
 				}
@@ -216,10 +216,10 @@ public class Diagram extends Component {
 					new Dimension(this.guiData.getRampLength().get(i)), turnaroundWidth, turnaroundHeight);
 			s.setHairpinDirection(hairpinDirection);
 			ramp.addSection(s);
-//			System.out.println("index: " + i + " ram;: " + guiData.getTurnAround().get(i));
+			System.out.println("index: " + i + " ram;: " + guiData.getTurnAround().get(i));
 		}
-		System.out.println(guiData.getDeckDimension()[0]);
-		System.out.println(guiData.getDeckDimension()[1]);
+//		System.out.println(guiData.getDeckDimension()[0]);
+//		System.out.println(guiData.getDeckDimension()[1]);
 
 		ramp.getSection(0).setLandingSize(new Dimension(this.guiData.getDeckDimension()[0]),
 				new Dimension(this.guiData.getDeckDimension()[1]));
