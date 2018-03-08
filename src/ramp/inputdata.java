@@ -216,7 +216,7 @@ public class inputdata extends JFrame {
 		comboDimFtW.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				double[] update = guiData.getDeckDimension();
-				update[0] = guiUtility.calcTotalIn(comboDimFtW.getSelectedIndex(), comboInch.getSelectedIndex(), 0);
+				update[0] = guiUtility.calcTotalIn(comboDimFtW.getSelectedIndex(), comboDimInW.getSelectedIndex(), 0);
 				guiData.setDeckDimension(update);
 			} 
 		});
@@ -224,7 +224,7 @@ public class inputdata extends JFrame {
 		comboDimInW.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				double[] update = guiData.getDeckDimension();
-				update[0] = guiUtility.calcTotalIn(comboDimFtW.getSelectedIndex(), comboInch.getSelectedIndex(), 0);
+				update[0] = guiUtility.calcTotalIn(comboDimFtW.getSelectedIndex(), comboDimInW.getSelectedIndex(), 0);
 				guiData.setDeckDimension(update);
 			} 
 		});
@@ -232,7 +232,7 @@ public class inputdata extends JFrame {
 		comboDimFtL.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				double[] update = guiData.getDeckDimension();
-				update[1] = guiUtility.calcTotalIn(comboDimFtL.getSelectedIndex(), comboInch.getSelectedIndex(), 0);
+				update[1] = guiUtility.calcTotalIn(comboDimFtL.getSelectedIndex(), comboDimInL.getSelectedIndex(), 0);
 				guiData.setDeckDimension(update);
 			} 
 		});
@@ -240,7 +240,7 @@ public class inputdata extends JFrame {
 		comboDimInL.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				double[] update = guiData.getDeckDimension();
-				update[1] = guiUtility.calcTotalIn(comboDimFtL.getSelectedIndex(), comboInch.getSelectedIndex(), 0);
+				update[1] = guiUtility.calcTotalIn(comboDimFtL.getSelectedIndex(), comboDimInL.getSelectedIndex(), 0);
 				guiData.setDeckDimension(update);
 			} 
 		});
