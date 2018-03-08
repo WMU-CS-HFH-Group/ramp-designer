@@ -23,7 +23,7 @@ public class GUIUtilitys{
 	private static JLabel lblFeetRemain;
 	
 	/**
-	 * BAsic constructor for the GUIUtility class
+	 * Basic constructor for the GUIUtility class
 	 * @param guiData data container for program
 	 */
 	public GUIUtilitys(GUIData guiData) {
@@ -116,7 +116,7 @@ public class GUIUtilitys{
 	}
 	
 	/**
-	 * Changes ramp configuration for non-Uturns
+	 * Changes ramp configuration for non-U-turns
 	 * @param incase         Direction for ramp to point
 	 * @param sl_contentPane Used to determine position of ramps
 	 * @param pivot          What the content is pivoting around
@@ -168,7 +168,16 @@ public class GUIUtilitys{
 		}
 	}
 	
-	private void setUturn(int incase, SpringLayout sl_contentPane, Component pivot, JTextArea lblRamp, JButton btnTurnAr) {
+	/**
+	 * Used for updating ramps with U-turns
+	 * @param incase         Direction of ramp
+	 * @param sl_contentPane Used to position objects
+	 * @param pivot          Pivot point of ramp
+	 * @param preRamp        Previous ramp for fixing pivot
+	 * @param lblRamp        Next ramp that holds length data
+	 * @param btnTurnAr      Button to create new ramp
+	 */
+	private void setUturn(int incase, SpringLayout sl_contentPane, Component pivot, JTextArea preRamp, JTextArea lblRamp, JButton btnTurnAr) {
 		switch (incase) {
 		case 0: //Up
 			sl_contentPane.putConstraint(SpringLayout.NORTH, lblRamp, -100, SpringLayout.NORTH, pivot);
@@ -221,7 +230,8 @@ public class GUIUtilitys{
 	 * @param lblRamp        Label for taking in ramp length
 	 * @param btnTurnAr      Button for creating a new turn around
 	 */
-	public void setRampDirection(int incase, SpringLayout sl_contentPane, Component pivot, JTextArea preRamp, JTextArea lblRamp, JButton btnTurnAr, int index){
+	public void setRampDirection(int incase, SpringLayout sl_contentPane, Component pivot, JTextArea preRamp, 
+			JToggleButton toggle, JTextArea lblRamp, JButton btnTurnAr, int index){
 		lblRamp.setVisible(false);
 		btnTurnAr.setVisible(false);
 		ArrayList<Integer> update = guiData.getRampDir();
@@ -230,16 +240,19 @@ public class GUIUtilitys{
 			update.add(index, 0);	
 		}
 		update.set(index, incase);
+		
+		
+		
 		if (index > 0){
 			if ((update.get(index)-update.get(index-1))%2 == 0 && update.get(index) != update.get(index-1)) {
 				if (incase == 0 || incase == 2){
 					turn.set(index-1, 1);
 					((JButton) pivot).setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/turnUHorizontal.png")));
-					setUturn(incase, sl_contentPane, pivot, lblRamp, btnTurnAr);
+					setUturn(incase, sl_contentPane, pivot, preRamp, lblRamp, btnTurnAr);
 				}else{
 					turn.set(index-1, 2);
 					((JButton) pivot).setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/turnUVertical.png")));
-					setUturn(incase, sl_contentPane, pivot, lblRamp, btnTurnAr);
+					setUturn(incase, sl_contentPane, pivot, preRamp, lblRamp, btnTurnAr);
 				}
 			} else {
 				turn.set(index-1, 0);
@@ -262,7 +275,8 @@ public class GUIUtilitys{
 	 * @param contentPane
 	 * @param sl_contentPane
 	 */
-	public void createRamp(JButton pivot, JTextArea preRamp, JPanel contentPane, SpringLayout sl_contentPane, JLabel lblFeetRemain, int index) {		
+	public void createRamp(JButton pivot, JTextArea preRamp, JToggleButton toggle, JPanel contentPane, 
+			SpringLayout sl_contentPane, JLabel lblFeetRemain, int index) {		
 		pivot.addMouseListener(new MouseAdapter() {
 			JTextArea lblRamp = new JTextArea();
 			JButton btnTurnAr = new JButton();	
@@ -278,7 +292,7 @@ public class GUIUtilitys{
 				case 1:
 				case 2:
 				case 3:
-					setRampDirection(direction, sl_contentPane, pivot, preRamp, lblRamp, btnTurnAr, index+1);
+					setRampDirection(direction, sl_contentPane, pivot, preRamp, toggle, lblRamp, btnTurnAr, index+1);
 					direction++;
 					if (direction>3) {
 						direction = 0;
@@ -320,9 +334,13 @@ public class GUIUtilitys{
 		btnTurnAr.setVisible(false);
 		contentPane.add(btnTurnAr);
 		
+		JToggleButton tglbtnToggle = new JToggleButton("Toggle");
+		tglbtnToggle.setVisible(false);
+		contentPane.add(tglbtnToggle);
+		
 		removeFocusEnter(lblRamp);
 		updateRAmpText(lblRamp, index);
-		createRamp(btnTurnAr, lblRamp, contentPane, sl_contentPane, lblFeetRemain, index);
+		createRamp(btnTurnAr, lblRamp, tglbtnToggle, contentPane, sl_contentPane, lblFeetRemain, index);
 	}
 	
 	/**
