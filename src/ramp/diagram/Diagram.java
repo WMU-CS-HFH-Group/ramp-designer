@@ -474,16 +474,15 @@ public class Diagram extends Component implements Printable {
 				break;
 			default:
 			}
-			
+
 			String labelString = s.getRampLength().toString() + " x " + s.getRampWidth().toString();
-			
+
 			if (s.getDirection() == Direction.UP || s.getDirection() == Direction.DOWN) {
 				labelString = s.getRampLength().toString() + "\nx\n" + s.getRampWidth().toString();
 			}
 
 			// Generate and draw labels for the ramp.
-			Label rampLengthLabel = new Label(labelString,
-					Alignment.CENTER, Alignment.CENTER, labelFont, Color.BLACK);
+			Label rampLengthLabel = new Label(labelString, Alignment.CENTER, Alignment.CENTER, labelFont, Color.BLACK);
 			this.drawLabel(g, rampLengthLabel, rampBox.getCenter());
 
 			// Draw the posts
@@ -521,9 +520,14 @@ public class Diagram extends Component implements Printable {
 			Dimension rail2Height = new Dimension(24); // Height from landing for middle railing
 
 			// Set up graphics
-			g.setStroke(new BasicStroke(2));
+			g.setStroke(new BasicStroke(5));
 			g.setColor(Color.BLACK);
 
+			// Draw the ground level
+			g.drawLine(coord(origin.getX()), coord(origin.getY()),
+					coord(origin.getX()) + coord(landingWidth) + coord(s.getRampLength()), coord(origin.getY()));
+			g.setStroke(new BasicStroke(2));
+			
 			// Draw the landing
 			g.drawRect(coord(origin.getX()), coord(origin.getY()) - coord(landingHeight), coord(landingWidth),
 					coord(new Dimension(6)));
