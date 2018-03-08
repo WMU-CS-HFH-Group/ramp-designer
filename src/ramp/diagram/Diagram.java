@@ -172,6 +172,8 @@ public class Diagram extends Component {
 					new Dimension(this.guiData.getRampLength().get(i)), new Dimension(4, 0), new Dimension(4, 0));
 			ramp.addSection(s);
 		}
+		ramp.getSection(0).setLandingSize(new Dimension(this.guiData.getDeckDimension()[0]),
+				new Dimension(this.guiData.getDeckDimension()[1]));
 		ramp.getSection(0).setRampOffset(new Dimension(this.guiData.getDeckOffSet()));
 		this.drawRampTop(g, ramp);
 		// this.drawRampSide(g, ramp);
