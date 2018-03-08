@@ -478,6 +478,8 @@ public class Diagram extends Component {
 			for (Coordinate c : posts) {
 				g.fillRect(coord(c.getX()), coord(c.getY()), coord(POST_SIZE), coord(POST_SIZE));
 			}
+			
+			hairPin = false;
 		}
 	}
 
