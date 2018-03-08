@@ -154,6 +154,23 @@ public class Diagram extends Component {
 				new Coordinate(new Dimension(25, 0), new Dimension(0)));
 		for (int i = 0; i < this.guiData.getRampLength().size(); i++) {
 			Direction d = Direction.UNDEFINED;
+			Direction hairpinDirection = Direction.UNDEFINED;
+			Dimension turnaroundWidth = new Dimension(4, 0);
+			Dimension turnaroundHeight = new Dimension(4, 0);
+			
+			if (i > 0) {
+				int lastDirection = this.guiData.getRampDir().get(i - 1);
+				if ((this.guiData.getRampDir().get(i) + lastDirection) % 2 == 0) {
+					// If there is a hairpin, set the turnaround size accordingly.
+					if (lastDirection == 1 || lastDirection == 3) {
+						// If the ramp is right or left, make the vertical side longer.
+						turnaroundHeight = new Dimension(8, 0);
+					} else {
+						turnaroundWidth = new Dimension(8, 0);
+					}
+				}
+			}
+			
 			switch (this.guiData.getRampDir().get(i)) {
 			case 0:
 				d = Direction.UP;
@@ -168,8 +185,24 @@ public class Diagram extends Component {
 				d = Direction.LEFT;
 				break;
 			}
+
+			switch (this.guiData.getTurnAround().get(i)) {
+			case 1:
+				hairpinDirection = Direction.RIGHT;
+				break;
+			case 2:
+				hairpinDirection = Direction.LEFT;
+				break;
+			case 3:
+				hairpinDirection = Direction.UP;
+				break;
+			default:
+				hairpinDirection = Direction.DOWN;
+			}
+			
 			Section s = new Section(d, new Dimension(0), new Dimension(0), new Dimension(40),
-					new Dimension(this.guiData.getRampLength().get(i)), new Dimension(4, 0), new Dimension(4, 0));
+					new Dimension(this.guiData.getRampLength().get(i)), turnaroundWidth, turnaroundHeight);
+			s.setHairpinDirection(hairpinDirection);
 			ramp.addSection(s);
 		}
 		ramp.getSection(0).setLandingSize(new Dimension(this.guiData.getDeckDimension()[0]),
