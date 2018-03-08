@@ -462,8 +462,10 @@ public class GUIUtilitys{
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				try{
-					Diagram diagram = new Diagram(guiData);
+					Diagram diagram = new Diagram(guiData, false);
+					Diagram sideDiagram = new Diagram(guiData, true);
 					diagram.launch();
+					sideDiagram.launch();
 				} catch (Exception bad) {
 					// TODO: pop up saying something went wrong
 				}

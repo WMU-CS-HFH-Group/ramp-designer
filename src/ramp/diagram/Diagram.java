@@ -39,10 +39,12 @@ public class Diagram extends Component {
 
 	// Input
 	private GUIData guiData;
+	private boolean side;
 
-	public Diagram(GUIData guiData) {
+	public Diagram(GUIData guiData, boolean side) {
 		// Store Input
 		this.guiData = guiData;
+		this.side = side;
 
 		// Transformation
 		this.scale = 0.25;
@@ -101,8 +103,13 @@ public class Diagram extends Component {
 
 	public void launch() {
 		JFrame frame;
+		String title = "Ramp Diagram";
+		
+		if (this.side) {
+			title = "Ramp Diagram - Side View";
+		}
 
-		frame = new JFrame("Ramp Diagram");
+		frame = new JFrame(title);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
 		frame.setSize(800, 800);
@@ -160,7 +167,7 @@ public class Diagram extends Component {
 
 			if (i > 0) {
 				if (this.guiData.getTurnAround().get(i) > 4) {
-					turnaroundHeight = new Dimension(8, 0); 
+					turnaroundHeight = new Dimension(8, 0);
 				} else if (this.guiData.getTurnAround().get(i) > 0) {
 					turnaroundWidth = new Dimension(8, 0);
 				}
@@ -216,16 +223,16 @@ public class Diagram extends Component {
 					new Dimension(this.guiData.getRampLength().get(i)), turnaroundWidth, turnaroundHeight);
 			s.setHairpinDirection(hairpinDirection);
 			ramp.addSection(s);
-			System.out.println("index: " + i + " ram;: " + guiData.getTurnAround().get(i));
 		}
-//		System.out.println(guiData.getDeckDimension()[0]);
-//		System.out.println(guiData.getDeckDimension()[1]);
 
 		ramp.getSection(0).setLandingSize(new Dimension(this.guiData.getDeckDimension()[0]),
 				new Dimension(this.guiData.getDeckDimension()[1]));
 		ramp.getSection(0).setRampOffset(new Dimension(this.guiData.getDeckOffSet()));
-		this.drawRampTop(g, ramp);
-		// this.drawRampSide(g, ramp);
+		if (this.side) {
+			this.drawRampSide(g, ramp);
+		} else {
+			this.drawRampTop(g, ramp);
+		}
 	}
 
 	public void drawRampTop(Graphics2D g, Ramp r) {
@@ -478,7 +485,7 @@ public class Diagram extends Component {
 			for (Coordinate c : posts) {
 				g.fillRect(coord(c.getX()), coord(c.getY()), coord(POST_SIZE), coord(POST_SIZE));
 			}
-			
+
 			hairPin = false;
 		}
 	}
@@ -488,7 +495,7 @@ public class Diagram extends Component {
 
 		if (longestSectionIndex >= 0) {
 			Section s = r.getSection(longestSectionIndex);
-			Coordinate origin = new Coordinate(new Dimension(0), new Dimension(0));
+			Coordinate origin = new Coordinate(new Dimension(5, 0), new Dimension(10, 0));
 			Box rampBox = new Box(new Coordinate(new Dimension(0), new Dimension(0)), s.getRampWidth(),
 					s.getRampLength());
 			if (s.getDirection() == Direction.LEFT || s.getDirection() == Direction.RIGHT) {
