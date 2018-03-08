@@ -340,14 +340,14 @@ public class GUIUtilitys{
 					}
 				}
 				toggle.setVisible(true);
-				turn.set(index-1, setUturn(incase, sl_contentPane, pivot, preRamp, toggle, lblRamp, btnTurnAr));
+				turn.set(index, setUturn(incase, sl_contentPane, pivot, preRamp, toggle, lblRamp, btnTurnAr));
 				toggle.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseClicked(MouseEvent e) {
 						try{
 							lblRamp.setVisible(false);
 							btnTurnAr.setVisible(false);
-							turn.set(index-1, setUturn(incase, sl_contentPane, pivot, preRamp, toggle, lblRamp, btnTurnAr));
+							turn.set(index, setUturn(incase, sl_contentPane, pivot, preRamp, toggle, lblRamp, btnTurnAr));
 							guiData.setTurnAround(turn);
 							lblRamp.setVisible(true);
 							btnTurnAr.setVisible(true);
@@ -357,7 +357,7 @@ public class GUIUtilitys{
 					}
 				});
 			} else {
-				turn.set(index-1, 0);
+				turn.set(index, 0);
 				((JButton) pivot).setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/turnAround.png")));
 				toggle.setVisible(false);
 				setTurnAround(incase, sl_contentPane, pivot, lblRamp, btnTurnAr);
@@ -370,6 +370,7 @@ public class GUIUtilitys{
 		guiData.setTurnAround(turn);
 		lblRamp.setVisible(true);
 		btnTurnAr.setVisible(true);
+		System.out.println("index:" + index + " dir: " + turn.get(index));
 	}
 	
 	/**
@@ -427,7 +428,7 @@ public class GUIUtilitys{
 			guiData.setRampLength(rampLength);
 			turnAround.add(index, 0);
 			guiData.setTurnAround(turnAround);
-			rampDir.set(index, 0);
+			rampDir.add(index, 0);
 			guiData.setRampDir(rampDir);
 		}
 		
