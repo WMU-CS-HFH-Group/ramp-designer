@@ -2,6 +2,9 @@ package ramp.diagram;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.print.PageFormat;
+import java.awt.print.Printable;
+import java.awt.print.PrinterException;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -15,7 +18,7 @@ import ramp.geometry.Dimension;
 import java.util.ArrayList;
 
 @SuppressWarnings("serial")
-public class Diagram extends Component {
+public class Diagram extends Component implements Printable {
 	// Constants
 	private static final Dimension MAX_POST_SPACE = new Dimension(6, 0);
 	private static final Dimension POST_SIZE = new Dimension(4);
@@ -102,22 +105,18 @@ public class Diagram extends Component {
 	}
 
 	public void launch() {
-		JFrame frame;
+		DiagramFrame frame;
 		String title = "Ramp Diagram";
 		
 		if (this.side) {
 			title = "Ramp Diagram - Side View";
 		}
 
-		frame = new JFrame(title);
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-		frame.setSize(800, 800);
-		frame.setBackground(Color.white);
-		frame.setLayout(new BorderLayout());
-		frame.add("Center", this);
-
+		frame = new DiagramFrame(this);
+		frame.setTitle(title);
 		frame.setVisible(true);
+
+		this.setBackground(Color.white);
 	}
 
 	public void resetTranslation() {
@@ -962,4 +961,17 @@ public class Diagram extends Component {
 		return d.toFractionalParts(8);
 	}
 
+	@Override
+	public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException {
+		if (pageIndex > 0) {
+			return NO_SUCH_PAGE;
+		}
+		
+		Graphics2D g = (Graphics2D) graphics;
+		g.translate(pageFormat.getImageableX(), pageFormat.getImageableY());
+		
+		this.printAll(g);
+		
+		return PAGE_EXISTS;
+	}
 }
