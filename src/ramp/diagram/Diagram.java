@@ -562,7 +562,9 @@ public class Diagram extends Component implements Printable {
 						coord(origin.getY()) - coord(firstPostHeight) + coord(heightDelta), coord(new Dimension(4)),
 						coord(firstPostHeight) - coord(heightDelta));
 
-				if (i < posts.length - 1) {
+				int supportBottom = coord(origin.getY()) - coord(landingHeight) + coord(heightDelta) + coord(new Dimension(12));
+				
+				if (supportBottom <= coord(origin.getY())) {
 					// Draw supports
 					g.drawRect(coord(origin.getX()) + coord(landingWidth) + coord(postX) + coord(new Dimension(4)),
 							coord(origin.getY()) - coord(landingHeight) + coord(heightDelta) + coord(new Dimension(6)),
