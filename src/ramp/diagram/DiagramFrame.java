@@ -4,35 +4,25 @@ import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JToolBar;
+import javax.imageio.ImageIO;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
+
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
+import java.io.IOException;
 import java.awt.event.ActionEvent;
 
 public class DiagramFrame extends JFrame {
 
 	private JPanel contentPane;
 	private Diagram diagram;
-
-	/**
-	 * Launch the application.
-	 */
-	public static void dksjflkd(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					DiagramFrame frame = new DiagramFrame();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
 	/**
 	 * Create the frame.
@@ -64,6 +54,23 @@ public class DiagramFrame extends JFrame {
 			}
 		});
 		toolBar.add(btnNewprintButton);
+		
+		JButton btnSaveImage = new JButton("Save Image");
+		btnSaveImage.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser chooser = new JFileChooser();
+				int option = chooser.showSaveDialog(null);
+				if (option == JFileChooser.APPROVE_OPTION) {
+					BufferedImage image = diagram.generateImage();
+					try {
+						ImageIO.write(image, "png", chooser.getSelectedFile());
+					} catch (IOException e1) {
+						JOptionPane.showMessageDialog(null, "Could not save image.", "Error", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			}
+		});
+		toolBar.add(btnSaveImage);
 	}
 
 	public DiagramFrame(Diagram diagram) {

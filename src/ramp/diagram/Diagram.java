@@ -2,6 +2,7 @@ package ramp.diagram;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
@@ -232,6 +233,15 @@ public class Diagram extends Component implements Printable {
 		} else {
 			this.drawRampTop(g, ramp);
 		}
+	}
+	
+	public BufferedImage generateImage() {
+		BufferedImage image = new BufferedImage(this.getWidth(), this.getHeight(), BufferedImage.TYPE_INT_RGB);
+		Graphics g = image.getGraphics();
+		g.setColor(Color.WHITE);
+		g.fillRect(0, 0, this.getWidth(), this.getHeight());
+		this.printAll(g);
+		return image;
 	}
 
 	public void drawRampTop(Graphics2D g, Ramp r) {
