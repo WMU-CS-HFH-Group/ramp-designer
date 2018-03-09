@@ -149,8 +149,9 @@ public class inputdata extends JFrame {
 		sl_contentPane.putConstraint(SpringLayout.NORTH, comboFromDeck, 0, SpringLayout.NORTH, lblRampIn);
 		sl_contentPane.putConstraint(SpringLayout.WEST, comboFromDeck, 3, SpringLayout.EAST, lblRampIn);
 		sl_contentPane.putConstraint(SpringLayout.EAST, comboFromDeck, 66, SpringLayout.EAST, lblRampIn);
+		comboFromDeck.addItem("Top");
 		comboFromDeck.addItem("Right");
-		comboFromDeck.addItem("Center");
+		comboFromDeck.addItem("Bottom");
 		comboFromDeck.addItem("Left");
 		contentPane.add(comboFromDeck);
 		
@@ -201,8 +202,8 @@ public class inputdata extends JFrame {
 		
 		
 		JLabel lblDeck = new JLabel("");
-		sl_scrollPanel.putConstraint(SpringLayout.NORTH, lblDeck, 5, SpringLayout.NORTH, scrollPanel);
-		sl_scrollPanel.putConstraint(SpringLayout.WEST, lblDeck, 337, SpringLayout.WEST, scrollPanel);
+		sl_scrollPanel.putConstraint(SpringLayout.NORTH, lblDeck, 174, SpringLayout.NORTH, scrollPanel);
+		sl_scrollPanel.putConstraint(SpringLayout.WEST, lblDeck, 302, SpringLayout.WEST, scrollPanel);
 		lblDeck.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/Deck.png")));
 		scrollPanel.add(lblDeck);
 		
@@ -256,7 +257,7 @@ public class inputdata extends JFrame {
 		//** changes direction of first ramp **//
 		comboFromDeck.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				guiUtility.setRampDirection(comboFromDeck.getSelectedIndex()+1, sl_scrollPanel, lblDeck, null, null, lblRamp, btnTurnAr, 0);
+				guiUtility.setRampDirection(comboFromDeck.getSelectedIndex(), sl_scrollPanel, lblDeck, null, null, lblRamp, btnTurnAr, 0);
 			}
 		});
 		
@@ -269,7 +270,7 @@ public class inputdata extends JFrame {
 				} else {
 					comboFromDeck.setSelectedIndex(comboFromDeck.getSelectedIndex() + 1);
 				}
-				guiUtility.setRampDirection(comboFromDeck.getSelectedIndex()+1, sl_scrollPanel, lblDeck, null, null, lblRamp, btnTurnAr, 0);
+				guiUtility.setRampDirection(comboFromDeck.getSelectedIndex(), sl_scrollPanel, lblDeck, null, null, lblRamp, btnTurnAr, 0);
 			}
 		});
 		

@@ -400,6 +400,7 @@ public class GUIUtilitys{
 		guiData.setTurnAround(turn);
 		lblRamp.setVisible(true);
 		btnTurnAr.setVisible(true);
+		
 	}
 	
 	/**
@@ -434,6 +435,7 @@ public class GUIUtilitys{
 				default:
 					break;
 				}
+				
 			}
 		});
 	}
