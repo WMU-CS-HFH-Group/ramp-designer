@@ -483,15 +483,27 @@ public class Diagram extends Component implements Printable {
 			default:
 			}
 
-			String labelString = s.getRampLength().toString() + " x " + s.getRampWidth().toStringInches();
+			// Generate and draw labels for the ramp.
+			Label rampLengthLabel = new Label(s.getRampLength().toString(), Alignment.CENTER, Alignment.CENTER,
+					labelFont, Color.BLACK);
+			Label rampWidthLabel = new Label(s.getRampWidth().toStringInches(), Alignment.CENTER, Alignment.CENTER,
+					labelFont, Color.BLACK);
 
 			if (s.getDirection() == Direction.UP || s.getDirection() == Direction.DOWN) {
-				labelString = s.getRampLength().toString() + "\nx\n" + s.getRampWidth().toStringInches();
+				rampLengthLabel.setAlignmentX(Alignment.LEFT_OR_TOP);
+				rampWidthLabel.setAlignmentY(Alignment.LEFT_OR_TOP);
+				this.drawLabel(g, rampLengthLabel,
+						new Coordinate(rampBox.getLocation().getX(), rampBox.getCenter().getY()));
+				this.drawLabel(g, rampWidthLabel,
+						new Coordinate(rampBox.getCenter().getX(), rampBox.getLocation().getY()));
+			} else {
+				rampLengthLabel.setAlignmentY(Alignment.LEFT_OR_TOP);
+				rampWidthLabel.setAlignmentX(Alignment.LEFT_OR_TOP);
+				this.drawLabel(g, rampLengthLabel,
+						new Coordinate(rampBox.getCenter().getX(), rampBox.getLocation().getY()));
+				this.drawLabel(g, rampWidthLabel,
+						new Coordinate(rampBox.getLocation().getX(), rampBox.getCenter().getY()));
 			}
-
-			// Generate and draw labels for the ramp.
-			Label rampLengthLabel = new Label(labelString, Alignment.CENTER, Alignment.CENTER, labelFont, Color.BLACK);
-			this.drawLabel(g, rampLengthLabel, rampBox.getCenter());
 
 			// Draw the posts
 			for (Coordinate c : posts) {
