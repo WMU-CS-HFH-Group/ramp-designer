@@ -538,6 +538,7 @@ public class Diagram extends Component implements Printable {
 			Dimension spindleWidth = new Dimension(2);
 			Dimension rail1Height = new Dimension(12); // Height from landing for bottom railing
 			Dimension rail2Height = new Dimension(24); // Height from landing for middle railing
+			Coordinate firstSupportLocation = origin.clone();
 
 			// Set up graphics
 			g.setStroke(new BasicStroke(5));
@@ -586,10 +587,17 @@ public class Diagram extends Component implements Printable {
 						+ coord(new Dimension(12));
 
 				if (supportBottom <= coord(origin.getY())) {
+					Coordinate supportLocation = new Coordinate(
+							origin.getX().clone().add(landingWidth).add(postX).add(new Dimension(4)),
+							origin.getY().clone().subtract(landingHeight).add(heightDelta).add(new Dimension(6)));
+
+					if (i == 0) {
+						firstSupportLocation = supportLocation.clone();
+					}
+
 					// Draw supports
-					g.drawRect(coord(origin.getX()) + coord(landingWidth) + coord(postX) + coord(new Dimension(4)),
-							coord(origin.getY()) - coord(landingHeight) + coord(heightDelta) + coord(new Dimension(6)),
-							coord(new Dimension(2)), coord(new Dimension(6)));
+					g.drawRect(coord(supportLocation.getX()), coord(supportLocation.getY()), coord(new Dimension(2)),
+							coord(new Dimension(6)));
 				}
 			}
 
@@ -656,7 +664,54 @@ public class Diagram extends Component implements Printable {
 									+ coord(new Dimension(4)),
 							coord(origin.getY()) - coord(firstPostHeight) + coord(new Dimension(4)) },
 					4);
+
+			// Draw measurement labels
+			Coordinate railMidpoint = new Coordinate(
+					origin.getX().clone().add(landingWidth).add(s.getRampLength().clone().scale(0.5)), origin.getY()
+							.clone().subtract(firstPostHeight).add(s.getRampLength().clone().scale(0.5 * Ramp.SLOPE)));
+
+			Coordinate firstPostLocation = new Coordinate(origin.getX().clone().add(landingWidth),
+					origin.getY().clone().subtract(firstPostHeight));
+
+			// 2x4 Railing
+			this.drawLabelWithLine(g,
+					new Label("2x4 Railing", Alignment.LEFT_OR_TOP, Alignment.RIGHT_OR_BOTTOM, labelFont, Color.BLACK),
+					railMidpoint.clone().add(new Coordinate(new Dimension(3, 0), new Dimension(-3, 0))), railMidpoint);
+
+			// 2x6 or 2x8 supports
+			this.drawLabelWithLine(g,
+					new Label("2x6 or 2x8 Supports", Alignment.RIGHT_OR_BOTTOM, Alignment.LEFT_OR_TOP, labelFont,
+							Color.BLACK),
+					firstSupportLocation.clone().add(new Coordinate(new Dimension(-3, 0), new Dimension(3, 0))),
+					firstSupportLocation);
+
+			// 4x4 treated posts
+			this.drawLabelWithLine(g,
+					new Label("4x4 Treated Posts", Alignment.RIGHT_OR_BOTTOM, Alignment.RIGHT_OR_BOTTOM, labelFont,
+							Color.BLACK),
+					firstPostLocation.clone().add(new Coordinate(new Dimension(-3, 0), new Dimension(-3, 0))),
+					firstPostLocation);
+
+			// Ground level
+			this.drawLabel(g,
+					new Label("Ground Level", Alignment.LEFT_OR_TOP, Alignment.CENTER, labelFont, Color.BLACK),
+					new Coordinate(origin.getX().clone().add(landingWidth).add(s.getRampLength()), origin.getY()));
 		}
+	}
+
+	public void drawLabelWithLine(Graphics2D g, Label l, Coordinate labelLocation, Coordinate pointLocation) {
+		this.drawLabel(g, l, labelLocation);
+
+		// Assume the line will come from the top-left corner of the label.
+		int labelEndX = coord(labelLocation.getX());
+		int labelEndY = coord(labelLocation.getY());
+
+		// Set up the graphics
+		g.setStroke(new BasicStroke(2));
+		g.setColor(Color.BLACK);
+
+		// Draw the line
+		g.drawLine(coord(pointLocation.getX()), coord(pointLocation.getY()), labelEndX, labelEndY);
 	}
 
 	private Coordinate[] generatePosts(Box rampBox, Direction rampDirection, Dimension postSize, boolean leftOrTop,
