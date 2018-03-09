@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 
 public class Dimension implements Comparable<Dimension> {
 	public static final int DEFAULT_DENOMINATOR = 8;
-	
+
 	/**
 	 * Length of the dimension in inches.
 	 */
@@ -163,7 +163,7 @@ public class Dimension implements Comparable<Dimension> {
 		this.length += d2.getLength();
 		return this;
 	}
-	
+
 	public Dimension subtract(Dimension d2) {
 		this.length -= d2.getLength();
 		return this;
@@ -188,7 +188,7 @@ public class Dimension implements Comparable<Dimension> {
 		String ft = String.format("%d", this.getFeet());
 		String in = String.format("%d", this.getWholeInches());
 		String frac = String.format("%d/8", eighths);
-		
+
 		// Simplify the fraction if it can be expressed with a power-of-two denominator.
 		if (eighths % 4 == 0) {
 			// If it can be reduced to halves, display halves.
@@ -197,30 +197,34 @@ public class Dimension implements Comparable<Dimension> {
 			// If it can be reduced to fourths, display fourths.
 			frac = String.format("%d/4", eighths / 2);
 		}
-		
+
 		// Only concatenate strings for components that are nonzero.
 		if (this.isZero()) {
 			result = "";
 		}
-		
+
 		if (this.getFeet() > 0) {
 			result += String.format("%s'", ft);
 		}
-		
+
 		if (this.getWholeInches() > 0) {
 			result += String.format(" %s", in);
 		}
-		
+
 		if (eighths > 0) {
 			result += String.format(" %s", frac);
 		}
-		
+
 		if (this.getInches() > 0) {
 			result += "\"";
 		}
-		
+
 		// Trim any whitespace off the beginning and end.
 		return result.trim();
+	}
+
+	public String toStringInches() {
+		return String.format("%d\"", (int) Math.ceil(this.getLength()));
 	}
 
 	/**
@@ -297,7 +301,7 @@ public class Dimension implements Comparable<Dimension> {
 					throw new Exception("Could not read string for feet quantity.");
 				}
 			}
-	
+
 			// If there was an inches measurement, calculate it.
 			if (matcher.group("iq") != null && matcher.group("iu") != null) {
 				try {
