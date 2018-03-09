@@ -348,6 +348,14 @@ public class Diagram extends Component implements Printable {
 			landingBox = new Box(new Coordinate(x, y), s.getLandingWidth(), s.getLandingLength());
 			g.drawRect(coord(x), coord(y), coord(s.getLandingWidth()), coord(s.getLandingLength()));
 
+			// Draw landing posts
+			g.fillRect(coord(x) - coord(POST_SIZE), coord(y), coord(POST_SIZE), coord(POST_SIZE));
+			g.fillRect(coord(x) + coord(landingBox.getWidth()), coord(y), coord(POST_SIZE), coord(POST_SIZE));
+			g.fillRect(coord(x) - coord(POST_SIZE), coord(y) + coord(landingBox.getHeight()) - coord(POST_SIZE),
+					coord(POST_SIZE), coord(POST_SIZE));
+			g.fillRect(coord(x) + coord(landingBox.getWidth()),
+					coord(y) + coord(landingBox.getHeight()) - coord(POST_SIZE), coord(POST_SIZE), coord(POST_SIZE));
+
 			// Generate and draw a label for the landing.
 			Label landingLabel = new Label(String.format("%s x %s", s.getLandingWidth(), s.getLandingLength()),
 					Alignment.CENTER, Alignment.CENTER, labelFont, Color.black);
@@ -475,10 +483,10 @@ public class Diagram extends Component implements Printable {
 			default:
 			}
 
-			String labelString = s.getRampLength().toString() + " x " + s.getRampWidth().toString();
+			String labelString = s.getRampLength().toString() + " x " + s.getRampWidth().toStringInches();
 
 			if (s.getDirection() == Direction.UP || s.getDirection() == Direction.DOWN) {
-				labelString = s.getRampLength().toString() + "\nx\n" + s.getRampWidth().toString();
+				labelString = s.getRampLength().toString() + "\nx\n" + s.getRampWidth().toStringInches();
 			}
 
 			// Generate and draw labels for the ramp.
@@ -527,7 +535,7 @@ public class Diagram extends Component implements Printable {
 			g.drawLine(coord(origin.getX()), coord(origin.getY()),
 					coord(origin.getX()) + coord(landingWidth) + coord(s.getRampLength()), coord(origin.getY()));
 			g.setStroke(new BasicStroke(2));
-			
+
 			// Draw the landing
 			g.drawRect(coord(origin.getX()), coord(origin.getY()) - coord(landingHeight), coord(landingWidth),
 					coord(new Dimension(6)));
@@ -562,8 +570,9 @@ public class Diagram extends Component implements Printable {
 						coord(origin.getY()) - coord(firstPostHeight) + coord(heightDelta), coord(new Dimension(4)),
 						coord(firstPostHeight) - coord(heightDelta));
 
-				int supportBottom = coord(origin.getY()) - coord(landingHeight) + coord(heightDelta) + coord(new Dimension(12));
-				
+				int supportBottom = coord(origin.getY()) - coord(landingHeight) + coord(heightDelta)
+						+ coord(new Dimension(12));
+
 				if (supportBottom <= coord(origin.getY())) {
 					// Draw supports
 					g.drawRect(coord(origin.getX()) + coord(landingWidth) + coord(postX) + coord(new Dimension(4)),
