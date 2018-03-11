@@ -45,7 +45,12 @@ public class Diagram extends Component implements Printable {
 	private GUIData guiData;
 	private boolean side;
 
+	// Lists of custom items
+	private List<CustomItem> items;
+
 	public Diagram(GUIData guiData, boolean side) {
+		this.items = new ArrayList<CustomItem>();
+
 		// Store Input
 		this.guiData = guiData;
 		this.side = side;
@@ -103,6 +108,10 @@ public class Diagram extends Component implements Printable {
 				repaint();
 			}
 		});
+	}
+	
+	public List<CustomItem> getCustomItems() {
+		return this.items;
 	}
 
 	public void launch() {
@@ -234,7 +243,7 @@ public class Diagram extends Component implements Printable {
 			this.drawRampTop(g, ramp);
 		}
 	}
-	
+
 	public BufferedImage generateImage() {
 		BufferedImage image = new BufferedImage(this.getWidth(), this.getHeight(), BufferedImage.TYPE_INT_RGB);
 		Graphics g = image.getGraphics();
@@ -369,7 +378,7 @@ public class Diagram extends Component implements Printable {
 			// Generate and draw a label for the landing.
 			Label landingLabel = new Label(String.format("%s x %s", s.getLandingWidth(), s.getLandingLength()),
 					Alignment.CENTER, Alignment.CENTER, labelFont, Color.black);
-			this.drawLabel(g, landingLabel, landingBox.getCenter());
+			Diagram.drawLabel(g, landingLabel, landingBox.getCenter());
 
 			rampBox = new Box(new Coordinate(x, y), new Dimension(0), new Dimension(0));
 
@@ -502,16 +511,16 @@ public class Diagram extends Component implements Printable {
 			if (s.getDirection() == Direction.UP || s.getDirection() == Direction.DOWN) {
 				rampLengthLabel.setAlignmentX(Alignment.LEFT_OR_TOP);
 				rampWidthLabel.setAlignmentY(Alignment.LEFT_OR_TOP);
-				this.drawLabel(g, rampLengthLabel,
+				Diagram.drawLabel(g, rampLengthLabel,
 						new Coordinate(rampBox.getLocation().getX(), rampBox.getCenter().getY()));
-				this.drawLabel(g, rampWidthLabel,
+				Diagram.drawLabel(g, rampWidthLabel,
 						new Coordinate(rampBox.getCenter().getX(), rampBox.getLocation().getY()));
 			} else {
 				rampLengthLabel.setAlignmentY(Alignment.LEFT_OR_TOP);
 				rampWidthLabel.setAlignmentX(Alignment.LEFT_OR_TOP);
-				this.drawLabel(g, rampLengthLabel,
+				Diagram.drawLabel(g, rampLengthLabel,
 						new Coordinate(rampBox.getCenter().getX(), rampBox.getLocation().getY()));
-				this.drawLabel(g, rampWidthLabel,
+				Diagram.drawLabel(g, rampWidthLabel,
 						new Coordinate(rampBox.getLocation().getX(), rampBox.getCenter().getY()));
 			}
 
@@ -684,33 +693,33 @@ public class Diagram extends Component implements Printable {
 					origin.getY().clone().subtract(firstPostHeight));
 
 			// 2x4 Railing
-			this.drawLabelWithLine(g,
+			Diagram.drawLabelWithLine(g,
 					new Label("2x4 Railing", Alignment.LEFT_OR_TOP, Alignment.RIGHT_OR_BOTTOM, labelFont, Color.BLACK),
 					railMidpoint.clone().add(new Coordinate(new Dimension(3, 0), new Dimension(-3, 0))), railMidpoint);
 
 			// 2x6 or 2x8 supports
-			this.drawLabelWithLine(g,
+			Diagram.drawLabelWithLine(g,
 					new Label("2x6 or 2x8 Supports", Alignment.RIGHT_OR_BOTTOM, Alignment.LEFT_OR_TOP, labelFont,
 							Color.BLACK),
 					firstSupportLocation.clone().add(new Coordinate(new Dimension(-3, 0), new Dimension(3, 0))),
 					firstSupportLocation);
 
 			// 4x4 treated posts
-			this.drawLabelWithLine(g,
+			Diagram.drawLabelWithLine(g,
 					new Label("4x4 Treated Posts", Alignment.RIGHT_OR_BOTTOM, Alignment.RIGHT_OR_BOTTOM, labelFont,
 							Color.BLACK),
 					firstPostLocation.clone().add(new Coordinate(new Dimension(-3, 0), new Dimension(-3, 0))),
 					firstPostLocation);
 
 			// Ground level
-			this.drawLabel(g,
+			Diagram.drawLabel(g,
 					new Label("Ground Level", Alignment.LEFT_OR_TOP, Alignment.CENTER, labelFont, Color.BLACK),
 					new Coordinate(origin.getX().clone().add(landingWidth).add(s.getRampLength()), origin.getY()));
 		}
 	}
 
-	public void drawLabelWithLine(Graphics2D g, Label l, Coordinate labelLocation, Coordinate pointLocation) {
-		this.drawLabel(g, l, labelLocation);
+	public static void drawLabelWithLine(Graphics2D g, Label l, Coordinate labelLocation, Coordinate pointLocation) {
+		drawLabel(g, l, labelLocation);
 
 		// Assume the line will come from the top-left corner of the label.
 		int labelEndX = coord(labelLocation.getX());
@@ -858,7 +867,7 @@ public class Diagram extends Component implements Printable {
 			l = new Label(length.toString(), Alignment.CENTER, Alignment.CENTER, labelFont, Color.BLACK);
 
 			// Draw the label.
-			this.drawLabel(g, l, location.getMidpoint(destination));
+			Diagram.drawLabel(g, l, location.getMidpoint(destination));
 		}
 
 		// Draw the head on the destination.
@@ -946,7 +955,7 @@ public class Diagram extends Component implements Printable {
 		}
 	}
 
-	public void drawLabel(Graphics2D g, Label l, Coordinate origin) {
+	public static void drawLabel(Graphics2D g, Label l, Coordinate origin) {
 		LabelSize size = l.calculateSize();
 		String[] lines = l.toLines();
 		int x = coord(origin.getX());
@@ -1074,5 +1083,138 @@ public class Diagram extends Component implements Printable {
 		this.printAll(g);
 
 		return PAGE_EXISTS;
+	}
+
+	public abstract class CustomItem {
+		private Coordinate location;
+
+		public CustomItem(Coordinate location) {
+			this.location = location;
+		}
+
+		public Coordinate getLocation() {
+			return location;
+		}
+
+		public void setLocation(Coordinate location) {
+			this.location = location;
+		}
+
+		public abstract void draw(Graphics2D g);
+	}
+
+	public class CustomPost extends CustomItem {
+		public CustomPost(Coordinate location, Dimension size) {
+			super(location);
+			this.size = size;
+		}
+
+		private Dimension size;
+
+		public Dimension getSize() {
+			return size;
+		}
+
+		public void setSize(Dimension size) {
+			this.size = size;
+		}
+
+		@Override
+		public void draw(Graphics2D g) {
+			g.setColor(Color.BLACK);
+			g.setStroke(new BasicStroke(2));
+			g.fillRect(coord(this.getLocation().getX()), coord(this.getLocation().getY()), coord(size), coord(size));
+		}
+	}
+
+	public class CustomBox extends CustomItem {
+		public CustomBox(Coordinate location, Dimension width, Dimension height) {
+			super(location);
+			this.width = width;
+			this.height = height;
+		}
+
+		private Dimension width, height;
+
+		@Override
+		public void draw(Graphics2D g) {
+			g.setColor(Color.BLACK);
+			g.setStroke(new BasicStroke(2));
+			g.drawRect(coord(this.getLocation().getX()), coord(this.getLocation().getY()), coord(width), coord(height));
+		}
+
+		public Dimension getWidth() {
+			return width;
+		}
+
+		public void setWidth(Dimension width) {
+			this.width = width;
+		}
+
+		public Dimension getHeight() {
+			return height;
+		}
+
+		public void setHeight(Dimension height) {
+			this.height = height;
+		}
+	}
+
+	public class CustomLabel extends CustomItem {
+		public CustomLabel(Coordinate location, Label label, Coordinate arrowLocation) {
+			super(location);
+			this.label = label;
+			this.arrowLocation = arrowLocation;
+		}
+
+		private Label label;
+		private Coordinate arrowLocation;
+
+		public Label getLabel() {
+			return label;
+		}
+
+		public void setLabel(Label label) {
+			this.label = label;
+		}
+
+		public Coordinate getArrowLocation() {
+			return arrowLocation;
+		}
+
+		public void setArrowLocation(Coordinate arrowLocation) {
+			this.arrowLocation = arrowLocation;
+		}
+
+		@Override
+		public void draw(Graphics2D g) {
+			g.setColor(Color.BLACK);
+			g.setStroke(new BasicStroke(2));
+			Diagram.drawLabelWithLine(g, label, this.getLocation(), this.getArrowLocation());
+		}
+	}
+
+	public class CustomText extends CustomItem {
+		public CustomText(Coordinate location, Label label) {
+			super(location);
+			this.label = label;
+		}
+
+		private Label label;
+
+		public Label getLabel() {
+			return label;
+		}
+
+		public void setLabel(Label label) {
+			this.label = label;
+		}
+
+		@Override
+		public void draw(Graphics2D g) {
+			g.setColor(Color.BLACK);
+			g.setStroke(new BasicStroke(2));
+			Diagram.drawLabel(g, label, this.getLocation());
+		}
 	}
 }
