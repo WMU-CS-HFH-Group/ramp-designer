@@ -5,9 +5,6 @@ import java.awt.Font;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 
-import ramp.geometry.Box;
-import ramp.geometry.Coordinate;
-
 /**
  * A data storage class for a label's attributes. This information will be used
  * to draw the label on a diagram. It may be aligned in any direction, any
