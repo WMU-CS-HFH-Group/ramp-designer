@@ -242,6 +242,10 @@ public class Diagram extends Component implements Printable {
 		} else {
 			this.drawRampTop(g, ramp);
 		}
+		
+		for (CustomItem i : items) {
+			i.draw(g);
+		}
 	}
 
 	public BufferedImage generateImage() {
