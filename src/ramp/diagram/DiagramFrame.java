@@ -1,6 +1,7 @@
 package ramp.diagram;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -25,6 +26,7 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.RowSpec;
 
+import ramp.diagram.Label.Alignment;
 import ramp.geometry.Coordinate;
 import ramp.geometry.Dimension;
 
@@ -41,6 +43,7 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
+import javax.swing.BoxLayout;
 
 public class DiagramFrame extends JFrame {
 
@@ -54,6 +57,12 @@ public class DiagramFrame extends JFrame {
 	private JTextField textPostX;
 	private JTextField textPostY;
 	private JTextField textPostSize;
+	private JTextField textBoxX;
+	private JTextField textBoxY;
+	private JTextField textBoxWidth;
+	private JTextField textBoxHeight;
+	private JTextField textBoxLabel;
+	private JTabbedPane tabbedPane;
 
 	/**
 	 * Create the frame.
@@ -113,11 +122,12 @@ public class DiagramFrame extends JFrame {
 		listCustomItems = new JList<CustomItem>(listCustomItemsModel);
 		listCustomItems.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent arg0) {
-				CustomItem item = listCustomItemsModel.getElementAt(arg0.getFirstIndex());
+				CustomItem item = listCustomItemsModel.getElementAt(listCustomItems.getSelectedIndex());
 				switch (item.getType()) {
 				case "Post":
 					CustomPost post = (CustomPost) item;
-					// TODO: Switch to post tab
+					// Switch to post tab
+					tabbedPane.setSelectedIndex(0);
 
 					// Change the data in the post editor.
 					textPostX.setText(post.getLocation().getX().toString());
@@ -126,6 +136,17 @@ public class DiagramFrame extends JFrame {
 					currentItem = post;
 					break;
 				case "Box":
+					CustomBox box = (CustomBox) item;
+					// Switch to box tab
+					tabbedPane.setSelectedIndex(1);
+
+					// Change the data in the box editor.
+					textBoxX.setText(box.getLocation().getX().toString());
+					textBoxY.setText(box.getLocation().getY().toString());
+					textBoxWidth.setText(box.getWidth().toString());
+					textBoxHeight.setText(box.getHeight().toString());
+					textBoxLabel.setText(box.getLabel().getString());
+					currentItem = box;
 					break;
 				case "Label":
 					break;
@@ -136,11 +157,12 @@ public class DiagramFrame extends JFrame {
 		});
 		splitPane.setRightComponent(listCustomItems);
 
-		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		splitPane.setLeftComponent(tabbedPane);
 
 		JPanel panel_1 = new JPanel();
 		tabbedPane.addTab("Post", null, panel_1, null);
+		panel_1.setLayout(new BoxLayout(panel_1, BoxLayout.Y_AXIS));
 
 		JLabel label = new JLabel("x");
 		panel_1.add(label);
@@ -181,6 +203,77 @@ public class DiagramFrame extends JFrame {
 			}
 		});
 		panel_1.add(btnUpdatePost);
+
+		JPanel panel = new JPanel();
+		tabbedPane.addTab("Box", null, panel, null);
+		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+		JLabel lblX = new JLabel("x");
+		panel.add(lblX);
+
+		textBoxX = new JTextField();
+		panel.add(textBoxX);
+		textBoxX.setColumns(10);
+
+		JLabel lblY = new JLabel("y");
+		panel.add(lblY);
+
+		textBoxY = new JTextField();
+		panel.add(textBoxY);
+		textBoxY.setColumns(10);
+
+		JLabel lblWidth = new JLabel("width");
+		panel.add(lblWidth);
+
+		textBoxWidth = new JTextField();
+		panel.add(textBoxWidth);
+		textBoxWidth.setColumns(10);
+
+		JLabel lblHeight = new JLabel("height");
+		panel.add(lblHeight);
+
+		textBoxHeight = new JTextField();
+		panel.add(textBoxHeight);
+		textBoxHeight.setColumns(10);
+
+		JLabel lblLabel = new JLabel("Label");
+		panel.add(lblLabel);
+
+		textBoxLabel = new JTextField();
+		panel.add(textBoxLabel);
+		textBoxLabel.setColumns(10);
+
+		JButton btnNewBox = new JButton("New");
+		btnNewBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// Add a new custom box.
+				CustomBox newBox = new CustomBox(new Coordinate(new Dimension(0), new Dimension(0)),
+						new Dimension(3, 0), new Dimension(3, 0),
+						new Label("", Alignment.CENTER, Alignment.CENTER, diagram.getLabelFont(), Color.BLACK));
+				listCustomItemsModel.addElement(newBox);
+				diagram.revalidate();
+				diagram.repaint();
+			}
+		});
+		panel.add(btnNewBox);
+
+		JButton btnUpdateBox = new JButton("Update");
+		btnUpdateBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// Update the current box.
+				if (currentItem.getType() == "Box") {
+					CustomBox box = (CustomBox) currentItem;
+					box.getLocation().setX(new Dimension(textBoxX.getText()));
+					box.getLocation().setY(new Dimension(textBoxY.getText()));
+					box.setWidth(new Dimension(textBoxWidth.getText()));
+					box.setHeight(new Dimension(textBoxHeight.getText()));
+					box.getLabel().setString(textBoxLabel.getText());
+					diagram.revalidate();
+					diagram.repaint();
+				}
+			}
+		});
+		panel.add(btnUpdateBox);
 		btnNewPost.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				// Add a new custom post at 0, 0.

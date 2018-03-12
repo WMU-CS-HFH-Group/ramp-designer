@@ -245,6 +245,10 @@ public class Diagram extends Component implements Printable {
 		return image;
 	}
 
+	public Font getLabelFont() {
+		return labelFont;
+	}
+	
 	public void drawRampTop(Graphics2D g, Ramp r) {
 		Dimension x = r.getLocation().getX();
 		Dimension y = r.getLocation().getY();
