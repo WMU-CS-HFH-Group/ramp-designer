@@ -224,11 +224,9 @@ public class Diagram extends Component implements Printable {
 		ramp.getSection(0).setLandingSize(new Dimension(this.guiData.getDeckDimension()[0]),
 				new Dimension(this.guiData.getDeckDimension()[1]));
 		ramp.getSection(0).setRampOffset(new Dimension(this.guiData.getDeckOffSet()));
-		if (this.side) {
-			this.drawRampSide(g, ramp);
-		} else {
-			this.drawRampTop(g, ramp);
-		}
+
+		this.drawRampTop(g, ramp);
+		this.drawRampSide(g, ramp);
 		
 		for (int i = 0; i < items.size(); i++) {
 			CustomItem item = items.getElementAt(i);
@@ -534,7 +532,7 @@ public class Diagram extends Component implements Printable {
 
 		if (longestSectionIndex >= 0) {
 			Section s = r.getSection(longestSectionIndex);
-			Coordinate origin = new Coordinate(new Dimension(5, 0), new Dimension(10, 0));
+			Coordinate origin = new Coordinate(new Dimension(0), new Dimension(40, 0));
 			Box rampBox = new Box(new Coordinate(new Dimension(0), new Dimension(0)), s.getRampWidth(),
 					s.getRampLength());
 			if (s.getDirection() == Direction.LEFT || s.getDirection() == Direction.RIGHT) {
