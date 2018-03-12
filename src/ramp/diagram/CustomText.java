@@ -12,6 +12,10 @@ public class CustomText extends CustomItem {
 		this.label = label;
 		this.type = "Text";
 	}
+	
+	public CustomItem clone() {
+		return new CustomText(getLocation().clone(), label.clone());
+	}
 
 	private Label label;
 

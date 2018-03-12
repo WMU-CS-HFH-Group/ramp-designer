@@ -59,4 +59,9 @@ public class CustomBox extends CustomItem {
 	public String toString() {
 		return String.format("Box at (%s, %s)", this.getLocation().getX().toString(), this.getLocation().getY().toString());
 	}
+
+	@Override
+	public CustomItem clone() {
+		return new CustomBox(this.getLocation().clone(), width.clone(), height.clone(), label.clone());
+	}
 }
