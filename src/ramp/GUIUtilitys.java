@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import javax.swing.*;
 
 import ramp.diagram.Diagram;
+import ramp.diagram.DiagramFrame;
 import ramp.diagram.GUIData;
 import ramp.geometry.Dimension;
 
@@ -498,10 +499,13 @@ public class GUIUtilitys{
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				try{
-					Diagram diagram = new Diagram(guiData, false);
-					Diagram sideDiagram = new Diagram(guiData, true);
-					diagram.launch();
-					sideDiagram.launch();
+					DiagramFrame sideView = new DiagramFrame(guiData, true);
+					sideView.setTitle("Ramp Diagram - Side View");
+					sideView.setVisible(true);
+					
+					DiagramFrame frame = new DiagramFrame(guiData, false);
+					frame.setTitle("Ramp Diagram");
+					frame.setVisible(true);
 				} catch (Exception bad) {
 					// TODO: pop up saying something went wrong
 				}
