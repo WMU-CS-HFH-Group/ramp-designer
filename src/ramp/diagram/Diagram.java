@@ -8,6 +8,7 @@ import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.util.List;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 
 import ramp.diagram.Label.Alignment;
@@ -46,14 +47,14 @@ public class Diagram extends Component implements Printable {
 	private boolean side;
 
 	// Lists of custom items
-	private List<CustomItem> items;
+	private DefaultListModel<CustomItem> items;
 
-	public Diagram(GUIData guiData, boolean side) {
-		this.items = new ArrayList<CustomItem>();
+	public Diagram(GUIData guiData, boolean side, DefaultListModel<CustomItem> items) {
 
 		// Store Input
 		this.guiData = guiData;
 		this.side = side;
+		this.items = items;
 
 		// Transformation
 		this.scale = 0.25;
@@ -76,6 +77,7 @@ public class Diagram extends Component implements Printable {
 		this.maxWidth = new Dimension(50, 0);
 		this.maxHeight = new Dimension(50, 0);
 		this.labelFont = new Font("Arial", Font.PLAIN, 100);
+		this.setBackground(Color.WHITE);
 
 		// Event for zooming
 		this.addMouseWheelListener(new MouseAdapter() {
@@ -109,24 +111,9 @@ public class Diagram extends Component implements Printable {
 			}
 		});
 	}
-	
-	public List<CustomItem> getCustomItems() {
-		return this.items;
-	}
 
 	public void launch() {
-		DiagramFrame frame;
-		String title = "Ramp Diagram";
-
-		if (this.side) {
-			title = "Ramp Diagram - Side View";
-		}
-
-		frame = new DiagramFrame(this);
-		frame.setTitle(title);
-		frame.setVisible(true);
-
-		this.setBackground(Color.white);
+		
 	}
 
 	public void resetTranslation() {
@@ -243,8 +230,9 @@ public class Diagram extends Component implements Printable {
 			this.drawRampTop(g, ramp);
 		}
 		
-		for (CustomItem i : items) {
-			i.draw(g);
+		for (int i = 0; i < items.size(); i++) {
+			CustomItem item = items.getElementAt(i);
+			item.draw(g);
 		}
 	}
 
@@ -257,6 +245,10 @@ public class Diagram extends Component implements Printable {
 		return image;
 	}
 
+	public Font getLabelFont() {
+		return labelFont;
+	}
+	
 	public void drawRampTop(Graphics2D g, Ramp r) {
 		Dimension x = r.getLocation().getX();
 		Dimension y = r.getLocation().getY();
@@ -1087,138 +1079,5 @@ public class Diagram extends Component implements Printable {
 		this.printAll(g);
 
 		return PAGE_EXISTS;
-	}
-
-	public abstract class CustomItem {
-		private Coordinate location;
-
-		public CustomItem(Coordinate location) {
-			this.location = location;
-		}
-
-		public Coordinate getLocation() {
-			return location;
-		}
-
-		public void setLocation(Coordinate location) {
-			this.location = location;
-		}
-
-		public abstract void draw(Graphics2D g);
-	}
-
-	public class CustomPost extends CustomItem {
-		public CustomPost(Coordinate location, Dimension size) {
-			super(location);
-			this.size = size;
-		}
-
-		private Dimension size;
-
-		public Dimension getSize() {
-			return size;
-		}
-
-		public void setSize(Dimension size) {
-			this.size = size;
-		}
-
-		@Override
-		public void draw(Graphics2D g) {
-			g.setColor(Color.BLACK);
-			g.setStroke(new BasicStroke(2));
-			g.fillRect(coord(this.getLocation().getX()), coord(this.getLocation().getY()), coord(size), coord(size));
-		}
-	}
-
-	public class CustomBox extends CustomItem {
-		public CustomBox(Coordinate location, Dimension width, Dimension height) {
-			super(location);
-			this.width = width;
-			this.height = height;
-		}
-
-		private Dimension width, height;
-
-		@Override
-		public void draw(Graphics2D g) {
-			g.setColor(Color.BLACK);
-			g.setStroke(new BasicStroke(2));
-			g.drawRect(coord(this.getLocation().getX()), coord(this.getLocation().getY()), coord(width), coord(height));
-		}
-
-		public Dimension getWidth() {
-			return width;
-		}
-
-		public void setWidth(Dimension width) {
-			this.width = width;
-		}
-
-		public Dimension getHeight() {
-			return height;
-		}
-
-		public void setHeight(Dimension height) {
-			this.height = height;
-		}
-	}
-
-	public class CustomLabel extends CustomItem {
-		public CustomLabel(Coordinate location, Label label, Coordinate arrowLocation) {
-			super(location);
-			this.label = label;
-			this.arrowLocation = arrowLocation;
-		}
-
-		private Label label;
-		private Coordinate arrowLocation;
-
-		public Label getLabel() {
-			return label;
-		}
-
-		public void setLabel(Label label) {
-			this.label = label;
-		}
-
-		public Coordinate getArrowLocation() {
-			return arrowLocation;
-		}
-
-		public void setArrowLocation(Coordinate arrowLocation) {
-			this.arrowLocation = arrowLocation;
-		}
-
-		@Override
-		public void draw(Graphics2D g) {
-			g.setColor(Color.BLACK);
-			g.setStroke(new BasicStroke(2));
-			Diagram.drawLabelWithLine(g, label, this.getLocation(), this.getArrowLocation());
-		}
-	}
-
-	public class CustomText extends CustomItem {
-		public CustomText(Coordinate location, Label label) {
-			super(location);
-			this.label = label;
-		}
-
-		private Label label;
-
-		public Label getLabel() {
-			return label;
-		}
-
-		public void setLabel(Label label) {
-			this.label = label;
-		}
-
-		@Override
-		public void draw(Graphics2D g) {
-			g.setColor(Color.BLACK);
-			g.setStroke(new BasicStroke(2));
-			Diagram.drawLabel(g, label, this.getLocation());
-		}
 	}
 }
