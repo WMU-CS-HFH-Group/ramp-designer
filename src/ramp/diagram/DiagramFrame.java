@@ -49,6 +49,7 @@ import javax.swing.JTextPane;
 import javax.swing.DefaultComboBoxModel;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
+import javax.swing.JScrollPane;
 
 public class DiagramFrame extends JFrame {
 
@@ -457,8 +458,6 @@ public class DiagramFrame extends JFrame {
 		JPanel panel_4 = new JPanel();
 		splitPane.setRightComponent(panel_4);
 		panel_4.setLayout(new BorderLayout(0, 0));
-		listCustomItems = new JList<CustomItem>(listCustomItemsModel);
-		panel_4.add(listCustomItems);
 
 		JToolBar toolBar_1 = new JToolBar();
 		panel_4.add(toolBar_1, BorderLayout.NORTH);
@@ -495,6 +494,11 @@ public class DiagramFrame extends JFrame {
 			}
 		});
 		toolBar_1.add(btnClear);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		panel_4.add(scrollPane, BorderLayout.CENTER);
+		listCustomItems = new JList<CustomItem>(listCustomItemsModel);
+		scrollPane.setViewportView(listCustomItems);
 		listCustomItems.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent arg0) {
 				if (listCustomItems.getSelectedIndex() >= 0) {
