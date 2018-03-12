@@ -258,7 +258,8 @@ public class inputdata extends JFrame {
 		//** changes direction of first ramp **//
 		comboFromDeck.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				guiUtility.setRampDirection(comboFromDeck.getSelectedIndex(), sl_scrollPanel, lblDeck, null, null, lblRamp, btnAdd, 0);
+				guiUtility.setRampDirection(comboFromDeck.getSelectedIndex(), sl_scrollPanel, lblDeck, null, null, 
+						lblRamp, btnAdd, btnRemove, 0);
 			}
 		});
 		
@@ -271,7 +272,8 @@ public class inputdata extends JFrame {
 				} else {
 					comboFromDeck.setSelectedIndex(comboFromDeck.getSelectedIndex() + 1);
 				}
-				guiUtility.setRampDirection(comboFromDeck.getSelectedIndex(), sl_scrollPanel, lblDeck, null, null, lblRamp, btnAdd, 0);
+				guiUtility.setRampDirection(comboFromDeck.getSelectedIndex(), sl_scrollPanel, lblDeck, null, null, 
+						lblRamp, btnAdd, btnRemove, 0);
 			}
 		});
 		
