@@ -208,9 +208,10 @@ public class inputdata extends JFrame {
 		scrollPanel.add(lblDeck);
 		
 		JTextArea lblRamp = new JTextArea();
-		JButton btnTurnAr = new JButton();
+		JButton btnAdd = new JButton();
+		JButton btnRemove = new JButton();
 		
-		guiUtility.setRamps(scrollPanel, sl_scrollPanel, lblRamp, btnTurnAr, lblFeetRemain, 0);
+		guiUtility.setRamps(scrollPanel, sl_scrollPanel, lblRamp, btnAdd, btnRemove, lblFeetRemain, 0);
 		guiUtility.comboChangeTotal(comboInch, comboInPart);
 		
 		//** Updates dimensions in GUI data **//
@@ -257,7 +258,7 @@ public class inputdata extends JFrame {
 		//** changes direction of first ramp **//
 		comboFromDeck.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				guiUtility.setRampDirection(comboFromDeck.getSelectedIndex(), sl_scrollPanel, lblDeck, null, null, lblRamp, btnTurnAr, 0);
+				guiUtility.setRampDirection(comboFromDeck.getSelectedIndex(), sl_scrollPanel, lblDeck, null, null, lblRamp, btnAdd, 0);
 			}
 		});
 		
@@ -270,7 +271,7 @@ public class inputdata extends JFrame {
 				} else {
 					comboFromDeck.setSelectedIndex(comboFromDeck.getSelectedIndex() + 1);
 				}
-				guiUtility.setRampDirection(comboFromDeck.getSelectedIndex(), sl_scrollPanel, lblDeck, null, null, lblRamp, btnTurnAr, 0);
+				guiUtility.setRampDirection(comboFromDeck.getSelectedIndex(), sl_scrollPanel, lblDeck, null, null, lblRamp, btnAdd, 0);
 			}
 		});
 		

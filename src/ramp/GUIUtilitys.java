@@ -413,20 +413,21 @@ public class GUIUtilitys{
 			SpringLayout sl_contentPane, JLabel lblFeetRemain, int index) {		
 		pivot.addMouseListener(new MouseAdapter() {
 			JTextArea lblRamp = new JTextArea();
-			JButton btnTurnAr = new JButton();	
+			JButton btnAdd = new JButton();	
+			JButton btnRemove = new JButton();
 			int direction = -1;
 			
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				switch (direction){
 				case -1:
-					setRamps(contentPane, sl_contentPane, lblRamp, btnTurnAr, lblFeetRemain, index+1);			
+					setRamps(contentPane, sl_contentPane, lblRamp, btnAdd, btnRemove, lblFeetRemain, index+1);			
 					direction++;
 				case 0:
 				case 1:
 				case 2:
 				case 3:
-					setRampDirection(direction, sl_contentPane, pivot, preRamp, toggle, lblRamp, btnTurnAr, index+1);
+					setRampDirection(direction, sl_contentPane, pivot, preRamp, toggle, lblRamp, btnAdd, index+1);
 					direction++;
 					if (direction>3) {
 						direction = 0;
@@ -445,11 +446,11 @@ public class GUIUtilitys{
 	 * @param contentPane Pane that the ramps and turn around
 	 * @param sl_contentPane used for placing content in specific locations
 	 * @param lblRamp Ramp label used for taking in length information
-	 * @param btnTurnAr button used to create new ramps
+	 * @param btnAdd button used to create new ramps
 	 * @param lblFeetRemain How many feet left until ground
 	 * @param index Which section of ramp is being used
 	 */
-	public void setRamps(JPanel contentPane, SpringLayout sl_contentPane, JTextArea lblRamp, JButton btnTurnAr, 
+	public void setRamps(JPanel contentPane, SpringLayout sl_contentPane, JTextArea lblRamp, JButton btnAdd, JButton btnRemove,
 			JLabel lblFeetRemain, int index) {
 		ArrayList<Double> rampLength = guiData.getRampLength();
 		ArrayList<Integer> turnAround = guiData.getTurnAround();
@@ -470,9 +471,13 @@ public class GUIUtilitys{
 		lblRamp.setVisible(false);
 		contentPane.add(lblRamp);
 				
-		btnTurnAr.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/Add.png")));
-		btnTurnAr.setVisible(false);
-		contentPane.add(btnTurnAr);
+		btnAdd.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/Add.png")));
+		btnAdd.setVisible(false);
+		contentPane.add(btnAdd);
+		
+		btnRemove.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/Remove.png")));
+		btnRemove.setVisible(false);
+		contentPane.add(btnRemove);
 		
 		JToggleButton tglbtnToggle = new JToggleButton("Side");
 		tglbtnToggle.setVisible(false);
@@ -481,7 +486,7 @@ public class GUIUtilitys{
 		
 		removeFocusEnter(lblRamp);
 		updateRAmpText(lblRamp, index);
-		createRamp(btnTurnAr, lblRamp, tglbtnToggle, contentPane, sl_contentPane, lblFeetRemain, index);
+		createRamp(btnAdd, lblRamp, tglbtnToggle, contentPane, sl_contentPane, lblFeetRemain, index);
 	}
 	
 	/**
