@@ -45,6 +45,10 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
+import javax.swing.JTextPane;
+import javax.swing.DefaultComboBoxModel;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
 
 public class DiagramFrame extends JFrame {
 
@@ -69,6 +73,9 @@ public class DiagramFrame extends JFrame {
 	private JTextField textLabelArrowX;
 	private JTextField textLabelArrowY;
 	private JTextField textLabelText;
+	private JTextField textTextX;
+	private JTextField textTextY;
+	private JTextPane textTextText;
 
 	/**
 	 * Create the frame.
@@ -125,55 +132,6 @@ public class DiagramFrame extends JFrame {
 		contentPane.add(splitPane, BorderLayout.EAST);
 
 		listCustomItemsModel = new DefaultListModel<CustomItem>();
-		listCustomItems = new JList<CustomItem>(listCustomItemsModel);
-		listCustomItems.addListSelectionListener(new ListSelectionListener() {
-			public void valueChanged(ListSelectionEvent arg0) {
-				CustomItem item = listCustomItemsModel.getElementAt(listCustomItems.getSelectedIndex());
-				switch (item.getType()) {
-				case "Post":
-					CustomPost post = (CustomPost) item;
-					// Switch to post tab
-					tabbedPane.setSelectedIndex(0);
-
-					// Change the data in the post editor.
-					textPostX.setText(post.getLocation().getX().toString());
-					textPostY.setText(post.getLocation().getY().toString());
-					textPostSize.setText(post.getSize().toString());
-					currentItem = post;
-					break;
-				case "Box":
-					CustomBox box = (CustomBox) item;
-					// Switch to box tab
-					tabbedPane.setSelectedIndex(1);
-
-					// Change the data in the box editor.
-					textBoxX.setText(box.getLocation().getX().toString());
-					textBoxY.setText(box.getLocation().getY().toString());
-					textBoxWidth.setText(box.getWidth().toString());
-					textBoxHeight.setText(box.getHeight().toString());
-					textBoxLabel.setText(box.getLabel().getString());
-					currentItem = box;
-					break;
-				case "Label":
-					CustomLabel label = (CustomLabel) item;
-
-					// Switch to label tab
-					tabbedPane.setSelectedIndex(2);
-
-					// Change data in the editor.
-					textLabelX.setText(label.getLocation().getX().toString());
-					textLabelY.setText(label.getLocation().getY().toString());
-					textLabelArrowX.setText(label.getArrowLocation().getX().toString());
-					textLabelArrowY.setText(label.getArrowLocation().getY().toString());
-					textLabelText.setText(label.getLabel().getString());
-					currentItem = label;
-					break;
-				case "Text":
-					break;
-				}
-			}
-		});
-		splitPane.setRightComponent(listCustomItems);
 
 		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		splitPane.setLeftComponent(tabbedPane);
@@ -210,13 +168,15 @@ public class DiagramFrame extends JFrame {
 		btnUpdatePost.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				// Update the selected post.
-				if (currentItem.getType() == "Post") {
-					CustomPost post = (CustomPost) currentItem;
-					post.getLocation().setX(new Dimension(textPostX.getText()));
-					post.getLocation().setY(new Dimension(textPostY.getText()));
-					post.setSize(new Dimension(textPostSize.getText()));
-					diagram.revalidate();
-					diagram.repaint();
+				if (currentItem != null) {
+					if (currentItem.getType() == "Post") {
+						CustomPost post = (CustomPost) currentItem;
+						post.getLocation().setX(new Dimension(textPostX.getText()));
+						post.getLocation().setY(new Dimension(textPostY.getText()));
+						post.setSize(new Dimension(textPostSize.getText()));
+						diagram.revalidate();
+						diagram.repaint();
+					}
 				}
 			}
 		});
@@ -363,6 +323,165 @@ public class DiagramFrame extends JFrame {
 			}
 		});
 		panel_2.add(btnUpdateLabel);
+
+		JPanel panel_3 = new JPanel();
+		tabbedPane.addTab("Text", null, panel_3, null);
+		panel_3.setLayout(new BoxLayout(panel_3, BoxLayout.Y_AXIS));
+
+		JLabel lblOriginX = new JLabel("Origin x");
+		panel_3.add(lblOriginX);
+
+		textTextX = new JTextField();
+		panel_3.add(textTextX);
+		textTextX.setColumns(10);
+
+		JLabel lblOriginY = new JLabel("Origin y");
+		panel_3.add(lblOriginY);
+
+		textTextY = new JTextField();
+		panel_3.add(textTextY);
+		textTextY.setColumns(10);
+
+		JLabel lblText = new JLabel("Text");
+		panel_3.add(lblText);
+
+		textTextText = new JTextPane();
+		panel_3.add(textTextText);
+
+		JLabel lblHorizontalAlignment = new JLabel("Horizontal Alignment");
+		panel_3.add(lblHorizontalAlignment);
+
+		JComboBox<Alignment> comboTextHorizontal = new JComboBox<Alignment>();
+		comboTextHorizontal.setModel(new DefaultComboBoxModel<Alignment>(Alignment.values()));
+		panel_3.add(comboTextHorizontal);
+
+		JLabel lblVerticalAlignment = new JLabel("Vertical Alignment");
+		panel_3.add(lblVerticalAlignment);
+
+		JComboBox<Alignment> comboTextVertical = new JComboBox<Alignment>();
+		comboTextVertical.setModel(new DefaultComboBoxModel<Alignment>(Alignment.values()));
+		panel_3.add(comboTextVertical);
+
+		JButton btnNewText = new JButton("New");
+		btnNewText.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				CustomText newText = new CustomText(new Coordinate(new Dimension(0), new Dimension(0)), new Label(
+						"Text", Alignment.LEFT_OR_TOP, Alignment.LEFT_OR_TOP, diagram.getLabelFont(), Color.BLACK));
+				listCustomItemsModel.addElement(newText);
+			}
+		});
+		panel_3.add(btnNewText);
+
+		JButton btnUpdateText = new JButton("Update");
+		btnUpdateText.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (currentItem.getType() == "Text") {
+					Alignment hAlignment = (Alignment) comboTextHorizontal.getSelectedItem();
+					Alignment vAlignment = (Alignment) comboTextVertical.getSelectedItem();
+
+					CustomText text = (CustomText) currentItem;
+					text.getLocation().setX(new Dimension(textTextX.getText()));
+					text.getLocation().setY(new Dimension(textTextY.getText()));
+					text.getLabel().setString(textTextText.getText());
+					text.getLabel().setAlignmentX(hAlignment);
+					text.getLabel().setAlignmentY(vAlignment);
+					diagram.revalidate();
+					diagram.repaint();
+				}
+			}
+		});
+		panel_3.add(btnUpdateText);
+
+		JPanel panel_4 = new JPanel();
+		splitPane.setRightComponent(panel_4);
+		panel_4.setLayout(new BorderLayout(0, 0));
+		listCustomItems = new JList<CustomItem>(listCustomItemsModel);
+		panel_4.add(listCustomItems);
+
+		JToolBar toolBar_1 = new JToolBar();
+		panel_4.add(toolBar_1, BorderLayout.NORTH);
+
+		JButton btnDelete = new JButton("Delete");
+		btnDelete.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (listCustomItems.getSelectedIndex() >= 0) {
+					listCustomItemsModel.removeElementAt(listCustomItems.getSelectedIndex());
+					diagram.revalidate();
+					diagram.repaint();
+				}
+			}
+		});
+		toolBar_1.add(btnDelete);
+
+		JButton btnClear = new JButton("Clear");
+		btnClear.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				listCustomItemsModel.clear();
+				diagram.revalidate();
+				diagram.repaint();
+			}
+		});
+		toolBar_1.add(btnClear);
+		listCustomItems.addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent arg0) {
+				if (listCustomItems.getSelectedIndex() >= 0) {
+					CustomItem item = listCustomItemsModel.getElementAt(listCustomItems.getSelectedIndex());
+					switch (item.getType()) {
+					case "Post":
+						CustomPost post = (CustomPost) item;
+						// Switch to post tab
+						tabbedPane.setSelectedIndex(0);
+
+						// Change the data in the post editor.
+						textPostX.setText(post.getLocation().getX().toString());
+						textPostY.setText(post.getLocation().getY().toString());
+						textPostSize.setText(post.getSize().toString());
+						currentItem = post;
+						break;
+					case "Box":
+						CustomBox box = (CustomBox) item;
+						// Switch to box tab
+						tabbedPane.setSelectedIndex(1);
+
+						// Change the data in the box editor.
+						textBoxX.setText(box.getLocation().getX().toString());
+						textBoxY.setText(box.getLocation().getY().toString());
+						textBoxWidth.setText(box.getWidth().toString());
+						textBoxHeight.setText(box.getHeight().toString());
+						textBoxLabel.setText(box.getLabel().getString());
+						currentItem = box;
+						break;
+					case "Label":
+						CustomLabel label = (CustomLabel) item;
+
+						// Switch to label tab
+						tabbedPane.setSelectedIndex(2);
+
+						// Change data in the editor.
+						textLabelX.setText(label.getLocation().getX().toString());
+						textLabelY.setText(label.getLocation().getY().toString());
+						textLabelArrowX.setText(label.getArrowLocation().getX().toString());
+						textLabelArrowY.setText(label.getArrowLocation().getY().toString());
+						textLabelText.setText(label.getLabel().getString());
+						currentItem = label;
+						break;
+					case "Text":
+						CustomText text = (CustomText) item;
+
+						// Switch to text tab.
+						tabbedPane.setSelectedIndex(3);
+
+						// Change data in the editor.
+						textTextX.setText(text.getLocation().getX().toString());
+						textTextY.setText(text.getLocation().getY().toString());
+						textTextText.setText(text.getLabel().getString());
+
+						currentItem = text;
+						break;
+					}
+				}
+			}
+		});
 		btnNewPost.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				// Add a new custom post at 0, 0.
