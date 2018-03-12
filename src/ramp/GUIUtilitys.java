@@ -565,13 +565,9 @@ public class GUIUtilitys{
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				try{
-					DiagramFrame sideView = new DiagramFrame(guiData, true);
-					sideView.setTitle("Ramp Diagram - Side View");
+					DiagramFrame sideView = new DiagramFrame(guiData, false);
+					sideView.setTitle("Ramp Diagram");
 					sideView.setVisible(true);
-					
-					DiagramFrame frame = new DiagramFrame(guiData, false);
-					frame.setTitle("Ramp Diagram");
-					frame.setVisible(true);
 				} catch (Exception bad) {
 					// TODO: pop up saying something went wrong
 				}
