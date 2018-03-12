@@ -44,6 +44,7 @@ import java.awt.Insets;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.BoxLayout;
+import javax.swing.JComboBox;
 
 public class DiagramFrame extends JFrame {
 
@@ -63,6 +64,11 @@ public class DiagramFrame extends JFrame {
 	private JTextField textBoxHeight;
 	private JTextField textBoxLabel;
 	private JTabbedPane tabbedPane;
+	private JTextField textLabelX;
+	private JTextField textLabelY;
+	private JTextField textLabelArrowX;
+	private JTextField textLabelArrowY;
+	private JTextField textLabelText;
 
 	/**
 	 * Create the frame.
@@ -149,6 +155,18 @@ public class DiagramFrame extends JFrame {
 					currentItem = box;
 					break;
 				case "Label":
+					CustomLabel label = (CustomLabel) item;
+
+					// Switch to label tab
+					tabbedPane.setSelectedIndex(2);
+
+					// Change data in the editor.
+					textLabelX.setText(label.getLocation().getX().toString());
+					textLabelY.setText(label.getLocation().getY().toString());
+					textLabelArrowX.setText(label.getArrowLocation().getX().toString());
+					textLabelArrowY.setText(label.getArrowLocation().getY().toString());
+					textLabelText.setText(label.getLabel().getString());
+					currentItem = label;
 					break;
 				case "Text":
 					break;
@@ -274,6 +292,77 @@ public class DiagramFrame extends JFrame {
 			}
 		});
 		panel.add(btnUpdateBox);
+
+		JPanel panel_2 = new JPanel();
+		tabbedPane.addTab("Label", null, panel_2, null);
+		panel_2.setLayout(new BoxLayout(panel_2, BoxLayout.Y_AXIS));
+
+		JLabel lblLabelX = new JLabel("Label x");
+		panel_2.add(lblLabelX);
+
+		textLabelX = new JTextField();
+		panel_2.add(textLabelX);
+		textLabelX.setColumns(10);
+
+		JLabel lblLabelY = new JLabel("Label y");
+		panel_2.add(lblLabelY);
+
+		textLabelY = new JTextField();
+		panel_2.add(textLabelY);
+		textLabelY.setColumns(10);
+
+		JLabel lblArrowX = new JLabel("Arrow x");
+		panel_2.add(lblArrowX);
+
+		textLabelArrowX = new JTextField();
+		panel_2.add(textLabelArrowX);
+		textLabelArrowX.setColumns(10);
+
+		JLabel lblArrowY = new JLabel("Arrow y");
+		panel_2.add(lblArrowY);
+
+		textLabelArrowY = new JTextField();
+		panel_2.add(textLabelArrowY);
+		textLabelArrowY.setColumns(10);
+
+		JLabel lblLabelText = new JLabel("Label Text");
+		panel_2.add(lblLabelText);
+
+		textLabelText = new JTextField();
+		panel_2.add(textLabelText);
+		textLabelText.setColumns(10);
+
+		JButton btnNewLabel = new JButton("New");
+		btnNewLabel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// Add a new custom label.
+				CustomLabel newLabel = new CustomLabel(new Coordinate(new Dimension(0), new Dimension(0)),
+						new Label("Label", Alignment.CENTER, Alignment.CENTER, diagram.getLabelFont(), Color.BLACK),
+						new Coordinate(new Dimension(3, 0), new Dimension(3, 0)));
+
+				listCustomItemsModel.addElement(newLabel);
+				diagram.revalidate();
+				diagram.repaint();
+			}
+		});
+		panel_2.add(btnNewLabel);
+
+		JButton btnUpdateLabel = new JButton("Update");
+		btnUpdateLabel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (currentItem.getType() == "Label") {
+					CustomLabel label = (CustomLabel) currentItem;
+					label.getLocation().setX(new Dimension(textLabelX.getText()));
+					label.getLocation().setY(new Dimension(textLabelY.getText()));
+					label.getArrowLocation().setX(new Dimension(textLabelArrowX.getText()));
+					label.getArrowLocation().setY(new Dimension(textLabelArrowY.getText()));
+					label.getLabel().setString(textLabelText.getText());
+					diagram.revalidate();
+					diagram.repaint();
+				}
+			}
+		});
+		panel_2.add(btnUpdateLabel);
 		btnNewPost.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				// Add a new custom post at 0, 0.
