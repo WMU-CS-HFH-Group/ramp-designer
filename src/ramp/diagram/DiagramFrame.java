@@ -49,6 +49,7 @@ import javax.swing.JTextPane;
 import javax.swing.DefaultComboBoxModel;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
+import javax.swing.JScrollPane;
 
 public class DiagramFrame extends JFrame {
 
@@ -224,11 +225,34 @@ public class DiagramFrame extends JFrame {
 		JButton btnNewBox = new JButton("New");
 		btnNewBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				// Set defaults
+				Coordinate location = new Coordinate(new Dimension(0), new Dimension(0));
+				Dimension width = new Dimension(3, 0);
+				Dimension height = new Dimension(3, 0);
+				Label label = new Label(textBoxLabel.getText(), Alignment.CENTER, Alignment.CENTER,
+						diagram.getLabelFont(), Color.BLACK);
+
+				// Take input
+				if (textBoxX.getText().length() > 0) {
+					location.setX(new Dimension(textBoxX.getText()));
+				}
+
+				if (textBoxY.getText().length() > 0) {
+					location.setY(new Dimension(textBoxY.getText()));
+				}
+
+				if (textBoxWidth.getText().length() > 0) {
+					width = new Dimension(textBoxWidth.getText());
+				}
+
+				if (textBoxHeight.getText().length() > 0) {
+					height = new Dimension(textBoxHeight.getText());
+				}
+
 				// Add a new custom box.
-				CustomBox newBox = new CustomBox(new Coordinate(new Dimension(0), new Dimension(0)),
-						new Dimension(3, 0), new Dimension(3, 0),
-						new Label("", Alignment.CENTER, Alignment.CENTER, diagram.getLabelFont(), Color.BLACK));
+				CustomBox newBox = new CustomBox(location, width, height, label);
 				listCustomItemsModel.addElement(newBox);
+				listCustomItems.setSelectedValue(newBox, true);
 				diagram.revalidate();
 				diagram.repaint();
 			}
@@ -295,12 +319,34 @@ public class DiagramFrame extends JFrame {
 		JButton btnNewLabel = new JButton("New");
 		btnNewLabel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				// Set defaults
+				Coordinate location = new Coordinate(new Dimension(0), new Dimension(0));
+				Label label = new Label(textLabelText.getText(), Alignment.CENTER, Alignment.CENTER,
+						diagram.getLabelFont(), Color.BLACK);
+				Coordinate arrowLocation = new Coordinate(new Dimension(3, 0), new Dimension(3, 0));
+
+				// Take input
+				if (textLabelX.getText().length() > 0) {
+					location.setX(new Dimension(textLabelX.getText()));
+				}
+
+				if (textLabelY.getText().length() > 0) {
+					location.setY(new Dimension(textLabelY.getText()));
+				}
+
+				if (textLabelArrowX.getText().length() > 0) {
+					arrowLocation.setX(new Dimension(textLabelArrowX.getText()));
+				}
+
+				if (textLabelArrowY.getText().length() > 0) {
+					arrowLocation.setY(new Dimension(textLabelArrowY.getText()));
+				}
+
 				// Add a new custom label.
-				CustomLabel newLabel = new CustomLabel(new Coordinate(new Dimension(0), new Dimension(0)),
-						new Label("Label", Alignment.CENTER, Alignment.CENTER, diagram.getLabelFont(), Color.BLACK),
-						new Coordinate(new Dimension(3, 0), new Dimension(3, 0)));
+				CustomLabel newLabel = new CustomLabel(location, label, arrowLocation);
 
 				listCustomItemsModel.addElement(newLabel);
+				listCustomItems.setSelectedValue(newLabel, true);
 				diagram.revalidate();
 				diagram.repaint();
 			}
@@ -365,9 +411,26 @@ public class DiagramFrame extends JFrame {
 		JButton btnNewText = new JButton("New");
 		btnNewText.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				CustomText newText = new CustomText(new Coordinate(new Dimension(0), new Dimension(0)), new Label(
-						"Text", Alignment.LEFT_OR_TOP, Alignment.LEFT_OR_TOP, diagram.getLabelFont(), Color.BLACK));
+				Alignment hAlignment = (Alignment) comboTextHorizontal.getSelectedItem();
+				Alignment vAlignment = (Alignment) comboTextVertical.getSelectedItem();
+
+				// Set defaults
+				Coordinate location = new Coordinate(new Dimension(0), new Dimension(0));
+				Label label = new Label(textTextText.getText(), hAlignment, vAlignment, diagram.getLabelFont(),
+						Color.BLACK);
+
+				// Take input
+				if (textTextX.getText().length() > 0) {
+					location.setX(new Dimension(textTextX.getText()));
+				}
+
+				if (textTextY.getText().length() > 0) {
+					location.setY(new Dimension(textTextY.getText()));
+				}
+
+				CustomText newText = new CustomText(location, label);
 				listCustomItemsModel.addElement(newText);
+				listCustomItems.setSelectedValue(newText, true);
 			}
 		});
 		panel_3.add(btnNewText);
@@ -395,8 +458,6 @@ public class DiagramFrame extends JFrame {
 		JPanel panel_4 = new JPanel();
 		splitPane.setRightComponent(panel_4);
 		panel_4.setLayout(new BorderLayout(0, 0));
-		listCustomItems = new JList<CustomItem>(listCustomItemsModel);
-		panel_4.add(listCustomItems);
 
 		JToolBar toolBar_1 = new JToolBar();
 		panel_4.add(toolBar_1, BorderLayout.NORTH);
@@ -411,6 +472,17 @@ public class DiagramFrame extends JFrame {
 				}
 			}
 		});
+		
+		JButton btnDuplicate = new JButton("Duplicate");
+		btnDuplicate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				CustomItem item = listCustomItems.getSelectedValue();
+				CustomItem item2 = item.clone();
+				listCustomItemsModel.addElement(item2);
+				listCustomItems.setSelectedValue(item2, true);
+			}
+		});
+		toolBar_1.add(btnDuplicate);
 		toolBar_1.add(btnDelete);
 
 		JButton btnClear = new JButton("Clear");
@@ -422,6 +494,11 @@ public class DiagramFrame extends JFrame {
 			}
 		});
 		toolBar_1.add(btnClear);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		panel_4.add(scrollPane, BorderLayout.CENTER);
+		listCustomItems = new JList<CustomItem>(listCustomItemsModel);
+		scrollPane.setViewportView(listCustomItems);
 		listCustomItems.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent arg0) {
 				if (listCustomItems.getSelectedIndex() >= 0) {
@@ -484,10 +561,26 @@ public class DiagramFrame extends JFrame {
 		});
 		btnNewPost.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				// Add a new custom post at 0, 0.
-				CustomPost newPost = new CustomPost(new Coordinate(new Dimension(0), new Dimension(0)),
-						new Dimension(4));
+				// Set defaults
+				Coordinate location = new Coordinate(new Dimension(0), new Dimension(0));
+				Dimension size = new Dimension(4);
+
+				if (textPostX.getText().length() > 0) {
+					location.setX(new Dimension(textPostX.getText()));
+				}
+
+				if (textPostY.getText().length() > 0) {
+					location.setY(new Dimension(textPostY.getText()));
+				}
+
+				if (textPostSize.getText().length() > 0) {
+					size = new Dimension(textPostSize.getText());
+				}
+
+				// Create the new post
+				CustomPost newPost = new CustomPost(location, size);
 				listCustomItemsModel.addElement(newPost);
+				listCustomItems.setSelectedValue(newPost, true);
 				diagram.revalidate();
 				diagram.repaint();
 			}

@@ -96,6 +96,10 @@ public class Label {
 	public String[] toLines() {
 		return this.string.split(Label.LINE_DELIM);
 	}
+	
+	public Label clone() {
+		return new Label(string, alignmentX, alignmentY, font, color);
+	}
 
 	public LabelSize calculateSize() {
 		FontRenderContext context = new FontRenderContext(null, true, true);

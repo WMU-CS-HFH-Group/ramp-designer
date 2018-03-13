@@ -13,6 +13,10 @@ public class CustomPost extends CustomItem {
 		this.size = size;
 		this.type = "Post";
 	}
+	
+	public CustomItem clone() {
+		return new CustomPost(getLocation().clone(), size.clone());
+	}
 
 	private Dimension size;
 

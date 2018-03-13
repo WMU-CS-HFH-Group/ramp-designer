@@ -13,6 +13,10 @@ public class CustomLabel extends CustomItem {
 		this.arrowLocation = arrowLocation;
 		this.type = "Label";
 	}
+	
+	public CustomItem clone() {
+		return new CustomLabel(getLocation().clone(), label.clone(), arrowLocation.clone());
+	}
 
 	private Label label;
 	private Coordinate arrowLocation;

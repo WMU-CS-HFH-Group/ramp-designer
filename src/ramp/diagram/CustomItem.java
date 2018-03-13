@@ -26,4 +26,6 @@ public abstract class CustomItem {
 	}
 
 	public abstract void draw(Graphics2D g);
+	
+	public abstract CustomItem clone();
 }
