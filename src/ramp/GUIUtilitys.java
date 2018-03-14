@@ -11,7 +11,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
 import javax.swing.*;
 
@@ -490,12 +489,7 @@ public class GUIUtilitys{
 						rampDir.add(index, 0);
 						guiData.setRampDir(rampDir);
 					}
-					try {
-						TimeUnit.SECONDS.sleep((long)0.5);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					
 					direction++;
 					btnRemove.addMouseListener(new MouseAdapter() {
 						@Override
