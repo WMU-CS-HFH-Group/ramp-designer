@@ -14,7 +14,6 @@ import java.util.ArrayList;
 
 import javax.swing.*;
 
-import ramp.diagram.Diagram;
 import ramp.diagram.DiagramFrame;
 import ramp.diagram.GUIData;
 import ramp.geometry.Dimension;
@@ -127,31 +126,31 @@ public class GUIUtilitys{
 	private void setTurnAround(int incase, SpringLayout sl_contentPane, Component pivot, JTextArea preRamp, 
 			JTextArea nextRamp, JButton btnAdd, JButton btnRemove) {
 		if (preRamp != null)
-		if (preRamp.getWidth() > 50){ //comes in right/left
-			if(preRamp.getBounds().x > pivot.getBounds().x){ //comes from right
-				sl_contentPane.putConstraint(SpringLayout.NORTH, pivot, -10, SpringLayout.NORTH, preRamp);
-				sl_contentPane.putConstraint(SpringLayout.WEST, pivot, -50, SpringLayout.WEST, preRamp);
-				sl_contentPane.putConstraint(SpringLayout.SOUTH, pivot, 10, SpringLayout.SOUTH, preRamp);
-				sl_contentPane.putConstraint(SpringLayout.EAST, pivot, 0, SpringLayout.WEST, preRamp);
-			} else { //comes from left
-				sl_contentPane.putConstraint(SpringLayout.NORTH, pivot, -10, SpringLayout.NORTH, preRamp);
-				sl_contentPane.putConstraint(SpringLayout.WEST, pivot, 0, SpringLayout.EAST, preRamp);
-				sl_contentPane.putConstraint(SpringLayout.SOUTH, pivot, 10, SpringLayout.SOUTH, preRamp);
-				sl_contentPane.putConstraint(SpringLayout.EAST, pivot, 50, SpringLayout.EAST, preRamp);
+			if (preRamp.getWidth() > 50){ //comes in right/left
+				if(preRamp.getBounds().x > pivot.getBounds().x){ //comes from right
+					sl_contentPane.putConstraint(SpringLayout.NORTH, pivot, -10, SpringLayout.NORTH, preRamp);
+					sl_contentPane.putConstraint(SpringLayout.WEST, pivot, -50, SpringLayout.WEST, preRamp);
+					sl_contentPane.putConstraint(SpringLayout.SOUTH, pivot, 10, SpringLayout.SOUTH, preRamp);
+					sl_contentPane.putConstraint(SpringLayout.EAST, pivot, 0, SpringLayout.WEST, preRamp);
+				} else { //comes from left
+					sl_contentPane.putConstraint(SpringLayout.NORTH, pivot, -10, SpringLayout.NORTH, preRamp);
+					sl_contentPane.putConstraint(SpringLayout.WEST, pivot, 0, SpringLayout.EAST, preRamp);
+					sl_contentPane.putConstraint(SpringLayout.SOUTH, pivot, 10, SpringLayout.SOUTH, preRamp);
+					sl_contentPane.putConstraint(SpringLayout.EAST, pivot, 50, SpringLayout.EAST, preRamp);
+				}
+			}else { //comes in up/down
+				if (preRamp.getBounds().y > pivot.getBounds().y){//comes from up
+					sl_contentPane.putConstraint(SpringLayout.NORTH, pivot, -50, SpringLayout.NORTH, preRamp);
+					sl_contentPane.putConstraint(SpringLayout.WEST, pivot, -10, SpringLayout.WEST, preRamp);
+					sl_contentPane.putConstraint(SpringLayout.SOUTH, pivot, 0, SpringLayout.NORTH, preRamp);
+					sl_contentPane.putConstraint(SpringLayout.EAST, pivot, 10, SpringLayout.EAST, preRamp);				
+				}else{//comes from down
+					sl_contentPane.putConstraint(SpringLayout.NORTH, pivot, 0, SpringLayout.SOUTH, preRamp);
+					sl_contentPane.putConstraint(SpringLayout.WEST, pivot, -10, SpringLayout.WEST, preRamp);
+					sl_contentPane.putConstraint(SpringLayout.SOUTH, pivot, 50, SpringLayout.SOUTH, preRamp);
+					sl_contentPane.putConstraint(SpringLayout.EAST, pivot, 10, SpringLayout.EAST, preRamp);
+				}
 			}
-		}else { //comes in up/down
-			if (preRamp.getBounds().y > pivot.getBounds().y){//comes from up
-				sl_contentPane.putConstraint(SpringLayout.NORTH, pivot, -50, SpringLayout.NORTH, preRamp);
-				sl_contentPane.putConstraint(SpringLayout.WEST, pivot, -10, SpringLayout.WEST, preRamp);
-				sl_contentPane.putConstraint(SpringLayout.SOUTH, pivot, 0, SpringLayout.NORTH, preRamp);
-				sl_contentPane.putConstraint(SpringLayout.EAST, pivot, 10, SpringLayout.EAST, preRamp);				
-			}else{//comes from down
-				sl_contentPane.putConstraint(SpringLayout.NORTH, pivot, 0, SpringLayout.SOUTH, preRamp);
-				sl_contentPane.putConstraint(SpringLayout.WEST, pivot, -10, SpringLayout.WEST, preRamp);
-				sl_contentPane.putConstraint(SpringLayout.SOUTH, pivot, 50, SpringLayout.SOUTH, preRamp);
-				sl_contentPane.putConstraint(SpringLayout.EAST, pivot, 10, SpringLayout.EAST, preRamp);
-			}
-		}
 		
 		switch (incase) {
 		case 0: //Up
@@ -416,16 +415,12 @@ public class GUIUtilitys{
 				toggle.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseClicked(MouseEvent e) {
-						try{
 							lblRamp.setVisible(false);
 							btnAdd.setVisible(false);
 							turn.set(index, setUturn(incase, sl_contentPane, pivot, preRamp, toggle, lblRamp, btnAdd, btnRemove));
 							guiData.setTurnAround(turn);
 							lblRamp.setVisible(true);
 							btnAdd.setVisible(true);
-						} catch (Exception bad) {
-							// TODO: pop up saying something went wrong
-						}
 					}
 				});
 			} else {
@@ -451,31 +446,29 @@ public class GUIUtilitys{
 	 * @param contentPane
 	 * @param sl_contentPane
 	 */
-	public void createRamp(JButton pivot, JTextArea preRamp, JToggleButton toggle, JPanel contentPane, 
-			SpringLayout sl_contentPane, JLabel lblFeetRemain, int index) {	
-		ArrayList<Double> rampLength = guiData.getRampLength();
-		ArrayList<Integer> turnAround = guiData.getTurnAround();
-		ArrayList<Integer> rampDir = guiData.getRampDir();
-		if (rampLength.size() <= index) {
-			rampLength.add(index, 0.0);
-			guiData.setRampLength(rampLength);
-			turnAround.add(index, 0);
-			guiData.setTurnAround(turnAround);
-			rampDir.add(index, 0);
-			guiData.setRampDir(rampDir);
-		}
-		
+	public void createRamp(JPanel contentPane, SpringLayout sl_contentPane, Component pivot, JTextArea preRamp, 
+			JToggleButton toggle, JTextArea lblRamp, JButton btnAdd, JButton btnRemove, int index) {	
 		pivot.addMouseListener(new MouseAdapter() {
-			JTextArea lblRamp = new JTextArea();
-			JButton btnAdd = new JButton();	
-			JButton btnRemove = new JButton();
 			int direction = -1;
 			
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
+				
 				switch (direction){
 				case -1:
-					setRamps(contentPane, sl_contentPane, lblRamp, btnAdd, btnRemove, lblFeetRemain, index+1);
+					ArrayList<Double> rampLength = guiData.getRampLength();
+					ArrayList<Integer> turnAround = guiData.getTurnAround();
+					ArrayList<Integer> rampDir = guiData.getRampDir();
+					if (rampLength.size() <= index) {
+						rampLength.add(index, 0.0);
+						guiData.setRampLength(rampLength);
+						turnAround.add(index, 0);
+						guiData.setTurnAround(turnAround);
+						rampDir.add(index, 0);
+						guiData.setRampDir(rampDir);
+					}
+					
+					direction++;
 					btnRemove.addMouseListener(new MouseAdapter() {
 						@Override
 						public void mouseClicked(MouseEvent arg0) {
@@ -499,12 +492,12 @@ public class GUIUtilitys{
 							direction = -1;
 						}
 					});
-					direction++;
+					setRamps(contentPane, sl_contentPane, btnAdd, lblRamp, index+1);
 				case 0:
 				case 1:
 				case 2:
 				case 3:
-					setRampDirection(direction, sl_contentPane, pivot, preRamp, toggle, lblRamp, btnAdd, btnRemove, index+1);
+					setRampDirection(direction, sl_contentPane, pivot, preRamp, toggle, lblRamp, btnAdd, btnRemove, index);
 					direction++;
 					if (direction>3) {
 						direction = 0;
@@ -527,9 +520,22 @@ public class GUIUtilitys{
 	 * @param lblFeetRemain How many feet left until ground
 	 * @param index Which section of ramp is being used
 	 */
-	public void setRamps(JPanel contentPane, SpringLayout sl_contentPane, JTextArea lblRamp, JButton btnAdd, JButton btnRemove,
-			JLabel lblFeetRemain, int index) {
+	public void setRamps(JPanel contentPane, SpringLayout sl_contentPane, Component pivot, JTextArea preRamp, int index) {
+		JTextArea lblRamp = new JTextArea();
+		JButton btnAdd = new JButton();	
+		JButton btnRemove = new JButton();
 		
+		ArrayList<Double> rampLength = guiData.getRampLength();
+		ArrayList<Integer> turnAround = guiData.getTurnAround();
+		ArrayList<Integer> rampDir = guiData.getRampDir();
+		if (rampLength.size() <= index) {
+			rampLength.add(index, 0.0);
+			guiData.setRampLength(rampLength);
+			turnAround.add(index, 0);
+			guiData.setTurnAround(turnAround);
+			rampDir.add(index, 0);
+			guiData.setRampDir(rampDir);
+		}
 		
 		lblRamp.setText("#' #\"");
 		lblRamp.setFont(new Font("Tahoma", Font.BOLD, 20));
@@ -553,7 +559,7 @@ public class GUIUtilitys{
 		
 		removeFocusEnter(lblRamp);
 		updateRampText(lblRamp, index);
-		createRamp(btnAdd, lblRamp, tglbtnToggle, contentPane, sl_contentPane, lblFeetRemain, index);
+		createRamp(contentPane, sl_contentPane, pivot, preRamp, tglbtnToggle, lblRamp, btnAdd, btnRemove, index);
 	}
 	
 	/**
@@ -620,5 +626,5 @@ public class GUIUtilitys{
 	 */
 	public void setLblFeetRemain(JLabel lblFeetRemain) {
 		GUIUtilitys.lblFeetRemain = lblFeetRemain;
-	}
+	}	
 }
