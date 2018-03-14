@@ -20,6 +20,8 @@ public class GUIData {
 																			// 3 uturn down right, 4 uturn down left, 
 																			// 5 uturn left up, 6 uturn left down,
 																			// 7 uturn right up, 8 uturn right down
+	private static int[] coords = {0, 0, 0, 0}; // The min and max coordinates the components are kept: 
+												// 1 min x, 2 min y, 3 max x, 4 max y
 
 	public GUIData() {
 		
@@ -91,5 +93,13 @@ public class GUIData {
 
 	public void setTurnAround(ArrayList<Integer> turnAround) {
 		GUIData.turnAround = turnAround;
+	}
+
+	public int[] getCoords() {
+		return coords;
+	}
+
+	public void setCoords(int[] coords) {
+		GUIData.coords = coords;
 	}
 }

@@ -156,8 +156,8 @@ public class inputdata extends JFrame {
 //		contentPane.add(comboFromDeck);
 		
 		JLabel lblHouse = new JLabel("");
-		sl_contentPane.putConstraint(SpringLayout.SOUTH, lblHouse, 10, SpringLayout.SOUTH, lblRampIn);
 		lblHouse.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/House.png")));
+		sl_contentPane.putConstraint(SpringLayout.SOUTH, lblHouse, 10, SpringLayout.SOUTH, lblRampIn);
 		sl_contentPane.putConstraint(SpringLayout.NORTH, lblHouse, 0, SpringLayout.NORTH, contentPane);
 		sl_contentPane.putConstraint(SpringLayout.WEST, lblHouse, 0, SpringLayout.WEST, contentPane);
 		sl_contentPane.putConstraint(SpringLayout.EAST, lblHouse, 0, SpringLayout.EAST, contentPane);
@@ -180,9 +180,9 @@ public class inputdata extends JFrame {
 		
 		JLabel lblFeetRemain = new JLabel("Ramp feet remaining: ");
 		sl_contentPane.putConstraint(SpringLayout.EAST, lblFeetRemain, -25, SpringLayout.WEST, btnSubmit);
+		sl_contentPane.putConstraint(SpringLayout.NORTH, lblFeetRemain, 0, SpringLayout.NORTH, btnSubmit);
 		lblFeetRemain.setFont(new Font("Dialog", Font.PLAIN, 14));
 		lblFeetRemain.setHorizontalAlignment(SwingConstants.RIGHT);
-		sl_contentPane.putConstraint(SpringLayout.NORTH, lblFeetRemain, 0, SpringLayout.NORTH, btnSubmit);
 		contentPane.add(lblFeetRemain);
 		guiUtility.setLblFeetRemain(lblFeetRemain);
 		
@@ -202,10 +202,14 @@ public class inputdata extends JFrame {
 		
 		
 		JLabel lblDeck = new JLabel("");
-		sl_scrollPanel.putConstraint(SpringLayout.NORTH, lblDeck, 174, SpringLayout.NORTH, scrollPanel);
-		sl_scrollPanel.putConstraint(SpringLayout.WEST, lblDeck, 302, SpringLayout.WEST, scrollPanel);
+		sl_scrollPanel.putConstraint(SpringLayout.NORTH, lblDeck, 170, SpringLayout.NORTH, scrollPanel);
+		sl_scrollPanel.putConstraint(SpringLayout.WEST, lblDeck, 320, SpringLayout.WEST, scrollPanel);
 		lblDeck.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/Deck.png")));
 		scrollPanel.add(lblDeck);
+		int[] coords = {lblDeck.getLocation().x,
+				lblDeck.getLocation().y,lblDeck.getLocation().x + lblDeck.getWidth(),
+				lblDeck.getLocation().y + lblDeck.getHeight()};
+		guiData.setCoords(coords);
 		
 		guiUtility.setRamps(scrollPanel, sl_scrollPanel, lblDeck, null, 0);
 		guiUtility.comboChangeTotal(comboInch, comboInPart);

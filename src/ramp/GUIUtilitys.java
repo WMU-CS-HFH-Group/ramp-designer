@@ -11,6 +11,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.*;
 
@@ -113,6 +114,22 @@ public class GUIUtilitys{
 				}
 			}
 		});
+	}
+	
+	private void setMinMaxCoords(int minX, int minY, int maxX, int maxY) {
+		int[] current = guiData.getCoords();
+		if (current[0] > minX) {
+			current[0] = minX;
+		}
+		if (current[1] > minY) {
+			current[1] = minY;
+		}
+		if (current[2] < maxX) {
+			current[2] = maxX;
+		}
+		if (current[3] < maxY) {
+			current[3] = maxY;
+		}
 	}
 	
 	/**
@@ -218,6 +235,9 @@ public class GUIUtilitys{
 			sl_contentPane.putConstraint(SpringLayout.EAST, btnRemove, 0, SpringLayout.WEST, nextRamp);
 			break;
 		}
+		setMinMaxCoords(nextRamp.getLocation().x, nextRamp.getLocation().y, 
+				nextRamp.getLocation().x + nextRamp.getWidth(), 
+				nextRamp.getLocation().y + nextRamp.getHeight());
 	}
 	
 	/**
@@ -338,7 +358,7 @@ public class GUIUtilitys{
 				sl_contentPane.putConstraint(SpringLayout.WEST, nextRamp, -100, SpringLayout.WEST, pivot);
 				sl_contentPane.putConstraint(SpringLayout.SOUTH, nextRamp, -10, SpringLayout.SOUTH, pivot);
 				sl_contentPane.putConstraint(SpringLayout.EAST, nextRamp, 00, SpringLayout.WEST, pivot);
-				out = 2;
+				out = 5;
 			} else { //up
 				sl_contentPane.putConstraint(SpringLayout.NORTH, pivot, -80, SpringLayout.NORTH, preRamp);
 				sl_contentPane.putConstraint(SpringLayout.EAST, pivot, 0, SpringLayout.EAST, preRamp);
@@ -348,7 +368,7 @@ public class GUIUtilitys{
 				sl_contentPane.putConstraint(SpringLayout.WEST, nextRamp, -100, SpringLayout.WEST, pivot);
 				sl_contentPane.putConstraint(SpringLayout.SOUTH, nextRamp, 40, SpringLayout.NORTH, pivot);
 				sl_contentPane.putConstraint(SpringLayout.EAST, nextRamp, 00, SpringLayout.WEST, pivot);
-				out = 1;
+				out = 6;
 			}
 			sl_contentPane.putConstraint(SpringLayout.NORTH, btnAdd, -16, SpringLayout.NORTH, nextRamp);
 			sl_contentPane.putConstraint(SpringLayout.WEST, btnAdd, -30, SpringLayout.WEST, nextRamp);
@@ -361,6 +381,9 @@ public class GUIUtilitys{
 			sl_contentPane.putConstraint(SpringLayout.EAST, btnRemove, 0, SpringLayout.WEST, nextRamp);
 			break;
 		}
+		setMinMaxCoords(nextRamp.getLocation().x, nextRamp.getLocation().y, 
+				nextRamp.getLocation().x + nextRamp.getWidth(), 
+				nextRamp.getLocation().y + nextRamp.getHeight());
 		return out;
 	}	
 		
@@ -467,7 +490,12 @@ public class GUIUtilitys{
 						rampDir.add(index, 0);
 						guiData.setRampDir(rampDir);
 					}
-					
+					try {
+						TimeUnit.SECONDS.sleep((long)0.5);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					direction++;
 					btnRemove.addMouseListener(new MouseAdapter() {
 						@Override
