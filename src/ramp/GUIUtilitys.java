@@ -475,20 +475,27 @@ public class GUIUtilitys{
 			
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				
+				ArrayList<Double> rampLength = guiData.getRampLength();
+				ArrayList<Integer> turnAround = guiData.getTurnAround();
+				ArrayList<Integer> rampDir = guiData.getRampDir();
+				if (rampLength.size() <= index) {
+					rampLength.add(index, 0.0);
+					guiData.setRampLength(rampLength);
+					turnAround.add(index, 0);
+					guiData.setTurnAround(turnAround);
+					rampDir.add(index, 0);
+					guiData.setRampDir(rampDir);
+				}
 				switch (direction){
 				case -1:
-					ArrayList<Double> rampLength = guiData.getRampLength();
-					ArrayList<Integer> turnAround = guiData.getTurnAround();
-					ArrayList<Integer> rampDir = guiData.getRampDir();
-					if (rampLength.size() <= index) {
-						rampLength.add(index, 0.0);
-						guiData.setRampLength(rampLength);
-						turnAround.add(index, 0);
-						guiData.setTurnAround(turnAround);
-						rampDir.add(index, 0);
-						guiData.setRampDir(rampDir);
-					}
+//					if (rampLength.size() <= index) {
+//						rampLength.add(index, 0.0);
+//						guiData.setRampLength(rampLength);
+//						turnAround.add(index, 0);
+//						guiData.setTurnAround(turnAround);
+//						rampDir.add(index, 0);
+//						guiData.setRampDir(rampDir);
+//					}
 					
 					direction++;
 					btnRemove.addMouseListener(new MouseAdapter() {
@@ -546,18 +553,6 @@ public class GUIUtilitys{
 		JTextArea lblRamp = new JTextArea();
 		JButton btnAdd = new JButton();	
 		JButton btnRemove = new JButton();
-		
-		ArrayList<Double> rampLength = guiData.getRampLength();
-		ArrayList<Integer> turnAround = guiData.getTurnAround();
-		ArrayList<Integer> rampDir = guiData.getRampDir();
-		if (rampLength.size() <= index) {
-			rampLength.add(index, 0.0);
-			guiData.setRampLength(rampLength);
-			turnAround.add(index, 0);
-			guiData.setTurnAround(turnAround);
-			rampDir.add(index, 0);
-			guiData.setRampDir(rampDir);
-		}
 		
 		lblRamp.setText("#' #\"");
 		lblRamp.setFont(new Font("Tahoma", Font.BOLD, 20));
