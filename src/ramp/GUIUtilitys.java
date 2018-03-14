@@ -487,16 +487,7 @@ public class GUIUtilitys{
 					guiData.setRampDir(rampDir);
 				}
 				switch (direction){
-				case -1:
-//					if (rampLength.size() <= index) {
-//						rampLength.add(index, 0.0);
-//						guiData.setRampLength(rampLength);
-//						turnAround.add(index, 0);
-//						guiData.setTurnAround(turnAround);
-//						rampDir.add(index, 0);
-//						guiData.setRampDir(rampDir);
-//					}
-					
+				case -1:					
 					direction++;
 					btnRemove.addMouseListener(new MouseAdapter() {
 						@Override
@@ -504,6 +495,9 @@ public class GUIUtilitys{
 							lblRamp.setVisible(false);
 							btnAdd.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/Add.png")));
 							btnAdd.setVisible(false);
+							if (index > 0) {
+								((JButton) pivot).setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/Add.png")));
+							}
 							btnRemove.setVisible(false);
 							rampLength.remove(index);
 							guiData.setRampLength(rampLength);
