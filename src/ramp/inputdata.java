@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 
 public class inputdata extends JFrame {
@@ -131,11 +132,11 @@ public class inputdata extends JFrame {
 		sl_contentPane.putConstraint(SpringLayout.WEST, lblStyle, 0, SpringLayout.WEST, lblHeightOfDeck);
 		contentPane.add(lblStyle);
 		
-		JComboBox<Integer> comboRampOffset = new JComboBox<Integer>();
+		JComboBox<String> comboRampOffset = new JComboBox<String>();
 		sl_contentPane.putConstraint(SpringLayout.NORTH, comboRampOffset, 0, SpringLayout.NORTH, lblStyle);
 		sl_contentPane.putConstraint(SpringLayout.WEST, comboRampOffset, 6, SpringLayout.EAST, lblStyle);
-		sl_contentPane.putConstraint(SpringLayout.EAST, comboRampOffset, 59, SpringLayout.EAST, lblStyle);
-		guiUtility.setComboBoxRangeNumber(comboRampOffset, -MAX_FEET, MAX_FEET);
+		sl_contentPane.putConstraint(SpringLayout.EAST, comboRampOffset, 80, SpringLayout.EAST, lblStyle);
+		guiUtility.setOffsetRangeNumber(comboRampOffset, -MAX_FEET, MAX_FEET);
 		comboRampOffset.setSelectedIndex(MAX_FEET);
 		contentPane.add(comboRampOffset);
 		
@@ -220,6 +221,10 @@ public class inputdata extends JFrame {
 				double[] update = guiData.getDeckDimension();
 				update[0] = guiUtility.calcTotalIn(comboDimFtW.getSelectedIndex(), comboDimInW.getSelectedIndex(), 0);
 				guiData.setDeckDimension(update);
+				if (update[0] > update[1]){
+					guiUtility.setOffsetRangeNumber(comboRampOffset, -(int)(update[0]/2 - 20), (int)update[0]/2 - 20);
+					comboRampOffset.setSelectedItem((int)update[0]/2 - 20);
+				}
 			} 
 		});
 		
@@ -228,6 +233,10 @@ public class inputdata extends JFrame {
 				double[] update = guiData.getDeckDimension();
 				update[0] = guiUtility.calcTotalIn(comboDimFtW.getSelectedIndex(), comboDimInW.getSelectedIndex(), 0);
 				guiData.setDeckDimension(update);
+				if (update[0] > update[1]){
+					guiUtility.setOffsetRangeNumber(comboRampOffset, -(int)(update[0]/2 - 20), (int)update[0]/2 - 20);
+					comboRampOffset.setSelectedItem((int)update[0]/2 - 20);
+				}
 			} 
 		});
 		
@@ -236,6 +245,10 @@ public class inputdata extends JFrame {
 				double[] update = guiData.getDeckDimension();
 				update[1] = guiUtility.calcTotalIn(comboDimFtL.getSelectedIndex(), comboDimInL.getSelectedIndex(), 0);
 				guiData.setDeckDimension(update);
+				if (update[0] < update[1]){
+					guiUtility.setOffsetRangeNumber(comboRampOffset, -(int)(update[0]/2 - 20), (int)update[0]/2 - 20);
+					comboRampOffset.setSelectedItem((int)update[1]/2 - 20);
+				}
 			} 
 		});
 		
@@ -244,14 +257,24 @@ public class inputdata extends JFrame {
 				double[] update = guiData.getDeckDimension();
 				update[1] = guiUtility.calcTotalIn(comboDimFtL.getSelectedIndex(), comboDimInL.getSelectedIndex(), 0);
 				guiData.setDeckDimension(update);
+				if (update[0] < update[1]){
+					guiUtility.setOffsetRangeNumber(comboRampOffset, -(int)(update[0]/2 - 20), (int)update[0]/2 - 20);
+					comboRampOffset.setSelectedItem((int)update[1]/2 - 20);
+				}
 			} 
 		});
 		
 		//** Updates on offset changes **//
 		comboRampOffset.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int update = comboRampOffset.getSelectedIndex() - MAX_FEET;
-				guiData.setDeckOffSet(update);
+				double[] range = guiData.getDeckDimension();
+				if (range[0] > range[1]){
+					guiData.setDeckOffSet(comboRampOffset.getSelectedIndex() - (int)(range[0]/2 - 20));
+				} else if (range[0] == 0 || range[1] == 0) {
+					guiData.setDeckOffSet(comboRampOffset.getSelectedIndex() - (MAX_FEET - 20));
+				} else {
+					guiData.setDeckOffSet(comboRampOffset.getSelectedIndex() - (int)(range[1]/2 - 20));
+				}
 			} 
 		});
 		
@@ -295,8 +318,6 @@ public class inputdata extends JFrame {
 		
 		//** Set Submit button **//
 		guiUtility.submitButtonActions(btnSubmit);
-		
-		System.out.println();
 	}
 	
 	//**********set combo boxes boxes*******************

@@ -115,19 +115,19 @@ public class GUIUtilitys{
 		});
 	}
 	
-	private void setMinMaxCoords(int minX, int minY, int maxX, int maxY) {
+	private void setMinMaxCoords(int posMinX, int posMinY, int posMaxX, int posMaxY) {
 		int[] current = guiData.getCoords();
-		if (current[0] > minX) {
-			current[0] = minX;
+		if (current[0] > posMinX) {
+			current[0] = posMinX;
 		}
-		if (current[1] > minY) {
-			current[1] = minY;
+		if (current[1] > posMinY) {
+			current[1] = posMinY;
 		}
-		if (current[2] < maxX) {
-			current[2] = maxX;
+		if (current[2] < posMaxX) {
+			current[2] = posMaxX;
 		}
-		if (current[3] < maxY) {
-			current[3] = maxY;
+		if (current[3] < posMaxY) {
+			current[3] = posMaxY;
 		}
 	}
 	
@@ -357,7 +357,7 @@ public class GUIUtilitys{
 				sl_contentPane.putConstraint(SpringLayout.WEST, nextRamp, -100, SpringLayout.WEST, pivot);
 				sl_contentPane.putConstraint(SpringLayout.SOUTH, nextRamp, -10, SpringLayout.SOUTH, pivot);
 				sl_contentPane.putConstraint(SpringLayout.EAST, nextRamp, 00, SpringLayout.WEST, pivot);
-				out = 5;
+				out = 6;
 			} else { //up
 				sl_contentPane.putConstraint(SpringLayout.NORTH, pivot, -80, SpringLayout.NORTH, preRamp);
 				sl_contentPane.putConstraint(SpringLayout.EAST, pivot, 0, SpringLayout.EAST, preRamp);
@@ -367,7 +367,7 @@ public class GUIUtilitys{
 				sl_contentPane.putConstraint(SpringLayout.WEST, nextRamp, -100, SpringLayout.WEST, pivot);
 				sl_contentPane.putConstraint(SpringLayout.SOUTH, nextRamp, 40, SpringLayout.NORTH, pivot);
 				sl_contentPane.putConstraint(SpringLayout.EAST, nextRamp, 00, SpringLayout.WEST, pivot);
-				out = 6;
+				out = 5;
 			}
 			sl_contentPane.putConstraint(SpringLayout.NORTH, btnAdd, -16, SpringLayout.NORTH, nextRamp);
 			sl_contentPane.putConstraint(SpringLayout.WEST, btnAdd, -30, SpringLayout.WEST, nextRamp);
@@ -601,6 +601,28 @@ public class GUIUtilitys{
 	public void setComboBoxRangeNumber(JComboBox<Integer> combo, int begin, int end){
 		for (int i = begin; i <= end; i++) {
 			combo.addItem(i);
+		}
+	}
+	
+	/**
+	 * Sets combo box range
+	 * @param combo JComboBox to add range to
+	 * @param begin start of range
+	 * @param end end of range
+	 */
+	public void setOffsetRangeNumber(JComboBox<String> combo, int begin, int end){
+		combo.removeAllItems();
+		for (int i = begin; i <= end; i++) {
+			if (i == begin){
+				combo.addItem("Right");
+			} else if (i == 0) {
+				combo.addItem("Center");
+			} else if (i == end) {
+				combo.addItem("Left");
+			} else{
+				combo.addItem("" + i);
+			}
+			
 		}
 	}
 	
