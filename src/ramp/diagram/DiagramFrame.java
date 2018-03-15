@@ -50,6 +50,9 @@ import javax.swing.DefaultComboBoxModel;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
 import javax.swing.JScrollPane;
+import javax.swing.JToggleButton;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ChangeEvent;
 
 public class DiagramFrame extends JFrame {
 
@@ -126,6 +129,14 @@ public class DiagramFrame extends JFrame {
 			}
 		});
 		toolBar.add(btnSaveImage);
+		
+		JToggleButton tglbtnSideView = new JToggleButton("Side View");
+		tglbtnSideView.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent arg0) {
+				diagram.setSideView(tglbtnSideView.isSelected());
+			}
+		});
+		toolBar.add(tglbtnSideView);
 
 		splitPane = new JSplitPane();
 		splitPane.setResizeWeight(0.5);

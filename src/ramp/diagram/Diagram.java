@@ -136,6 +136,16 @@ public class Diagram extends Component implements Printable {
 	public void removeGrid(Grid grid) {
 		this.grids.remove(grid);
 	}
+	
+	public boolean isSideView() {
+		return side;
+	}
+	
+	public void setSideView(boolean side) {
+		this.side = side;
+		revalidate();
+		repaint();
+	}
 
 	public void paint(Graphics graphics) {
 		// Set up graphics
@@ -225,8 +235,11 @@ public class Diagram extends Component implements Printable {
 				new Dimension(this.guiData.getDeckDimension()[1]));
 		ramp.getSection(0).setRampOffset(new Dimension(this.guiData.getDeckOffSet()));
 
-		this.drawRampTop(g, ramp);
-		this.drawRampSide(g, ramp);
+		if (side) {
+			this.drawRampSide(g, ramp);
+		} else {
+			this.drawRampTop(g, ramp);
+		}
 		
 		for (int i = 0; i < items.size(); i++) {
 			CustomItem item = items.getElementAt(i);
@@ -532,7 +545,7 @@ public class Diagram extends Component implements Printable {
 
 		if (longestSectionIndex >= 0) {
 			Section s = r.getSection(longestSectionIndex);
-			Coordinate origin = new Coordinate(new Dimension(0), new Dimension(40, 0));
+			Coordinate origin = new Coordinate(new Dimension(3, 0), new Dimension(10, 0));
 			Box rampBox = new Box(new Coordinate(new Dimension(0), new Dimension(0)), s.getRampWidth(),
 					s.getRampLength());
 			if (s.getDirection() == Direction.LEFT || s.getDirection() == Direction.RIGHT) {
