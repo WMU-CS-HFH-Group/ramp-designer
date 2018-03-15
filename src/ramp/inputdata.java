@@ -221,7 +221,7 @@ public class inputdata extends JFrame {
 				double[] update = guiData.getDeckDimension();
 				update[0] = guiUtility.calcTotalIn(comboDimFtW.getSelectedIndex(), comboDimInW.getSelectedIndex(), 0);
 				guiData.setDeckDimension(update);
-				if (update[0] > update[1]){
+				if (guiData.getRampDir().size() != 0 && guiData.getRampDir().get(0)%2 == 0){
 					guiUtility.setOffsetRangeNumber(comboRampOffset, -(int)(update[0]/2 - 20), (int)update[0]/2 - 20);
 					comboRampOffset.setSelectedItem((int)update[0]/2 - 20);
 				}
@@ -233,7 +233,7 @@ public class inputdata extends JFrame {
 				double[] update = guiData.getDeckDimension();
 				update[0] = guiUtility.calcTotalIn(comboDimFtW.getSelectedIndex(), comboDimInW.getSelectedIndex(), 0);
 				guiData.setDeckDimension(update);
-				if (update[0] > update[1]){
+				if (guiData.getRampDir().size() != 0 && guiData.getRampDir().get(0)%2 == 0){
 					guiUtility.setOffsetRangeNumber(comboRampOffset, -(int)(update[0]/2 - 20), (int)update[0]/2 - 20);
 					comboRampOffset.setSelectedItem((int)update[0]/2 - 20);
 				}
@@ -245,8 +245,8 @@ public class inputdata extends JFrame {
 				double[] update = guiData.getDeckDimension();
 				update[1] = guiUtility.calcTotalIn(comboDimFtL.getSelectedIndex(), comboDimInL.getSelectedIndex(), 0);
 				guiData.setDeckDimension(update);
-				if (update[0] < update[1]){
-					guiUtility.setOffsetRangeNumber(comboRampOffset, -(int)(update[0]/2 - 20), (int)update[0]/2 - 20);
+				if (guiData.getRampDir().size() != 0 && guiData.getRampDir().get(0)%2 == 1){
+					guiUtility.setOffsetRangeNumber(comboRampOffset, -(int)(update[1]/2 - 20), (int)update[1]/2 - 20);
 					comboRampOffset.setSelectedItem((int)update[1]/2 - 20);
 				}
 			} 
@@ -257,8 +257,8 @@ public class inputdata extends JFrame {
 				double[] update = guiData.getDeckDimension();
 				update[1] = guiUtility.calcTotalIn(comboDimFtL.getSelectedIndex(), comboDimInL.getSelectedIndex(), 0);
 				guiData.setDeckDimension(update);
-				if (update[0] < update[1]){
-					guiUtility.setOffsetRangeNumber(comboRampOffset, -(int)(update[0]/2 - 20), (int)update[0]/2 - 20);
+				if (guiData.getRampDir().size() != 0 && guiData.getRampDir().get(0)%2 == 1){
+					guiUtility.setOffsetRangeNumber(comboRampOffset, -(int)(update[1]/2 - 20), (int)update[1]/2 - 20);
 					comboRampOffset.setSelectedItem((int)update[1]/2 - 20);
 				}
 			} 
@@ -268,10 +268,10 @@ public class inputdata extends JFrame {
 		comboRampOffset.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				double[] range = guiData.getDeckDimension();
-				if (range[0] > range[1]){
-					guiData.setDeckOffSet(comboRampOffset.getSelectedIndex() - (int)(range[0]/2 - 20));
-				} else if (range[0] == 0 || range[1] == 0) {
+				if (guiData.getRampDir().size() == 0){
 					guiData.setDeckOffSet(comboRampOffset.getSelectedIndex() - (MAX_FEET - 20));
+				} else if (guiData.getRampDir().get(0)%2 == 0) {
+					guiData.setDeckOffSet(comboRampOffset.getSelectedIndex() - (int)(range[0]/2 - 20));
 				} else {
 					guiData.setDeckOffSet(comboRampOffset.getSelectedIndex() - (int)(range[1]/2 - 20));
 				}
@@ -286,19 +286,20 @@ public class inputdata extends JFrame {
 //			}
 //		});
 		
-//		//** click to change direction of first ramp **//
-//		lblDeck.addMouseListener(new MouseAdapter() {
-//			@Override
-//			public void mouseClicked(MouseEvent arg0) {
-//				if ((comboFromDeck.getSelectedIndex() + 1) >= comboFromDeck.getItemCount()){
-//					comboFromDeck.setSelectedIndex(0);
-//				} else {
-//					comboFromDeck.setSelectedIndex(comboFromDeck.getSelectedIndex() + 1);
-//				}
-////				guiUtility.setRampDirection(comboFromDeck.getSelectedIndex(), sl_scrollPanel, lblDeck, null, null, 
-////						lblRamp, btnAdd, btnRemove, 0);
-//			}
-//		});
+		//** click to change direction of first ramp **//
+		lblDeck.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				double[] update = guiData.getDeckDimension();
+				if (guiData.getRampDir().get(0)%2 == 0 && update[0] != 0){
+					guiUtility.setOffsetRangeNumber(comboRampOffset, -(int)(update[0]/2 - 20), (int)update[0]/2 - 20);
+					comboRampOffset.setSelectedItem((int)update[0]/2 - 20);
+				} else if (guiData.getRampDir().get(0)%2 == 1 && update[0] != 0){
+					guiUtility.setOffsetRangeNumber(comboRampOffset, -(int)(update[1]/2 - 20), (int)update[1]/2 - 20);
+					comboRampOffset.setSelectedItem((int)update[1]/2 - 20);
+				}
+			}
+		});
 		
 		
 		btnSave.addMouseListener(new MouseAdapter() {

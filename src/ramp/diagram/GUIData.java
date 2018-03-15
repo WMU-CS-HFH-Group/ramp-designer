@@ -8,7 +8,7 @@ import java.util.ArrayList;
  */
 public class GUIData {
 	private static double deckHeight = 0; // Height of deck
-	private static double[] deckDimension = { 1, 2 }; // Dimension of deck
+	private static double[] deckDimension = { 0, 0 }; // Dimension of deck
 	private static int deckOffSet = 0; // Offset off of the center
 	private static double rampLengthTotal = 0; // Amount of in until ground
 	private static double usedIn = 0; // Total number of inches used
