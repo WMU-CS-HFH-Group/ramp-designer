@@ -11,7 +11,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-
 public class inputdata extends JFrame {
 	/**
 	 * Just to make java happy
