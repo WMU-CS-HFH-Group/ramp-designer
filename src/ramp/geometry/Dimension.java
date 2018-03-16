@@ -353,7 +353,7 @@ public class Dimension implements Comparable<Dimension> {
 		Dimension d2 = (Dimension) o;
 		return this.length == d2.length;
 	}
-
+	
 	// STATIC ULILITIES //
 
 	public static int convertFraction(String fraction, int denom) {

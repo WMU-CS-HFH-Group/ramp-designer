@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 import javax.swing.*;
 
+import ramp.diagram.CustomItem;
 import ramp.diagram.DiagramFrame;
 import ramp.diagram.GUIData;
 import ramp.geometry.Dimension;
@@ -582,6 +583,7 @@ public class GUIUtilitys{
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				try{
+					guiData.setItems(new DefaultListModel<CustomItem>());
 					DiagramFrame sideView = new DiagramFrame(guiData, false);
 					sideView.setTitle("Ramp Diagram");
 					sideView.setVisible(true);

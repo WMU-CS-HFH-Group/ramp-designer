@@ -43,6 +43,7 @@ import javax.swing.event.ChangeEvent;
 import java.awt.Component;
 import javax.swing.JSeparator;
 import java.awt.GridLayout;
+import javax.swing.SwingConstants;
 
 public class DiagramFrame extends JFrame {
 
@@ -50,7 +51,7 @@ public class DiagramFrame extends JFrame {
 	 * Version id to make Eclipse happy
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	private JPanel contentPane;
 	private Diagram diagram;
 
@@ -137,8 +138,8 @@ public class DiagramFrame extends JFrame {
 					textDeckX.setText(diagram.getSideViewOrigin().getX().toString());
 					textDeckY.setText(diagram.getSideViewOrigin().getY().toString());
 				} else {
-					textDeckX.setText(diagram.getRamp().getLocation().getX().toString());
-					textDeckY.setText(diagram.getRamp().getLocation().getY().toString());
+					textDeckX.setText(diagram.getDeckLocation().getX().toString());
+					textDeckY.setText(diagram.getDeckLocation().getY().toString());
 				}
 			}
 		});
@@ -152,6 +153,7 @@ public class DiagramFrame extends JFrame {
 		panel_5.setLayout(new GridLayout(0, 5, 0, 0));
 
 		JLabel lblDeckX = new JLabel("Deck x");
+		lblDeckX.setHorizontalAlignment(SwingConstants.RIGHT);
 		panel_5.add(lblDeckX);
 
 		textDeckX = new JTextField();
@@ -159,6 +161,7 @@ public class DiagramFrame extends JFrame {
 		textDeckX.setColumns(10);
 
 		JLabel lblDeckY = new JLabel("Deck y");
+		lblDeckY.setHorizontalAlignment(SwingConstants.RIGHT);
 		panel_5.add(lblDeckY);
 
 		textDeckY = new JTextField();
@@ -172,7 +175,7 @@ public class DiagramFrame extends JFrame {
 				if (diagram.isSideView()) {
 					diagram.setSideViewOrigin(c);
 				} else {
-					diagram.getRamp().setLocation(c);
+					diagram.setDeckLocation(c);
 				}
 				diagram.revalidate();
 				diagram.repaint();
@@ -642,9 +645,10 @@ public class DiagramFrame extends JFrame {
 
 	public DiagramFrame(GUIData data, boolean side) {
 		this();
-		this.diagram = new Diagram(data, side, listCustomItemsModel);
-		textDeckX.setText(diagram.getRamp().getLocation().getX().toString());
-		textDeckY.setText(diagram.getRamp().getLocation().getY().toString());
+		this.diagram = new Diagram(data, side);
+		listCustomItemsModel = data.getItems();
+		textDeckX.setText(diagram.getDeckLocation().getX().toString());
+		textDeckY.setText(diagram.getDeckLocation().getY().toString());
 
 		contentPane.add(diagram, BorderLayout.CENTER);
 

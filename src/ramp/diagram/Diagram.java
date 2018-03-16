@@ -46,17 +46,14 @@ public class Diagram extends Component implements Printable {
 	private GUIData guiData;
 	private Ramp ramp;
 	private boolean side;
-	private Coordinate sideViewOrigin;
 
 	// Lists of custom items
-	private DefaultListModel<CustomItem> items;
 
-	public Diagram(GUIData guiData, boolean side, DefaultListModel<CustomItem> items) {
+	public Diagram(GUIData guiData, boolean side) {
 
 		// Store Input
 		this.guiData = guiData;
 		this.side = side;
-		this.items = items;
 
 		// Transformation
 		this.scale = 0.25;
@@ -64,7 +61,6 @@ public class Diagram extends Component implements Printable {
 		this.translationY = 0;
 		this.panOrigin = new Point(0, 0);
 		this.lastTranslation = new Point(0, 0);
-		this.sideViewOrigin = new Coordinate(new Dimension(36), new Dimension(36));
 
 		// Grids
 		this.grids = new ArrayList<Grid>();
@@ -168,14 +164,16 @@ public class Diagram extends Component implements Printable {
 			this.drawGrid(g, grid);
 		}
 
+		ramp.setLocation(new Coordinate(guiData.getDeckLocation()));
+		
 		if (side) {
-			this.drawRampSide(g, ramp, sideViewOrigin);
+			this.drawRampSide(g, ramp, new Coordinate(guiData.getSideViewOrigin()));
 		} else {
 			this.drawRampTop(g, ramp);
 		}
 
-		for (int i = 0; i < items.size(); i++) {
-			CustomItem item = items.getElementAt(i);
+		for (int i = 0; i < guiData.getItems().size(); i++) {
+			CustomItem item = guiData.getItems().getElementAt(i);
 			item.draw(g);
 		}
 	}
@@ -185,11 +183,19 @@ public class Diagram extends Component implements Printable {
 	}
 
 	public Coordinate getSideViewOrigin() {
-		return sideViewOrigin;
+		return new Coordinate(guiData.getSideViewOrigin());
 	}
 
 	public void setSideViewOrigin(Coordinate sideViewOrigin) {
-		this.sideViewOrigin = sideViewOrigin;
+		guiData.setSideViewOrigin(sideViewOrigin.toArray());
+	}
+
+	public Coordinate getDeckLocation() {
+		return new Coordinate(guiData.getDeckLocation());
+	}
+
+	public void setDeckLocation(Coordinate deckLocation) {
+		guiData.setDeckLocation(deckLocation.toArray());
 	}
 
 	public void generateRamp() {
