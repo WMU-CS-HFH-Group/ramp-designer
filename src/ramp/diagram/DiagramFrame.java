@@ -8,7 +8,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JToolBar;
-import javax.swing.ListModel;
 import javax.imageio.ImageIO;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -18,13 +17,11 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
+import java.io.File;
 import java.io.IOException;
 import java.awt.event.ActionEvent;
 import javax.swing.JSplitPane;
 import javax.swing.JList;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.RowSpec;
 
 import ramp.diagram.Label.Alignment;
 import ramp.geometry.Coordinate;
@@ -32,31 +29,25 @@ import ramp.geometry.Dimension;
 
 import javax.swing.JLabel;
 import javax.swing.JTextField;
-import com.jgoodies.forms.layout.FormSpecs;
-import javax.swing.SwingConstants;
-import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
-import javax.swing.JLayeredPane;
-import java.awt.FlowLayout;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JTextPane;
 import javax.swing.DefaultComboBoxModel;
-import java.awt.event.ItemListener;
-import java.awt.event.ItemEvent;
 import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
-import java.awt.Component;
 
 public class DiagramFrame extends JFrame {
 
+	/**
+	 * Version id to make Eclipse happy
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private JPanel contentPane;
 	private Diagram diagram;
 
@@ -121,7 +112,8 @@ public class DiagramFrame extends JFrame {
 				if (option == JFileChooser.APPROVE_OPTION) {
 					BufferedImage image = diagram.generateImage();
 					try {
-						ImageIO.write(image, "png", chooser.getSelectedFile());
+						File file = new File(chooser.getSelectedFile().toString() + ".png");
+						ImageIO.write(image, "png", file);
 					} catch (IOException e1) {
 						JOptionPane.showMessageDialog(null, "Could not save image.", "Error",
 								JOptionPane.ERROR_MESSAGE);
