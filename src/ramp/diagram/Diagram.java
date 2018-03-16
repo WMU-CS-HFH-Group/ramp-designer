@@ -68,7 +68,7 @@ public class Diagram extends Component implements Printable {
 
 		// Grids
 		this.grids = new ArrayList<Grid>();
-		
+
 		// Generate ramp
 		this.generateRamp();
 
@@ -179,7 +179,7 @@ public class Diagram extends Component implements Printable {
 			item.draw(g);
 		}
 	}
-	
+
 	public Ramp getRamp() {
 		return ramp;
 	}

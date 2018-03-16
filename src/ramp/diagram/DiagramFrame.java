@@ -132,7 +132,7 @@ public class DiagramFrame extends JFrame {
 		tglbtnSideView.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent arg0) {
 				diagram.setSideView(tglbtnSideView.isSelected());
-				
+
 				if (diagram.isSideView()) {
 					textDeckX.setText(diagram.getSideViewOrigin().getX().toString());
 					textDeckY.setText(diagram.getSideViewOrigin().getY().toString());
