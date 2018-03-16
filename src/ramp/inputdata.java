@@ -27,7 +27,7 @@ public class inputdata extends JFrame {
 	 * Create the frame and basic GUI.
 	 */
 	public inputdata() {
-		setTitle("RampDesign by Lana-Wulf Soft");
+		setTitle("RampDesign");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 799, 601);
 		contentPane = new JPanel();

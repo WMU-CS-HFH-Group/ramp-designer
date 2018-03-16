@@ -21,15 +21,7 @@ public class GUIData {
 																			// 5 uturn left up, 6 uturn left down,
 																			// 7 uturn right up, 8 uturn right down
 	private static int[] coords = {0, 0, 0, 0}; // The min and max coordinates the components are kept: 
-												// 1 min x, 2 min y, 3 max x, 4 max y
-
-	public GUIData() {
-		
-	}
-	
-	public GUIData(double deckWidth, double deckLength, double deckHeight, double deckLocation, double firstRampLength, Direction firstRampDirection, double firstRampOffset) {
-		
-	}
+												// 0 min x, 1 min y, 2 max x, 3 max y
 
 	public double getDeckHeight() {
 		return deckHeight;

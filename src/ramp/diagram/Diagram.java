@@ -113,7 +113,7 @@ public class Diagram extends Component implements Printable {
 	}
 
 	public void launch() {
-		
+
 	}
 
 	public void resetTranslation() {
@@ -136,11 +136,11 @@ public class Diagram extends Component implements Printable {
 	public void removeGrid(Grid grid) {
 		this.grids.remove(grid);
 	}
-	
+
 	public boolean isSideView() {
 		return side;
 	}
-	
+
 	public void setSideView(boolean side) {
 		this.side = side;
 		revalidate();
@@ -161,10 +161,14 @@ public class Diagram extends Component implements Printable {
 		for (Grid grid : this.grids) {
 			this.drawGrid(g, grid);
 		}
-
+ 
+		// Calculate the ramp location.
+		int deckX = guiData.getCoords()[0] + 36;
+		int deckY = guiData.getCoords()[1] + 36;
+		
 		// this.drawSample(g);
 		Ramp ramp = new Ramp(new Dimension(this.guiData.getDeckHeight()),
-				new Coordinate(new Dimension(25, 0), new Dimension(0)));
+				new Coordinate(new Dimension(deckX), new Dimension(deckY)));
 		for (int i = 0; i < this.guiData.getRampLength().size(); i++) {
 			Direction d = Direction.UNDEFINED;
 			Direction hairpinDirection = Direction.UNDEFINED;
@@ -240,7 +244,7 @@ public class Diagram extends Component implements Printable {
 		} else {
 			this.drawRampTop(g, ramp);
 		}
-		
+
 		for (int i = 0; i < items.size(); i++) {
 			CustomItem item = items.getElementAt(i);
 			item.draw(g);
@@ -259,7 +263,7 @@ public class Diagram extends Component implements Printable {
 	public Font getLabelFont() {
 		return labelFont;
 	}
-	
+
 	public void drawRampTop(Graphics2D g, Ramp r) {
 		Dimension x = r.getLocation().getX();
 		Dimension y = r.getLocation().getY();
@@ -565,6 +569,8 @@ public class Diagram extends Component implements Printable {
 			Dimension rail1Height = new Dimension(12); // Height from landing for bottom railing
 			Dimension rail2Height = new Dimension(24); // Height from landing for middle railing
 			Coordinate firstSupportLocation = origin.clone();
+			Dimension deckBoardWidth = new Dimension(6);
+			Dimension deckBoardThickness = new Dimension(2);
 
 			// Set up graphics
 			g.setStroke(new BasicStroke(5));
@@ -579,6 +585,18 @@ public class Diagram extends Component implements Printable {
 			g.drawRect(coord(origin.getX()), coord(origin.getY()) - coord(landingHeight), coord(landingWidth),
 					coord(new Dimension(6)));
 
+			// Draw deck boards on landing
+			/*
+			 * int dbx = 0; int dby = coord(origin.getY()) - coord(landingHeight) -
+			 * coord(deckBoardThickness); for (dbx = coord(origin.getX()); dbx <=
+			 * coord(origin.getX()) + coord(landingWidth) - coord(deckBoardWidth); dbx +=
+			 * coord(deckBoardWidth)) { g.drawRect(dbx, dby, coord(deckBoardWidth),
+			 * coord(deckBoardThickness)); }
+			 * 
+			 * int endX = coord(origin.getX()) + coord(landingWidth); if (dbx < endX) {
+			 * g.drawRect(dbx, dby, endX - dbx, coord(deckBoardThickness)); }
+			 */
+
 			// Draw ramp floor
 			g.drawPolygon(
 					new int[] { coord(origin.getX()) + coord(landingWidth),
@@ -590,6 +608,11 @@ public class Diagram extends Component implements Printable {
 							coord(origin.getY()) - coord(nextLandingHeight) + coord(new Dimension(6)),
 							coord(origin.getY()) - coord(landingHeight) + coord(new Dimension(6)) },
 					4);
+
+			// Draw ramp deck boards
+			int rbx = coord(origin.getX()) + coord(landingWidth); // X of ramp board along the bottom
+			int rby = coord(origin.getY()) - coord(landingHeight);
+			// TODO: ramp deck boards
 
 			// Draw posts for landing
 			g.drawRect(coord(origin.getX()), coord(origin.getY()) - coord(firstPostHeight), coord(new Dimension(4)),
