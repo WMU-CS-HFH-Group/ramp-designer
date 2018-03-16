@@ -177,9 +177,9 @@ public class Diagram extends Component implements Printable {
 
 			if (i > 0) {
 				if (this.guiData.getTurnAround().get(i) > 4) {
-					turnaroundHeight = new Dimension(8, 0);
+					turnaroundHeight = new Dimension(83.5);
 				} else if (this.guiData.getTurnAround().get(i) > 0) {
-					turnaroundWidth = new Dimension(8, 0);
+					turnaroundWidth = new Dimension(83.5);
 				}
 			}
 
