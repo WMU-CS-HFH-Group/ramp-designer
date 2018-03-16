@@ -312,7 +312,11 @@ public class Dimension implements Comparable<Dimension> {
 				}
 			}
 		} else {
-			throw new Exception("Could not parse dimension string.");
+			try {
+				length = Double.parseDouble(s) * 12;
+			} catch (NumberFormatException n) {
+				throw new Exception("Could not parse dimension string.");
+			}
 		}
 
 		return length;

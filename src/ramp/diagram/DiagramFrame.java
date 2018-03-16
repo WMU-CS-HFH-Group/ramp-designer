@@ -53,6 +53,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
+import java.awt.Component;
 
 public class DiagramFrame extends JFrame {
 
