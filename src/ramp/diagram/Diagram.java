@@ -44,7 +44,9 @@ public class Diagram extends Component implements Printable {
 
 	// Input
 	private GUIData guiData;
+	private Ramp ramp;
 	private boolean side;
+	private Coordinate sideViewOrigin;
 
 	// Lists of custom items
 	private DefaultListModel<CustomItem> items;
@@ -62,9 +64,13 @@ public class Diagram extends Component implements Printable {
 		this.translationY = 0;
 		this.panOrigin = new Point(0, 0);
 		this.lastTranslation = new Point(0, 0);
+		this.sideViewOrigin = new Coordinate(new Dimension(36), new Dimension(36));
 
 		// Grids
 		this.grids = new ArrayList<Grid>();
+		
+		// Generate ramp
+		this.generateRamp();
 
 		// Default grid
 		Grid ftGrid = Grid.createFeetGrid();
@@ -161,14 +167,35 @@ public class Diagram extends Component implements Printable {
 		for (Grid grid : this.grids) {
 			this.drawGrid(g, grid);
 		}
- 
-		// Calculate the ramp location.
-		int deckX = guiData.getCoords()[0] + 36;
-		int deckY = guiData.getCoords()[1] + 36;
-		
+
+		if (side) {
+			this.drawRampSide(g, ramp, sideViewOrigin);
+		} else {
+			this.drawRampTop(g, ramp);
+		}
+
+		for (int i = 0; i < items.size(); i++) {
+			CustomItem item = items.getElementAt(i);
+			item.draw(g);
+		}
+	}
+	
+	public Ramp getRamp() {
+		return ramp;
+	}
+
+	public Coordinate getSideViewOrigin() {
+		return sideViewOrigin;
+	}
+
+	public void setSideViewOrigin(Coordinate sideViewOrigin) {
+		this.sideViewOrigin = sideViewOrigin;
+	}
+
+	public void generateRamp() {
 		// this.drawSample(g);
-		Ramp ramp = new Ramp(new Dimension(this.guiData.getDeckHeight()),
-				new Coordinate(new Dimension(deckX), new Dimension(deckY)));
+		this.ramp = new Ramp(new Dimension(this.guiData.getDeckHeight()),
+				new Coordinate(new Dimension(3, 0), new Dimension(3, 0)));
 		for (int i = 0; i < this.guiData.getRampLength().size(); i++) {
 			Direction d = Direction.UNDEFINED;
 			Direction hairpinDirection = Direction.UNDEFINED;
@@ -238,17 +265,6 @@ public class Diagram extends Component implements Printable {
 		ramp.getSection(0).setLandingSize(new Dimension(this.guiData.getDeckDimension()[0]),
 				new Dimension(this.guiData.getDeckDimension()[1]));
 		ramp.getSection(0).setRampOffset(new Dimension(this.guiData.getDeckOffSet()));
-
-		if (side) {
-			this.drawRampSide(g, ramp);
-		} else {
-			this.drawRampTop(g, ramp);
-		}
-
-		for (int i = 0; i < items.size(); i++) {
-			CustomItem item = items.getElementAt(i);
-			item.draw(g);
-		}
 	}
 
 	public BufferedImage generateImage() {
@@ -265,8 +281,8 @@ public class Diagram extends Component implements Printable {
 	}
 
 	public void drawRampTop(Graphics2D g, Ramp r) {
-		Dimension x = r.getLocation().getX();
-		Dimension y = r.getLocation().getY();
+		Dimension x = r.getLocation().getX().clone();
+		Dimension y = r.getLocation().getY().clone();
 
 		// If this is true, the last section overlaps with this one.
 		boolean hairPin = false;
@@ -544,12 +560,11 @@ public class Diagram extends Component implements Printable {
 		}
 	}
 
-	public void drawRampSide(Graphics2D g, Ramp r) {
+	public void drawRampSide(Graphics2D g, Ramp r, Coordinate origin) {
 		int longestSectionIndex = r.getLongestSection();
 
 		if (longestSectionIndex >= 0) {
 			Section s = r.getSection(longestSectionIndex);
-			Coordinate origin = new Coordinate(new Dimension(3, 0), new Dimension(10, 0));
 			Box rampBox = new Box(new Coordinate(new Dimension(0), new Dimension(0)), s.getRampWidth(),
 					s.getRampLength());
 			if (s.getDirection() == Direction.LEFT || s.getDirection() == Direction.RIGHT) {

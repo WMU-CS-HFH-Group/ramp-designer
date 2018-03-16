@@ -40,6 +40,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
+import java.awt.Component;
+import javax.swing.JSeparator;
+import java.awt.GridLayout;
 
 public class DiagramFrame extends JFrame {
 
@@ -72,6 +75,8 @@ public class DiagramFrame extends JFrame {
 	private JTextField textTextX;
 	private JTextField textTextY;
 	private JTextPane textTextText;
+	private JTextField textDeckX;
+	private JTextField textDeckY;
 
 	/**
 	 * Create the frame.
@@ -122,14 +127,58 @@ public class DiagramFrame extends JFrame {
 			}
 		});
 		toolBar.add(btnSaveImage);
-		
+
 		JToggleButton tglbtnSideView = new JToggleButton("Side View");
 		tglbtnSideView.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent arg0) {
 				diagram.setSideView(tglbtnSideView.isSelected());
+				
+				if (diagram.isSideView()) {
+					textDeckX.setText(diagram.getSideViewOrigin().getX().toString());
+					textDeckY.setText(diagram.getSideViewOrigin().getY().toString());
+				} else {
+					textDeckX.setText(diagram.getRamp().getLocation().getX().toString());
+					textDeckY.setText(diagram.getRamp().getLocation().getY().toString());
+				}
 			}
 		});
 		toolBar.add(tglbtnSideView);
+
+		JSeparator separator = new JSeparator();
+		toolBar.add(separator);
+
+		JPanel panel_5 = new JPanel();
+		toolBar.add(panel_5);
+		panel_5.setLayout(new GridLayout(0, 5, 0, 0));
+
+		JLabel lblDeckX = new JLabel("Deck x");
+		panel_5.add(lblDeckX);
+
+		textDeckX = new JTextField();
+		panel_5.add(textDeckX);
+		textDeckX.setColumns(10);
+
+		JLabel lblDeckY = new JLabel("Deck y");
+		panel_5.add(lblDeckY);
+
+		textDeckY = new JTextField();
+		panel_5.add(textDeckY);
+		textDeckY.setColumns(10);
+
+		JButton btnUpdateDeck = new JButton("Update");
+		btnUpdateDeck.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Coordinate c = new Coordinate(new Dimension(textDeckX.getText()), new Dimension(textDeckY.getText()));
+				if (diagram.isSideView()) {
+					diagram.setSideViewOrigin(c);
+				} else {
+					diagram.getRamp().setLocation(c);
+				}
+				diagram.revalidate();
+				diagram.repaint();
+			}
+		});
+		panel_5.add(btnUpdateDeck);
 
 		splitPane = new JSplitPane();
 		splitPane.setResizeWeight(0.5);
@@ -476,7 +525,7 @@ public class DiagramFrame extends JFrame {
 				}
 			}
 		});
-		
+
 		JButton btnDuplicate = new JButton("Duplicate");
 		btnDuplicate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -498,7 +547,7 @@ public class DiagramFrame extends JFrame {
 			}
 		});
 		toolBar_1.add(btnClear);
-		
+
 		JScrollPane scrollPane = new JScrollPane();
 		panel_4.add(scrollPane, BorderLayout.CENTER);
 		listCustomItems = new JList<CustomItem>(listCustomItemsModel);
@@ -594,6 +643,9 @@ public class DiagramFrame extends JFrame {
 	public DiagramFrame(GUIData data, boolean side) {
 		this();
 		this.diagram = new Diagram(data, side, listCustomItemsModel);
+		textDeckX.setText(diagram.getRamp().getLocation().getX().toString());
+		textDeckY.setText(diagram.getRamp().getLocation().getY().toString());
+
 		contentPane.add(diagram, BorderLayout.CENTER);
 
 		if (side) {
