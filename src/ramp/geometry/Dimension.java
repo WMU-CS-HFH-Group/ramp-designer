@@ -10,13 +10,16 @@ public class Dimension implements Comparable<Dimension> {
 	 * Length of the dimension in inches.
 	 */
 	private double length;
+	private boolean displayInInches;
 
 	public Dimension(double inches) {
 		this.length = inches;
+		this.displayInInches = false;
 	}
 
 	public Dimension(int feet, double inches) {
 		this.length = (double) feet * 12 + inches;
+		this.displayInInches = false;
 	}
 
 	/**
@@ -176,6 +179,14 @@ public class Dimension implements Comparable<Dimension> {
 
 	// IMPLEMENTATIONS //
 
+	public boolean isDisplayInInches() {
+		return displayInInches;
+	}
+
+	public void setDisplayInInches(boolean displayInInches) {
+		this.displayInInches = displayInInches;
+	}
+
 	@Override
 	/**
 	 * Converts this dimension into a readable string. Formatted examples:
@@ -183,44 +194,51 @@ public class Dimension implements Comparable<Dimension> {
 	 * 8' 4 3/8", 5 1/2", 0', 7'
 	 */
 	public String toString() {
-		String result = "";
-		int eighths = this.getInchFractional(8);
-		String ft = String.format("%d", this.getFeet());
-		String in = String.format("%d", this.getWholeInches());
-		String frac = String.format("%d/8", eighths);
+			String result = "";
+			int eighths = this.getInchFractional(8);
+			String ft = String.format("%d", this.getFeet());
+			String in = String.format("%d", this.getWholeInches());
+			int floorInches = (int) Math.floor(this.getLength());
+			String frac = String.format("%d/8", eighths);
 
-		// Simplify the fraction if it can be expressed with a power-of-two denominator.
-		if (eighths % 4 == 0) {
-			// If it can be reduced to halves, display halves.
-			frac = String.format("%d/2", eighths / 4);
-		} else if (eighths % 2 == 0) {
-			// If it can be reduced to fourths, display fourths.
-			frac = String.format("%d/4", eighths / 2);
-		}
+			// Simplify the fraction if it can be expressed with a power-of-two denominator.
+			if (eighths % 4 == 0) {
+				// If it can be reduced to halves, display halves.
+				frac = String.format("%d/2", eighths / 4);
+			} else if (eighths % 2 == 0) {
+				// If it can be reduced to fourths, display fourths.
+				frac = String.format("%d/4", eighths / 2);
+			}
 
-		// Only concatenate strings for components that are nonzero.
-		if (this.isZero()) {
-			result = "";
-		}
+			// Only concatenate strings for components that are nonzero.
+			if (this.isZero()) {
+				result = "";
+			}
 
-		if (this.getFeet() > 0) {
-			result += String.format("%s'", ft);
-		}
+			if (this.displayInInches) {
+				if (floorInches > 0) {
+					result += String.format("%d", floorInches);
+				}
+			} else {
+				if (this.getFeet() > 0) {
+					result += String.format("%s'", ft);
+				}
+	
+				if (this.getWholeInches() > 0) {
+					result += String.format(" %s", in);
+				}
+			}
 
-		if (this.getWholeInches() > 0) {
-			result += String.format(" %s", in);
-		}
+			if (eighths > 0) {
+				result += String.format(" %s", frac);
+			}
 
-		if (eighths > 0) {
-			result += String.format(" %s", frac);
-		}
+			if (this.getInches() > 0) {
+				result += "\"";
+			}
 
-		if (this.getInches() > 0) {
-			result += "\"";
-		}
-
-		// Trim any whitespace off the beginning and end.
-		return result.trim();
+			// Trim any whitespace off the beginning and end.
+			return result.trim();
 	}
 
 	public String toStringInches() {
@@ -353,7 +371,7 @@ public class Dimension implements Comparable<Dimension> {
 		Dimension d2 = (Dimension) o;
 		return this.length == d2.length;
 	}
-	
+
 	// STATIC ULILITIES //
 
 	public static int convertFraction(String fraction, int denom) {

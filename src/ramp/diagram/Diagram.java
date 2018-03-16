@@ -211,8 +211,10 @@ public class Diagram extends Component implements Printable {
 			if (i > 0) {
 				if (this.guiData.getTurnAround().get(i) > 4) {
 					turnaroundHeight = new Dimension(83.5);
+					turnaroundHeight.setDisplayInInches(true);
 				} else if (this.guiData.getTurnAround().get(i) > 0) {
 					turnaroundWidth = new Dimension(83.5);
+					turnaroundWidth.setDisplayInInches(true);
 				}
 			}
 
@@ -296,7 +298,7 @@ public class Diagram extends Component implements Printable {
 		Coordinate[] posts = new Coordinate[0];
 
 		Box landingBox, rampBox;
-
+		
 		for (int i = 0; i < r.countSections(); i++) {
 			Section s = r.getSection(i);
 
