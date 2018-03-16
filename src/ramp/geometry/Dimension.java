@@ -285,7 +285,7 @@ public class Dimension implements Comparable<Dimension> {
 	 *             If the string could not be parsed.
 	 */
 	public static double inchesFromString(String s) throws Exception {
-		String p = "^(?:(?<fq>-?\\d+)\\s*(?<fu>\\'|f(?:ee)?t\\.?|))?\\s*(?:(?<iq>(?:\\d+\\s+)?\\d+\\/\\d+|\\d*\\.\\d+|\\d+)\\s*(?<iu>\\\"|''|in(?:ches|\\.?)))?$";
+		String p = "^(?:(?<fq>-?\\d+)\\s*(?<fu>\\'|f(?:ee)?t\\.?))?\\s*(?:(?<iq>(?:\\d+\\s+)?\\d+\\/\\d+|\\d*\\.\\d+|\\d+)\\s*(?<iu>\\\"|''|in(?:ches|\\.?)))?$";
 		Pattern pattern = Pattern.compile(p);
 		Matcher matcher = pattern.matcher(s);
 
