@@ -11,7 +11,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-
 public class inputdata extends JFrame {
 	/**
 	 * Just to make java happy
@@ -28,7 +27,7 @@ public class inputdata extends JFrame {
 	 * Create the frame and basic GUI.
 	 */
 	public inputdata() {
-		setTitle("RampDesign by Lana-Wulf Soft");
+		setTitle("RampDesign");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 799, 601);
 		contentPane = new JPanel();
@@ -131,33 +130,33 @@ public class inputdata extends JFrame {
 		sl_contentPane.putConstraint(SpringLayout.WEST, lblStyle, 0, SpringLayout.WEST, lblHeightOfDeck);
 		contentPane.add(lblStyle);
 		
-		JComboBox<Integer> comboRampOffset = new JComboBox<Integer>();
+		JComboBox<String> comboRampOffset = new JComboBox<String>();
 		sl_contentPane.putConstraint(SpringLayout.NORTH, comboRampOffset, 0, SpringLayout.NORTH, lblStyle);
 		sl_contentPane.putConstraint(SpringLayout.WEST, comboRampOffset, 6, SpringLayout.EAST, lblStyle);
-		sl_contentPane.putConstraint(SpringLayout.EAST, comboRampOffset, 59, SpringLayout.EAST, lblStyle);
-		guiUtility.setComboBoxRangeNumber(comboRampOffset, -MAX_FEET, MAX_FEET);
+		sl_contentPane.putConstraint(SpringLayout.EAST, comboRampOffset, 80, SpringLayout.EAST, lblStyle);
+		guiUtility.setOffsetRangeNumber(comboRampOffset, -MAX_FEET, MAX_FEET);
 		comboRampOffset.setSelectedIndex(MAX_FEET);
 		contentPane.add(comboRampOffset);
 		
-		JLabel lblRampIn = new JLabel("'' off of the ");
+		JLabel lblRampIn = new JLabel("\" off center."); //off of the ");
 		sl_contentPane.putConstraint(SpringLayout.NORTH, lblRampIn, 0, SpringLayout.NORTH, comboRampOffset);
 		sl_contentPane.putConstraint(SpringLayout.WEST, lblRampIn, 3, SpringLayout.EAST, comboRampOffset);
 		lblRampIn.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		contentPane.add(lblRampIn);
 		
-		JComboBox<String> comboFromDeck = new JComboBox<String>();
-		sl_contentPane.putConstraint(SpringLayout.NORTH, comboFromDeck, 0, SpringLayout.NORTH, lblRampIn);
-		sl_contentPane.putConstraint(SpringLayout.WEST, comboFromDeck, 3, SpringLayout.EAST, lblRampIn);
-		sl_contentPane.putConstraint(SpringLayout.EAST, comboFromDeck, 66, SpringLayout.EAST, lblRampIn);
-		comboFromDeck.addItem("Top");
-		comboFromDeck.addItem("Right");
-		comboFromDeck.addItem("Bottom");
-		comboFromDeck.addItem("Left");
-		contentPane.add(comboFromDeck);
+//		JComboBox<String> comboFromDeck = new JComboBox<String>();
+//		sl_contentPane.putConstraint(SpringLayout.NORTH, comboFromDeck, 0, SpringLayout.NORTH, lblRampIn);
+//		sl_contentPane.putConstraint(SpringLayout.WEST, comboFromDeck, 3, SpringLayout.EAST, lblRampIn);
+//		sl_contentPane.putConstraint(SpringLayout.EAST, comboFromDeck, 66, SpringLayout.EAST, lblRampIn);
+//		comboFromDeck.addItem("Top");
+//		comboFromDeck.addItem("Right");
+//		comboFromDeck.addItem("Bottom");
+//		comboFromDeck.addItem("Left");
+//		contentPane.add(comboFromDeck);
 		
 		JLabel lblHouse = new JLabel("");
-		sl_contentPane.putConstraint(SpringLayout.SOUTH, lblHouse, 10, SpringLayout.SOUTH, comboFromDeck);
 		lblHouse.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/House.png")));
+		sl_contentPane.putConstraint(SpringLayout.SOUTH, lblHouse, 10, SpringLayout.SOUTH, lblRampIn);
 		sl_contentPane.putConstraint(SpringLayout.NORTH, lblHouse, 0, SpringLayout.NORTH, contentPane);
 		sl_contentPane.putConstraint(SpringLayout.WEST, lblHouse, 0, SpringLayout.WEST, contentPane);
 		sl_contentPane.putConstraint(SpringLayout.EAST, lblHouse, 0, SpringLayout.EAST, contentPane);
@@ -180,9 +179,9 @@ public class inputdata extends JFrame {
 		
 		JLabel lblFeetRemain = new JLabel("Ramp feet remaining: ");
 		sl_contentPane.putConstraint(SpringLayout.EAST, lblFeetRemain, -25, SpringLayout.WEST, btnSubmit);
+		sl_contentPane.putConstraint(SpringLayout.NORTH, lblFeetRemain, 0, SpringLayout.NORTH, btnSubmit);
 		lblFeetRemain.setFont(new Font("Dialog", Font.PLAIN, 14));
 		lblFeetRemain.setHorizontalAlignment(SwingConstants.RIGHT);
-		sl_contentPane.putConstraint(SpringLayout.NORTH, lblFeetRemain, 0, SpringLayout.NORTH, btnSubmit);
 		contentPane.add(lblFeetRemain);
 		guiUtility.setLblFeetRemain(lblFeetRemain);
 		
@@ -202,15 +201,16 @@ public class inputdata extends JFrame {
 		
 		
 		JLabel lblDeck = new JLabel("");
-		sl_scrollPanel.putConstraint(SpringLayout.NORTH, lblDeck, 174, SpringLayout.NORTH, scrollPanel);
-		sl_scrollPanel.putConstraint(SpringLayout.WEST, lblDeck, 302, SpringLayout.WEST, scrollPanel);
+		sl_scrollPanel.putConstraint(SpringLayout.NORTH, lblDeck, 170, SpringLayout.NORTH, scrollPanel);
+		sl_scrollPanel.putConstraint(SpringLayout.WEST, lblDeck, 320, SpringLayout.WEST, scrollPanel);
 		lblDeck.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/Deck.png")));
 		scrollPanel.add(lblDeck);
+		int[] coords = {lblDeck.getLocation().x,
+				lblDeck.getLocation().y,lblDeck.getLocation().x + lblDeck.getWidth(),
+				lblDeck.getLocation().y + lblDeck.getHeight()};
+		guiData.setCoords(coords);
 		
-		JTextArea lblRamp = new JTextArea();
-		JButton btnTurnAr = new JButton();
-		
-		guiUtility.setRamps(scrollPanel, sl_scrollPanel, lblRamp, btnTurnAr, lblFeetRemain, 0);
+		guiUtility.setRamps(scrollPanel, sl_scrollPanel, lblDeck, null, 0);
 		guiUtility.comboChangeTotal(comboInch, comboInPart);
 		
 		//** Updates dimensions in GUI data **//
@@ -219,6 +219,10 @@ public class inputdata extends JFrame {
 				double[] update = guiData.getDeckDimension();
 				update[0] = guiUtility.calcTotalIn(comboDimFtW.getSelectedIndex(), comboDimInW.getSelectedIndex(), 0);
 				guiData.setDeckDimension(update);
+				if (guiData.getRampDir().size() != 0 && guiData.getRampDir().get(0)%2 == 0){
+					guiUtility.setOffsetRangeNumber(comboRampOffset, -(int)(update[0]/2 - 20), (int)update[0]/2 - 20);
+					comboRampOffset.setSelectedItem((int)update[0]/2 - 20);
+				}
 			} 
 		});
 		
@@ -227,6 +231,10 @@ public class inputdata extends JFrame {
 				double[] update = guiData.getDeckDimension();
 				update[0] = guiUtility.calcTotalIn(comboDimFtW.getSelectedIndex(), comboDimInW.getSelectedIndex(), 0);
 				guiData.setDeckDimension(update);
+				if (guiData.getRampDir().size() != 0 && guiData.getRampDir().get(0)%2 == 0){
+					guiUtility.setOffsetRangeNumber(comboRampOffset, -(int)(update[0]/2 - 20), (int)update[0]/2 - 20);
+					comboRampOffset.setSelectedItem((int)update[0]/2 - 20);
+				}
 			} 
 		});
 		
@@ -235,6 +243,10 @@ public class inputdata extends JFrame {
 				double[] update = guiData.getDeckDimension();
 				update[1] = guiUtility.calcTotalIn(comboDimFtL.getSelectedIndex(), comboDimInL.getSelectedIndex(), 0);
 				guiData.setDeckDimension(update);
+				if (guiData.getRampDir().size() != 0 && guiData.getRampDir().get(0)%2 == 1){
+					guiUtility.setOffsetRangeNumber(comboRampOffset, -(int)(update[1]/2 - 20), (int)update[1]/2 - 20);
+					comboRampOffset.setSelectedItem((int)update[1]/2 - 20);
+				}
 			} 
 		});
 		
@@ -243,34 +255,47 @@ public class inputdata extends JFrame {
 				double[] update = guiData.getDeckDimension();
 				update[1] = guiUtility.calcTotalIn(comboDimFtL.getSelectedIndex(), comboDimInL.getSelectedIndex(), 0);
 				guiData.setDeckDimension(update);
+				if (guiData.getRampDir().size() != 0 && guiData.getRampDir().get(0)%2 == 1){
+					guiUtility.setOffsetRangeNumber(comboRampOffset, -(int)(update[1]/2 - 20), (int)update[1]/2 - 20);
+					comboRampOffset.setSelectedItem((int)update[1]/2 - 20);
+				}
 			} 
 		});
 		
 		//** Updates on offset changes **//
 		comboRampOffset.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int update = comboRampOffset.getSelectedIndex() - MAX_FEET;
-				guiData.setDeckOffSet(update);
+				double[] range = guiData.getDeckDimension();
+				if (guiData.getRampDir().size() == 0){
+					guiData.setDeckOffSet(comboRampOffset.getSelectedIndex() - (MAX_FEET - 20));
+				} else if (guiData.getRampDir().get(0)%2 == 0) {
+					guiData.setDeckOffSet(comboRampOffset.getSelectedIndex() - (int)(range[0]/2 - 20));
+				} else {
+					guiData.setDeckOffSet(comboRampOffset.getSelectedIndex() - (int)(range[1]/2 - 20));
+				}
 			} 
 		});
 		
-		//** changes direction of first ramp **//
-		comboFromDeck.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				guiUtility.setRampDirection(comboFromDeck.getSelectedIndex(), sl_scrollPanel, lblDeck, null, null, lblRamp, btnTurnAr, 0);
-			}
-		});
+//		//** changes direction of first ramp **//
+//		comboFromDeck.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+////				guiUtility.setRampDirection(comboFromDeck.getSelectedIndex(), sl_scrollPanel, lblDeck, null, null, 
+////						lblRamp, btnAdd, btnRemove, 0);
+//			}
+//		});
 		
 		//** click to change direction of first ramp **//
 		lblDeck.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				if ((comboFromDeck.getSelectedIndex() + 1) >= comboFromDeck.getItemCount()){
-					comboFromDeck.setSelectedIndex(0);
-				} else {
-					comboFromDeck.setSelectedIndex(comboFromDeck.getSelectedIndex() + 1);
+				double[] update = guiData.getDeckDimension();
+				if (guiData.getRampDir().get(0)%2 == 0 && update[0] != 0){
+					guiUtility.setOffsetRangeNumber(comboRampOffset, -(int)(update[0]/2 - 20), (int)update[0]/2 - 20);
+					comboRampOffset.setSelectedItem((int)update[0]/2 - 20);
+				} else if (guiData.getRampDir().get(0)%2 == 1 && update[0] != 0){
+					guiUtility.setOffsetRangeNumber(comboRampOffset, -(int)(update[1]/2 - 20), (int)update[1]/2 - 20);
+					comboRampOffset.setSelectedItem((int)update[1]/2 - 20);
 				}
-				guiUtility.setRampDirection(comboFromDeck.getSelectedIndex(), sl_scrollPanel, lblDeck, null, null, lblRamp, btnTurnAr, 0);
 			}
 		});
 		
@@ -292,8 +317,6 @@ public class inputdata extends JFrame {
 		
 		//** Set Submit button **//
 		guiUtility.submitButtonActions(btnSubmit);
-		
-		System.out.println();
 	}
 	
 	//**********set combo boxes boxes*******************

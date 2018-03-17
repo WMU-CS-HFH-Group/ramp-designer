@@ -2,32 +2,36 @@ package ramp.diagram;
 
 import java.util.ArrayList;
 
+import javax.swing.DefaultListModel;
+
 /**
  * Represents a ramp with multiple sections. Provides convenience methods for
  * storing data for the ramp efficiently.
  */
 public class GUIData {
 	private static double deckHeight = 0; // Height of deck
-	private static double[] deckDimension = { 1, 2 }; // Dimension of deck
+	private static double[] deckDimension = { 0, 0 }; // Dimension of deck
 	private static int deckOffSet = 0; // Offset off of the center
 	private static double rampLengthTotal = 0; // Amount of in until ground
 	private static double usedIn = 0; // Total number of inches used
 	private static ArrayList<Double> rampLength = new ArrayList<Double>(); // Length of each ramp piece
-	private static ArrayList<Integer> rampDir = new ArrayList<Integer>(); // Direction off of deck/turn around: 0 up, 1 right
-																		// 2 down, 3 left
-	private static ArrayList<Integer> turnAround = new ArrayList<Integer>(); // Type of turn around: 0 normal, 
-																			// 1 uturn up right, 2 uturn up left, 
-																			// 3 uturn down right, 4 uturn down left, 
-																			// 5 uturn left up, 6 uturn left down,
-																			// 7 uturn right up, 8 uturn right down
-
-	public GUIData() {
-		
-	}
+	private static ArrayList<Integer> rampDir = new ArrayList<Integer>(); // Direction off of deck/turn around: 0 up, 1
+																			// right
+																			// 2 down, 3 left
+	private static ArrayList<Integer> turnAround = new ArrayList<Integer>(); // Type of turn around: 0 normal,
+																				// 1 uturn up right, 2 uturn up left,
+																				// 3 uturn down right, 4 uturn down
+																				// left,
+																				// 5 uturn left up, 6 uturn left down,
+																				// 7 uturn right up, 8 uturn right down
+	private static int[] coords = { 0, 0, 0, 0 }; // The min and max coordinates the components are kept:
+													// 0 min x, 1 min y, 2 max x, 3 max y
 	
-	public GUIData(double deckWidth, double deckLength, double deckHeight, double deckLocation, double firstRampLength, Direction firstRampDirection, double firstRampOffset) {
-		
-	}
+	private static double[] deckLocation = {36, 36};
+	private static double[] sideViewOrigin = {36, 36};
+	
+	// Custom items added after generating the ramp.
+	private DefaultListModel<CustomItem> items;
 
 	public double getDeckHeight() {
 		return deckHeight;
@@ -91,5 +95,37 @@ public class GUIData {
 
 	public void setTurnAround(ArrayList<Integer> turnAround) {
 		GUIData.turnAround = turnAround;
+	}
+
+	public int[] getCoords() {
+		return coords;
+	}
+
+	public void setCoords(int[] coords) {
+		GUIData.coords = coords;
+	}
+
+	public DefaultListModel<CustomItem> getItems() {
+		return items;
+	}
+
+	public void setItems(DefaultListModel<CustomItem> items) {
+		this.items = items;
+	}
+
+	public double[] getDeckLocation() {
+		return deckLocation;
+	}
+
+	public void setDeckLocation(double[] deckLocation) {
+		GUIData.deckLocation = deckLocation;
+	}
+
+	public double[] getSideViewOrigin() {
+		return sideViewOrigin;
+	}
+
+	public void setSideViewOrigin(double[] sideViewOrigin) {
+		GUIData.sideViewOrigin = sideViewOrigin;
 	}
 }

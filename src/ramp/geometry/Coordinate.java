@@ -19,7 +19,23 @@ public class Coordinate {
 	public Coordinate(Dimension x, Dimension y) {
 		this(x, y, new Dimension(0));
 	}
-	
+
+	public Coordinate(double... ds) {
+		this.x = new Dimension(0);
+		this.y = new Dimension(0);
+		this.z = new Dimension(0);
+
+		if (ds.length > 1) {
+			this.x = new Dimension(ds[0]);
+			this.y = new Dimension(ds[1]);
+		}
+
+		if (ds.length == 3) {
+			this.z = new Dimension(ds[2]);
+		}
+
+	}
+
 	public Dimension getX() {
 		return x;
 	}
@@ -43,7 +59,7 @@ public class Coordinate {
 	public void setZ(Dimension z) {
 		this.z = z;
 	}
-	
+
 	public Coordinate swapXY() {
 		Dimension oldX = this.getX();
 		this.setX(this.getY());
@@ -71,14 +87,14 @@ public class Coordinate {
 		this.getZ().negate();
 		return this;
 	}
-	
+
 	public Dimension getDistance(Coordinate c2) {
 		double xSquare = Math.pow(c2.getX().getLength() - this.getX().getLength(), 2);
 		double ySquare = Math.pow(c2.getY().getLength() - this.getY().getLength(), 2);
 		double zSquare = Math.pow(c2.getZ().getLength() - this.getZ().getLength(), 2);
 		return new Dimension(Math.sqrt(xSquare + ySquare + zSquare));
 	}
-	
+
 	public Coordinate getMidpoint(Coordinate c2) {
 		double xAvg = (this.getX().getLength() + c2.getX().getLength()) / 2;
 		double yAvg = (this.getY().getLength() + c2.getY().getLength()) / 2;
@@ -113,5 +129,13 @@ public class Coordinate {
 	@Override
 	public String toString() {
 		return String.format("(%s, %s, %s)", this.getX().toString(), this.getY().toString(), this.getZ().toString());
+	}
+
+	public double[] toArray() {
+		if (this.getZ().isZero()) {
+			return new double[] { this.x.getLength(), this.y.getLength() };
+		} else {
+			return new double[] { this.x.getLength(), this.y.getLength(), this.z.getLength() };
+		}
 	}
 }

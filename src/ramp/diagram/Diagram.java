@@ -8,6 +8,7 @@ import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.util.List;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 
 import ramp.diagram.Label.Alignment;
@@ -43,9 +44,13 @@ public class Diagram extends Component implements Printable {
 
 	// Input
 	private GUIData guiData;
+	private Ramp ramp;
 	private boolean side;
 
+	// Lists of custom items
+
 	public Diagram(GUIData guiData, boolean side) {
+
 		// Store Input
 		this.guiData = guiData;
 		this.side = side;
@@ -60,6 +65,9 @@ public class Diagram extends Component implements Printable {
 		// Grids
 		this.grids = new ArrayList<Grid>();
 
+		// Generate ramp
+		this.generateRamp();
+
 		// Default grid
 		Grid ftGrid = Grid.createFeetGrid();
 		ftGrid.setDisplayLabels(true);
@@ -71,6 +79,7 @@ public class Diagram extends Component implements Printable {
 		this.maxWidth = new Dimension(50, 0);
 		this.maxHeight = new Dimension(50, 0);
 		this.labelFont = new Font("Arial", Font.PLAIN, 100);
+		this.setBackground(Color.WHITE);
 
 		// Event for zooming
 		this.addMouseWheelListener(new MouseAdapter() {
@@ -106,18 +115,7 @@ public class Diagram extends Component implements Printable {
 	}
 
 	public void launch() {
-		DiagramFrame frame;
-		String title = "Ramp Diagram";
 
-		if (this.side) {
-			title = "Ramp Diagram - Side View";
-		}
-
-		frame = new DiagramFrame(this);
-		frame.setTitle(title);
-		frame.setVisible(true);
-
-		this.setBackground(Color.white);
 	}
 
 	public void resetTranslation() {
@@ -141,6 +139,16 @@ public class Diagram extends Component implements Printable {
 		this.grids.remove(grid);
 	}
 
+	public boolean isSideView() {
+		return side;
+	}
+
+	public void setSideView(boolean side) {
+		this.side = side;
+		revalidate();
+		repaint();
+	}
+
 	public void paint(Graphics graphics) {
 		// Set up graphics
 		Graphics2D g = (Graphics2D) graphics;
@@ -156,9 +164,44 @@ public class Diagram extends Component implements Printable {
 			this.drawGrid(g, grid);
 		}
 
+		ramp.setLocation(new Coordinate(guiData.getDeckLocation()));
+		
+		if (side) {
+			this.drawRampSide(g, ramp, new Coordinate(guiData.getSideViewOrigin()));
+		} else {
+			this.drawRampTop(g, ramp);
+		}
+
+		for (int i = 0; i < guiData.getItems().size(); i++) {
+			CustomItem item = guiData.getItems().getElementAt(i);
+			item.draw(g);
+		}
+	}
+
+	public Ramp getRamp() {
+		return ramp;
+	}
+
+	public Coordinate getSideViewOrigin() {
+		return new Coordinate(guiData.getSideViewOrigin());
+	}
+
+	public void setSideViewOrigin(Coordinate sideViewOrigin) {
+		guiData.setSideViewOrigin(sideViewOrigin.toArray());
+	}
+
+	public Coordinate getDeckLocation() {
+		return new Coordinate(guiData.getDeckLocation());
+	}
+
+	public void setDeckLocation(Coordinate deckLocation) {
+		guiData.setDeckLocation(deckLocation.toArray());
+	}
+
+	public void generateRamp() {
 		// this.drawSample(g);
-		Ramp ramp = new Ramp(new Dimension(this.guiData.getDeckHeight()),
-				new Coordinate(new Dimension(25, 0), new Dimension(0)));
+		this.ramp = new Ramp(new Dimension(this.guiData.getDeckHeight()),
+				new Coordinate(new Dimension(3, 0), new Dimension(3, 0)));
 		for (int i = 0; i < this.guiData.getRampLength().size(); i++) {
 			Direction d = Direction.UNDEFINED;
 			Direction hairpinDirection = Direction.UNDEFINED;
@@ -167,9 +210,11 @@ public class Diagram extends Component implements Printable {
 
 			if (i > 0) {
 				if (this.guiData.getTurnAround().get(i) > 4) {
-					turnaroundHeight = new Dimension(8, 0);
+					turnaroundHeight = new Dimension(83.5);
+					turnaroundHeight.setDisplayInInches(true);
 				} else if (this.guiData.getTurnAround().get(i) > 0) {
-					turnaroundWidth = new Dimension(8, 0);
+					turnaroundWidth = new Dimension(83.5);
+					turnaroundWidth.setDisplayInInches(true);
 				}
 			}
 
@@ -228,13 +273,8 @@ public class Diagram extends Component implements Printable {
 		ramp.getSection(0).setLandingSize(new Dimension(this.guiData.getDeckDimension()[0]),
 				new Dimension(this.guiData.getDeckDimension()[1]));
 		ramp.getSection(0).setRampOffset(new Dimension(this.guiData.getDeckOffSet()));
-		if (this.side) {
-			this.drawRampSide(g, ramp);
-		} else {
-			this.drawRampTop(g, ramp);
-		}
 	}
-	
+
 	public BufferedImage generateImage() {
 		BufferedImage image = new BufferedImage(this.getWidth(), this.getHeight(), BufferedImage.TYPE_INT_RGB);
 		Graphics g = image.getGraphics();
@@ -244,9 +284,13 @@ public class Diagram extends Component implements Printable {
 		return image;
 	}
 
+	public Font getLabelFont() {
+		return labelFont;
+	}
+
 	public void drawRampTop(Graphics2D g, Ramp r) {
-		Dimension x = r.getLocation().getX();
-		Dimension y = r.getLocation().getY();
+		Dimension x = r.getLocation().getX().clone();
+		Dimension y = r.getLocation().getY().clone();
 
 		// If this is true, the last section overlaps with this one.
 		boolean hairPin = false;
@@ -254,7 +298,7 @@ public class Diagram extends Component implements Printable {
 		Coordinate[] posts = new Coordinate[0];
 
 		Box landingBox, rampBox;
-
+		
 		for (int i = 0; i < r.countSections(); i++) {
 			Section s = r.getSection(i);
 
@@ -369,7 +413,7 @@ public class Diagram extends Component implements Printable {
 			// Generate and draw a label for the landing.
 			Label landingLabel = new Label(String.format("%s x %s", s.getLandingWidth(), s.getLandingLength()),
 					Alignment.CENTER, Alignment.CENTER, labelFont, Color.black);
-			this.drawLabel(g, landingLabel, landingBox.getCenter());
+			Diagram.drawLabel(g, landingLabel, landingBox.getCenter());
 
 			rampBox = new Box(new Coordinate(x, y), new Dimension(0), new Dimension(0));
 
@@ -502,16 +546,16 @@ public class Diagram extends Component implements Printable {
 			if (s.getDirection() == Direction.UP || s.getDirection() == Direction.DOWN) {
 				rampLengthLabel.setAlignmentX(Alignment.LEFT_OR_TOP);
 				rampWidthLabel.setAlignmentY(Alignment.LEFT_OR_TOP);
-				this.drawLabel(g, rampLengthLabel,
+				Diagram.drawLabel(g, rampLengthLabel,
 						new Coordinate(rampBox.getLocation().getX(), rampBox.getCenter().getY()));
-				this.drawLabel(g, rampWidthLabel,
+				Diagram.drawLabel(g, rampWidthLabel,
 						new Coordinate(rampBox.getCenter().getX(), rampBox.getLocation().getY()));
 			} else {
 				rampLengthLabel.setAlignmentY(Alignment.LEFT_OR_TOP);
 				rampWidthLabel.setAlignmentX(Alignment.LEFT_OR_TOP);
-				this.drawLabel(g, rampLengthLabel,
+				Diagram.drawLabel(g, rampLengthLabel,
 						new Coordinate(rampBox.getCenter().getX(), rampBox.getLocation().getY()));
-				this.drawLabel(g, rampWidthLabel,
+				Diagram.drawLabel(g, rampWidthLabel,
 						new Coordinate(rampBox.getLocation().getX(), rampBox.getCenter().getY()));
 			}
 
@@ -524,12 +568,11 @@ public class Diagram extends Component implements Printable {
 		}
 	}
 
-	public void drawRampSide(Graphics2D g, Ramp r) {
+	public void drawRampSide(Graphics2D g, Ramp r, Coordinate origin) {
 		int longestSectionIndex = r.getLongestSection();
 
 		if (longestSectionIndex >= 0) {
 			Section s = r.getSection(longestSectionIndex);
-			Coordinate origin = new Coordinate(new Dimension(5, 0), new Dimension(10, 0));
 			Box rampBox = new Box(new Coordinate(new Dimension(0), new Dimension(0)), s.getRampWidth(),
 					s.getRampLength());
 			if (s.getDirection() == Direction.LEFT || s.getDirection() == Direction.RIGHT) {
@@ -549,6 +592,8 @@ public class Diagram extends Component implements Printable {
 			Dimension rail1Height = new Dimension(12); // Height from landing for bottom railing
 			Dimension rail2Height = new Dimension(24); // Height from landing for middle railing
 			Coordinate firstSupportLocation = origin.clone();
+			Dimension deckBoardWidth = new Dimension(6);
+			Dimension deckBoardThickness = new Dimension(2);
 
 			// Set up graphics
 			g.setStroke(new BasicStroke(5));
@@ -563,6 +608,18 @@ public class Diagram extends Component implements Printable {
 			g.drawRect(coord(origin.getX()), coord(origin.getY()) - coord(landingHeight), coord(landingWidth),
 					coord(new Dimension(6)));
 
+			// Draw deck boards on landing
+			/*
+			 * int dbx = 0; int dby = coord(origin.getY()) - coord(landingHeight) -
+			 * coord(deckBoardThickness); for (dbx = coord(origin.getX()); dbx <=
+			 * coord(origin.getX()) + coord(landingWidth) - coord(deckBoardWidth); dbx +=
+			 * coord(deckBoardWidth)) { g.drawRect(dbx, dby, coord(deckBoardWidth),
+			 * coord(deckBoardThickness)); }
+			 * 
+			 * int endX = coord(origin.getX()) + coord(landingWidth); if (dbx < endX) {
+			 * g.drawRect(dbx, dby, endX - dbx, coord(deckBoardThickness)); }
+			 */
+
 			// Draw ramp floor
 			g.drawPolygon(
 					new int[] { coord(origin.getX()) + coord(landingWidth),
@@ -574,6 +631,11 @@ public class Diagram extends Component implements Printable {
 							coord(origin.getY()) - coord(nextLandingHeight) + coord(new Dimension(6)),
 							coord(origin.getY()) - coord(landingHeight) + coord(new Dimension(6)) },
 					4);
+
+			// Draw ramp deck boards
+			int rbx = coord(origin.getX()) + coord(landingWidth); // X of ramp board along the bottom
+			int rby = coord(origin.getY()) - coord(landingHeight);
+			// TODO: ramp deck boards
 
 			// Draw posts for landing
 			g.drawRect(coord(origin.getX()), coord(origin.getY()) - coord(firstPostHeight), coord(new Dimension(4)),
@@ -684,33 +746,33 @@ public class Diagram extends Component implements Printable {
 					origin.getY().clone().subtract(firstPostHeight));
 
 			// 2x4 Railing
-			this.drawLabelWithLine(g,
+			Diagram.drawLabelWithLine(g,
 					new Label("2x4 Railing", Alignment.LEFT_OR_TOP, Alignment.RIGHT_OR_BOTTOM, labelFont, Color.BLACK),
 					railMidpoint.clone().add(new Coordinate(new Dimension(3, 0), new Dimension(-3, 0))), railMidpoint);
 
 			// 2x6 or 2x8 supports
-			this.drawLabelWithLine(g,
+			Diagram.drawLabelWithLine(g,
 					new Label("2x6 or 2x8 Supports", Alignment.RIGHT_OR_BOTTOM, Alignment.LEFT_OR_TOP, labelFont,
 							Color.BLACK),
 					firstSupportLocation.clone().add(new Coordinate(new Dimension(-3, 0), new Dimension(3, 0))),
 					firstSupportLocation);
 
 			// 4x4 treated posts
-			this.drawLabelWithLine(g,
+			Diagram.drawLabelWithLine(g,
 					new Label("4x4 Treated Posts", Alignment.RIGHT_OR_BOTTOM, Alignment.RIGHT_OR_BOTTOM, labelFont,
 							Color.BLACK),
 					firstPostLocation.clone().add(new Coordinate(new Dimension(-3, 0), new Dimension(-3, 0))),
 					firstPostLocation);
 
 			// Ground level
-			this.drawLabel(g,
+			Diagram.drawLabel(g,
 					new Label("Ground Level", Alignment.LEFT_OR_TOP, Alignment.CENTER, labelFont, Color.BLACK),
 					new Coordinate(origin.getX().clone().add(landingWidth).add(s.getRampLength()), origin.getY()));
 		}
 	}
 
-	public void drawLabelWithLine(Graphics2D g, Label l, Coordinate labelLocation, Coordinate pointLocation) {
-		this.drawLabel(g, l, labelLocation);
+	public static void drawLabelWithLine(Graphics2D g, Label l, Coordinate labelLocation, Coordinate pointLocation) {
+		drawLabel(g, l, labelLocation);
 
 		// Assume the line will come from the top-left corner of the label.
 		int labelEndX = coord(labelLocation.getX());
@@ -858,7 +920,7 @@ public class Diagram extends Component implements Printable {
 			l = new Label(length.toString(), Alignment.CENTER, Alignment.CENTER, labelFont, Color.BLACK);
 
 			// Draw the label.
-			this.drawLabel(g, l, location.getMidpoint(destination));
+			Diagram.drawLabel(g, l, location.getMidpoint(destination));
 		}
 
 		// Draw the head on the destination.
@@ -946,7 +1008,7 @@ public class Diagram extends Component implements Printable {
 		}
 	}
 
-	public void drawLabel(Graphics2D g, Label l, Coordinate origin) {
+	public static void drawLabel(Graphics2D g, Label l, Coordinate origin) {
 		LabelSize size = l.calculateSize();
 		String[] lines = l.toLines();
 		int x = coord(origin.getX());
