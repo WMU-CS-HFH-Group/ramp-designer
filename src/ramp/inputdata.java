@@ -5,6 +5,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import ramp.diagram.GUIData;
+import ramp.diagram.RampFile;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -153,11 +154,28 @@ public class inputdata extends JFrame {
 		contentPane.add(lblHouse);
 		
 		JButton btnSave = new JButton("Save");
+		btnSave.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				JFileChooser chooser = new JFileChooser();
+				int option = chooser.showSaveDialog(null);
+				if (option == JFileChooser.APPROVE_OPTION) {
+					try {
+						RampFile.saveToFile(guiData, chooser.getSelectedFile().toString() + ".json");
+					} catch (Exception e) {
+						JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			}
+		});
 		sl_contentPane.putConstraint(SpringLayout.SOUTH, btnSave, -10, SpringLayout.SOUTH, contentPane);
 		sl_contentPane.putConstraint(SpringLayout.WEST, btnSave, 10, SpringLayout.WEST, contentPane);
 		contentPane.add(btnSave);
 		
 		JButton btnLoad = new JButton("Load");
+		btnLoad.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
 		sl_contentPane.putConstraint(SpringLayout.NORTH, btnLoad, 0, SpringLayout.NORTH, btnSave);
 		sl_contentPane.putConstraint(SpringLayout.WEST, btnLoad, 5, SpringLayout.EAST, btnSave);
 		contentPane.add(btnLoad);

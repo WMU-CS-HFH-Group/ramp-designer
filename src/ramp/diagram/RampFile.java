@@ -10,7 +10,7 @@ import com.google.gson.stream.JsonReader;
 
 public class RampFile {
 	
-	public void saveToFile(GUIData data, String filepath) throws Exception {
+	public static void saveToFile(GUIData data, String filepath) throws Exception {
 		GsonBuilder builder = new GsonBuilder();
 		builder.setPrettyPrinting();
 		Gson gson = builder.create();
@@ -24,7 +24,7 @@ public class RampFile {
 		}
 	}
 	
-	public GUIData loadFromFile(String filepath) throws Exception {
+	public static GUIData loadFromFile(String filepath) throws Exception {
 		GsonBuilder builder = new GsonBuilder();
 		builder.setPrettyPrinting();
 		Gson gson = builder.create();
