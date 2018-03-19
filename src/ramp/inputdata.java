@@ -144,16 +144,6 @@ public class inputdata extends JFrame {
 		lblRampIn.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		contentPane.add(lblRampIn);
 		
-//		JComboBox<String> comboFromDeck = new JComboBox<String>();
-//		sl_contentPane.putConstraint(SpringLayout.NORTH, comboFromDeck, 0, SpringLayout.NORTH, lblRampIn);
-//		sl_contentPane.putConstraint(SpringLayout.WEST, comboFromDeck, 3, SpringLayout.EAST, lblRampIn);
-//		sl_contentPane.putConstraint(SpringLayout.EAST, comboFromDeck, 66, SpringLayout.EAST, lblRampIn);
-//		comboFromDeck.addItem("Top");
-//		comboFromDeck.addItem("Right");
-//		comboFromDeck.addItem("Bottom");
-//		comboFromDeck.addItem("Left");
-//		contentPane.add(comboFromDeck);
-		
 		JLabel lblHouse = new JLabel("");
 		lblHouse.setIcon(new ImageIcon(inputdata.class.getResource("/ramp/Images/House.png")));
 		sl_contentPane.putConstraint(SpringLayout.SOUTH, lblHouse, 10, SpringLayout.SOUTH, lblRampIn);
@@ -275,15 +265,7 @@ public class inputdata extends JFrame {
 				}
 			} 
 		});
-		
-//		//** changes direction of first ramp **//
-//		comboFromDeck.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent e) {
-////				guiUtility.setRampDirection(comboFromDeck.getSelectedIndex(), sl_scrollPanel, lblDeck, null, null, 
-////						lblRamp, btnAdd, btnRemove, 0);
-//			}
-//		});
-		
+				
 		//** click to change direction of first ramp **//
 		lblDeck.addMouseListener(new MouseAdapter() {
 			@Override
