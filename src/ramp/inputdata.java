@@ -174,6 +174,27 @@ public class inputdata extends JFrame {
 		JButton btnLoad = new JButton("Load");
 		btnLoad.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				JFileChooser chooser = new JFileChooser();
+				int option = chooser.showOpenDialog(null);
+				if (option == JFileChooser.APPROVE_OPTION) {
+					try {
+						GUIData loadData = RampFile.loadFromFile(chooser.getSelectedFile().toString());
+						guiData.setCoords(loadData.getCoords());
+						guiData.setDeckDimension(loadData.getDeckDimension());
+						guiData.setDeckHeight(loadData.getDeckHeight());
+						guiData.setDeckLocation(loadData.getDeckLocation());
+						guiData.setDeckOffSet(loadData.getDeckOffSet());
+						guiData.setItems(loadData.getItems());
+						guiData.setRampDir(loadData.getRampDir());
+						guiData.setRampLength(loadData.getRampLength());
+						guiData.setRampLengthTotal(loadData.getRampLengthTotal());
+						guiData.setSideViewOrigin(loadData.getSideViewOrigin());
+						guiData.setTurnAround(loadData.getTurnAround());
+						guiData.setUsedIn(loadData.getUsedIn());
+					} catch (Exception e1) {
+						JOptionPane.showMessageDialog(null, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+					}
+				}
 			}
 		});
 		sl_contentPane.putConstraint(SpringLayout.NORTH, btnLoad, 0, SpringLayout.NORTH, btnSave);
