@@ -31,8 +31,8 @@ public class GUIData {
 	private double[] sideViewOrigin = {36, 36};
 	
 	// Custom items added after generating the ramp.
-	private DefaultListModel<CustomItem> items;
-
+	private DefaultListModel<CustomItem> items = new DefaultListModel<CustomItem>();
+	
 	public double getDeckHeight() {
 		return deckHeight;
 	}

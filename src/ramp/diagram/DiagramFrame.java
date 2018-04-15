@@ -647,6 +647,8 @@ public class DiagramFrame extends JFrame {
 		this();
 		this.diagram = new Diagram(data, side);
 		listCustomItemsModel = data.getItems();
+		listCustomItems.setModel(listCustomItemsModel);
+		
 		textDeckX.setText(diagram.getDeckLocation().getX().toString());
 		textDeckY.setText(diagram.getDeckLocation().getY().toString());
 
